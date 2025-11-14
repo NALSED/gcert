@@ -434,7 +434,7 @@ echo -e "   - Ne partagez jamais votre mot de passe maître."
                 sleep 4
                 # --- Création ou choix de la clé GPG ---
                
-                choix_cle() {
+               
                                 clear
                                 afficher_bienvenue
 
@@ -491,8 +491,11 @@ echo -e "   - Ne partagez jamais votre mot de passe maître."
 
                                                 clear
                                                 afficher_bienvenue
+                                                
                                                 cle=$(gpg --list-keys --keyid-format long | grep -o '[0-9A-F]\{40\}' | nl -w2 -s'. ')
-                                                echo -e "cle"
+                                                
+                                                echo -e "$cle\n"
+                                                
                                                 echo -e "${YELLOW}Veuillez entrer le fingerprint de la clé GPG...${NC}\n"
                                                 read LAST_CLE
                                                 
@@ -532,8 +535,7 @@ echo -e "   - Ne partagez jamais votre mot de passe maître."
                                     fi
 
                                 done
-                            }
-                choix_cle
+                            
 
                 # Initialiser pass avec la clé choisie
                 clear
