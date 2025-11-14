@@ -434,116 +434,167 @@ echo -e "   - Ne partagez jamais votre mot de passe maître."
                 sleep 4
                 # --- Création ou choix de la clé GPG ---
                
+                choix_cle() {
+                                clear
+                                afficher_bienvenue
+
+                                while true; do
+                                    echo -e "${YELLOW}Souhaitez-vous créer une nouvelle clé GPG ? [y/n] : ${NC}"
+                                    read -r Choix_Creation_Cle
+
+                                    if [[ "$Choix_Creation_Cle" =~ ^[yYnN]$ ]]; then
+
+                                        # --- Création d’une nouvelle clé ---
+                                        if [[ "$Choix_Creation_Cle" == "y" || "$Choix_Creation_Cle" == "Y" ]]; then
+
+                                            clear
+                                            afficher_bienvenue
+                                            echo -e "${YELLOW}=== Création d'une nouvelle clé GPG ===${NC}\n"
+                                            echo -e "${YELLOW}Génération interactive de la clé avec${NC} ${WHITE}GnuPG${NC}${YELLOW}...${NC}\n\n\n"
+                                            echo -e " => ${RED}!!! RAPPEL: !!!${NC}  (1) ${GREEN}RSA and RSA${NC}  => compatible avec pass"
+                                            echo
+                                            gpg --full-generate-key
+
+                                            LAST_CLE=$(gpg --list-keys --keyid-format long | grep -o '[0-9A-F]\{40\}' | tail -n1)
+
+                                            msg="Veuillez patientez"
+                                            echo -e "\n\n"
+                                            BLA::start_loading_animation "$msg" "${BLA_passing_dots[@]}"
+                                            sleep 5
+                                            BLA::stop_loading_animation
+
+                                            clear
+                                            afficher_bienvenue
+                                            echo -e "\n${GREEN}[√] Clé GPG créée.${NC}\n"
+                                            echo -e "${WHITE}Fingerprint : ${GREEN}${LAST_CLE}${NC}\n"
+                                            sleep 4
+
+                                            break
+                                        fi
+
+                                        # --- Utilisation d’une clé existante ---
+                                        if [[ "$Choix_Creation_Cle" == "n" || "$Choix_Creation_Cle" == "N" ]]; then
+                                            
+                                            clear
+                                            afficher_bienvenue
+                                            echo -e "[1] Entrer un Clé..."
+                                            echo -e "[2] Sortir..."
+                                            
+                                            read -p "Choisissez une option: " choix_gpg
+
+                                            case "$choix_gpg" in
+                                            1)
+                                                echo -e "${RED}Vous devez être en possession de la passphrase.${NC}\n\n"
+                                                echo -e "${YELLOW}Veuillez entrer le fingerprint de la clé GPG...${NC}\n"
+                                                read LAST_CLE
+                                                
+                                                
+                                                if [[ "$LAST_CLE" =~ ^[0-9A-Fa-f]{40}$ ]]; then
+                                                    echo -e "${WHITE}Clé sélectionnée : ${GREEN}${LAST_CLE}${NC}"
+                                                else
+                                                    echo -e "${RED}Clé invalide. Doit être 40 caractères hexadécimaux (0-9, A-F).${NC}"
+                                                    continue
+                                                fi
+                                                
+                                                
+                                                ;;
+                                            2)
+                                                echo -e "${RED}Le programme d'intalation va quitter...${NC}" 
+                                	
+                                                msg="Veuillez patientez"
+                                                echo -e "\n\n"
+                                                BLA::start_loading_animation "$msg" "${BLA_passing_dots[@]}"
+                                                sleep 4
+                                                BLA::stop_loading_animation
+                                            
+                                                exit 1
+                                                ;;
+                                            *)
+                                                echo -e "${RED}Erreur, Réponse invalide .${NC}"
+                                                ;;
+                                            esac 
+                    
+                                        fi
+
+                                    else
+                                        echo -e "${RED}Erreur : entrez uniquement 'y' ou 'n'.${NC}"
+                                    fi
+
+                                done
+                            }
+                choix_cle
+
+                # Initialiser pass avec la clé choisie
                 clear
                 afficher_bienvenue
+                echo -e "\n${YELLOW}Initialisation de ${WHITE}pass${NC} ${YELLOW}avec la clé${NC} ${GREEN}${LAST_CLE}${NC}${YELLOW}...${NC}\n\n"
 
                 while true; do
-                    echo -e "${YELLOW}Souhaitez-vous créer une nouvelle clé GPG ? [y/n] : ${NC}"
-                    read -r Choix_Creation_Cle
+                    echo -e "${YELLOW}Êtes-vous sûr de vouloir utiliser cette clé ? [y/n] : ${NC}"
+                    read Choix_Valide_Cle
 
-                    if [[ "$Choix_Creation_Cle" =~ ^[yYnN]$ ]]; then
+                    if [[ "$Choix_Valide_Cle" =~ ^[yY]$ ]]; then
+                        if pass init "$LAST_CLE" >/dev/null 2>&1; then
+                            
+                            # Vérifie la création du répertoire du Password Store
+                            if [[ -d "$HOME/.password-store" ]]; then
+                                clear
+                                afficher_bienvenue
+                                echo -e "${YELLOW}=== Structure du Password Store G.cert ===${NC}\n"
 
-                        # --- Création d’une nouvelle clé ---
-                        if [[ "$Choix_Creation_Cle" == "y" || "$Choix_Creation_Cle" == "Y" ]]; then
-
-                            clear
-                            afficher_bienvenue
-                            echo -e "${YELLOW}=== Création d'une nouvelle clé GPG ===${NC}\n"
-                            echo -e "${YELLOW}Génération interactive de la clé avec${NC} ${WHITE}GnuPG${NC}${YELLOW}...${NC}\n\n\n"
-                            echo -e " => ${RED}!!! RAPPEL: !!!${NC}  (1) ${GREEN}RSA and RSA${NC}  => compatible avec pass"
-                            echo
-                            gpg --full-generate-key
-
-                            LAST_CLE=$(gpg --list-keys --keyid-format long | grep -o '[0-9A-F]\{40\}' | tail -n1)
-
-                            msg="Veuillez patientez"
-                            echo -e "\n\n"
-                            BLA::start_loading_animation "$msg" "${BLA_passing_dots[@]}"
-                            sleep 5
-                            BLA::stop_loading_animation
-
-                            clear
-                            afficher_bienvenue
-                            echo -e "\n${GREEN}[√] Clé GPG créée.${NC}\n"
-                            echo -e "${WHITE}Fingerprint : ${GREEN}${LAST_CLE}${NC}\n"
-                            sleep 4
-
-                            break
-                        fi
-
-                        # --- Utilisation d’une clé existante ---
-                        if [[ "$Choix_Creation_Cle" == "n" || "$Choix_Creation_Cle" == "N" ]]; then
-
-                            echo -e "${RED}Vous devez être en possession de la passphrase.${NC}\n\n"
-                            echo -e "${YELLOW}Veuillez entrer le fingerprint de la clé GPG...${NC}\n"
-                            read LAST_CLE
-
-                            if [[ "$LAST_CLE" =~ ^[0-9A-Fa-f]{40}$ ]]; then
-                                echo -e "${WHITE}Clé sélectionnée : ${GREEN}${LAST_CLE}${NC}"
+                                echo -e "${GREEN}[√]${NC}${WHITE}Password Store${NC}   - Répertoire local où pass stocke tous les mots de passe"
+                                echo -e "└── ${WHITE}[2]${NC}${YELLOW}gcert${NC}       - Dossier contenant les Mots de passe"
+                                echo -e "    └── ${WHITE}[3]wan${NC}      - Mot de passe pour le service WAN"
+                                echo -e "    └── ${WHITE}[4]lan${NC}      - Mot de passe pour le service LAN"
+                                echo -e "    └── ${WHITE}[5]gestion${NC}  - Mot de passe pour le service Gestion"
+                                echo -e "    └── ${WHITE}[6]certif${NC}   - Mot de passe pour le service Certificats"
+                                echo -e "    └── ${WHITE}[7]logs${NC}     - Mot de passe pour le service Logs\n\n"
+                                echo -e "\n\n${GREEN}Password Store créé avec succès !${NC}"
+                                sleep 3
+                                break        
                             else
-                                echo -e "${RED}Clé invalide. Doit être 40 caractères hexadécimaux (0-9, A-F).${NC}"
-                                continue
+                                echo -e "${RED}Erreur : le répertoire .password-store n'a pas été créé.${NC}"
+                                sleep 3
+                                exit 1
                             fi
 
-                            break
+                        else
+                            echo -e "${RED}Erreur : impossible d’initialiser le Password Store avec la clé ${LAST_CLE}.${NC}"
+                            sleep 3
+                            exit 1
                         fi
 
+                    elif [[ "$Choix_Valide_Cle" =~ ^[nN]$ ]]; then
+                        echo -e "\n${YELLOW}Vous ne souhaitez pas utiliser cette clé.${NC}"
+
+                        while true; do
+                            echo -e "${YELLOW}Souhaitez-vous créer une nouvelle clé GPG ? [y/n] : ${NC}"
+                            read -r Choix_New_Key
+
+                            if [[ "$Choix_New_Key" =~ ^[yY]$ ]]; then
+                                
+                                choix_cle
+                                continue  # revient à la validation de clé
+                            elif [[ "$Choix_New_Key" =~ ^[nN]$ ]]; then
+                                echo -e "${YELLOW}G.Cert à besoin d'une clé GPG pour la le chiffrement des mots de passes...${NC}\n"
+                                echo -e "${RED}Le programme d'intalation va quitter...${NC}" 
+                                	
+                                    msg="Veuillez patientez"
+                                    echo -e "\n\n"
+                                    BLA::start_loading_animation "$msg" "${BLA_passing_dots[@]}"
+                                    sleep 4
+                                    BLA::stop_loading_animation
+                                 
+                                exit 1
+                            else
+                                echo -e "${RED}Réponse invalide. Tapez y ou n.${NC}"
+                            fi
+                        done
+
                     else
-                        echo -e "${RED}Erreur : entrez uniquement 'y' ou 'n'.${NC}"
+                        echo -e "${RED}Choix invalide.${NC}"
                     fi
-
                 done
-
-
-
-# Initialiser pass avec la clé choisie
-clear
-afficher_bienvenue
-echo -e "\n${YELLOW}Initialisation de ${WHITE}pass${NC} ${YELLOW}avec la clé${NC} ${GREEN}${LAST_CLE}${NC}${YELLOW}...${NC}\n\n"
-
-while true; do
-    echo -e "${YELLOW}Êtes-vous sûr de vouloir utiliser cette clé ? [y/n] : ${NC}"
-    read Choix_Valide_Cle
-
-    if [[ "$Choix_Valide_Cle" =~ ^[yY]$ ]]; then
-        if pass init "$LAST_CLE" >/dev/null 2>&1; then
-            
-            # Vérifie la création du répertoire du Password Store
-            if [[ -d "$HOME/.password-store" ]]; then
-                clear
-                afficher_bienvenue
-                echo -e "${YELLOW}=== Structure du Password Store G.cert ===${NC}\n"
-
-                echo -e "${GREEN}[√]${NC}${WHITE}Password Store${NC}   - Répertoire local où pass stocke tous les mots de passe"
-                echo -e "└── ${WHITE}[2]${NC}${YELLOW}gcert${NC}       - Dossier contenant les Mots de passe"
-                echo -e "    └── ${WHITE}[3]wan${NC}      - Mot de passe pour le service WAN"
-                echo -e "    └── ${WHITE}[4]lan${NC}      - Mot de passe pour le service LAN"
-                echo -e "    └── ${WHITE}[5]gestion${NC}  - Mot de passe pour le service Gestion"
-                echo -e "    └── ${WHITE}[6]certif${NC}   - Mot de passe pour le service Certificats"
-                echo -e "    └── ${WHITE}[7]logs${NC}     - Mot de passe pour le service Logs\n\n"
-                echo -e "\n\n${GREEN}Password Store créé avec succès !${NC}"
-                sleep 3
-                break        
-            else
-                echo -e "${RED}Erreur : le répertoire .password-store n'a pas été créé.${NC}"
-                sleep 3
-                exit 1
-            fi
-
-        else
-            echo -e "${RED}Erreur : impossible d’initialiser le Password Store avec la clé ${LAST_CLE}.${NC}"
-            sleep 3
-            exit 1
-        fi
-
-    elif [[ "$Choix_Valide_Cle" =~ ^[nN]$ ]]; then
-        echo -e "\n${YELLOW}Retour à la sélection de la clé...${NC}\n"
-        choix_cle
-        break
-    else
-        echo -e "${RED}Choix invalide.${NC}"
-    fi
-done
 
 
 # =============================== CREATION MOT DE PASSE ===============================
