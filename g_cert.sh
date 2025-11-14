@@ -477,8 +477,8 @@ echo -e "   - Ne partagez jamais votre mot de passe maître."
                                             
                                             clear
                                             afficher_bienvenue
-                                            echo -e "[1] Entrer un Clé..."
-                                            echo -e "[2] Sortir..."
+                                            echo -e "${YELLOW}[1] Entrer un Clé...${NC}"
+                                            echo -e "${YELLOW}[2] Sortir...${NC}\n"
                                             
                                             read -p "Choisissez une option: " choix_gpg
 
@@ -499,10 +499,13 @@ echo -e "   - Ne partagez jamais votre mot de passe maître."
                                                 
                                                 ;;
                                             2)
+                                                
+                                                clear
+                                                afficher_bienvenue
                                                 echo -e "${RED}Le programme d'intalation va quitter...${NC}" 
                                 	
                                                 msg="Veuillez patientez"
-                                                echo -e "\n\n"
+                                                echo -e "\n"
                                                 BLA::start_loading_animation "$msg" "${BLA_passing_dots[@]}"
                                                 sleep 4
                                                 BLA::stop_loading_animation
@@ -565,17 +568,8 @@ echo -e "   - Ne partagez jamais votre mot de passe maître."
                         fi
 
                     elif [[ "$Choix_Valide_Cle" =~ ^[nN]$ ]]; then
-                        echo -e "\n${YELLOW}Vous ne souhaitez pas utiliser cette clé.${NC}"
+                        
 
-                        while true; do
-                            echo -e "${YELLOW}Souhaitez-vous créer une nouvelle clé GPG ? [y/n] : ${NC}"
-                            read -r Choix_New_Key
-
-                            if [[ "$Choix_New_Key" =~ ^[yY]$ ]]; then
-                                
-                                choix_cle
-                                continue  # revient à la validation de clé
-                            elif [[ "$Choix_New_Key" =~ ^[nN]$ ]]; then
                                 echo -e "${YELLOW}G.Cert à besoin d'une clé GPG pour la le chiffrement des mots de passes...${NC}\n"
                                 echo -e "${RED}Le programme d'intalation va quitter...${NC}" 
                                 	
