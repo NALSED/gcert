@@ -53,7 +53,7 @@ class GestionMenu:
             elif choix == "Gestion Certificats":
                 from my_package.Gestion.Certif.gestion_certif import gestion_certif
                 mon_certif = gestion_certif()
-                mon_certif.show_banner() 
+                self.show_banner() 
 
             elif choix == "Retour":
                 import main

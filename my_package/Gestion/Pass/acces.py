@@ -7,6 +7,7 @@ import signal
 import psutil
 import time
 from my_package.utils import COLOR_OK, COLOR_NOK, COLOR_BORDER, COLOR_TEXT, GREEN, YELLOW, WHITE, NC, CHECK, show_banner
+from my_package.Logs.logs_Menu import Choix_Logs
 
 # Utiliser pour conter les tentatives d’essai de mot de passe
 count = 0
@@ -56,6 +57,7 @@ def Wan_Pass():
                 "--padding", "1 2",
                 "Mot de passe Incorrect\n"
             ])
+            time.sleep(2)
             count += 1
             if count < 3:
                 subprocess.run([
@@ -64,6 +66,7 @@ def Wan_Pass():
                     "--padding", "1 2",
                     f"Nombre d'essais restant : {3 - count}"
                 ])
+                time.sleep(2)
             else:
                 show_banner()
                 subprocess.run([
@@ -119,6 +122,7 @@ def Lan_Pass():
                 "--padding", "1 2",
                 "Mot de passe Incorrect\n"
             ])
+            time.sleep(2)
             count += 1
             if count < 3:
                 subprocess.run([
@@ -127,6 +131,7 @@ def Lan_Pass():
                     "--padding", "1 2",
                     f"Nombre d'essais restant : {3 - count}"
                 ])
+                time.sleep(2)
             else:
                 show_banner()
                 subprocess.run([
@@ -182,6 +187,7 @@ def Gestion_Pass():
                 "--padding", "1 2",
                 "Mot de passe Incorrect\n"
             ])
+            time.sleep(2)
             count += 1
             if count < 3:
                 subprocess.run([
@@ -190,6 +196,7 @@ def Gestion_Pass():
                     "--padding", "1 2",
                     f"Nombre d'essais restant : {3 - count}"
                 ])
+                time.sleep(2)
             else:
                 show_banner()
                 subprocess.run([
@@ -246,6 +253,7 @@ def Certif_Pass():
                 "--padding", "1 2",
                 "Mot de passe Incorrect\n"
             ])
+            time.sleep(2)
             count += 1
             if count < 3:
                 subprocess.run([
@@ -254,6 +262,7 @@ def Certif_Pass():
                     "--padding", "1 2",
                     f"Nombre d'essais restant : {3 - count}"
                 ])
+                time.sleep(2)
             else:
                 show_banner()
                 subprocess.run([
@@ -290,8 +299,10 @@ def Log_Pass():
                 "Mot de passe Correct\n"
             ])
             time.sleep(2)
+            
             c = Choix_Logs()
             c.menu()
+            
             show_banner()
             subprocess.run([
                 "gum", "spin",
@@ -308,6 +319,7 @@ def Log_Pass():
                 "--padding", "1 2",
                 "Mot de passe Incorrect\n"
             ])
+            time.sleep(2)
             count += 1
             if count < 3:
                 subprocess.run([
@@ -316,6 +328,7 @@ def Log_Pass():
                     "--padding", "1 2",
                     f"Nombre d'essais restant : {3 - count}"
                 ])
+                time.sleep(2)
             else:
                 show_banner()
                 subprocess.run([
