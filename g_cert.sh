@@ -484,7 +484,15 @@ echo -e "   - Ne partagez jamais votre mot de passe maître."
 
                                             case "$choix_gpg" in
                                             1)
+                                                clear
+                                                afficher_bienvenue
                                                 echo -e "${RED}Vous devez être en possession de la passphrase.${NC}\n\n"
+                                                sleep 2
+
+                                                clear
+                                                afficher_bienvenue
+                                                cle=$(gpg --list-keys --keyid-format long | grep -o '[0-9A-F]\{40\}' | nl -w2 -s'. ')
+                                                echo -e "cle"
                                                 echo -e "${YELLOW}Veuillez entrer le fingerprint de la clé GPG...${NC}\n"
                                                 read LAST_CLE
                                                 
