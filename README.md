@@ -16,6 +16,15 @@
       su -
       apt update && apt -y install sudo git && usermod -aG sudo sednal
 
+# GIT
+
+      
+      mv .git .git_backup
+      git init
+      git add .
+      git commit -m "Restauration après corruption du dépôt"
+      git remote add origin https://github.com/NALSED/gcert
+      git push -u origin main --force
 
 
 # Arborecence du projet
@@ -124,4 +133,5 @@
                      ├
 └──
 ├──  
+
 
