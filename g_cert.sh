@@ -434,7 +434,7 @@ echo -e "   - Ne partagez jamais votre mot de passe maître."
                 sleep 4
                 # --- Création ou choix de la clé GPG ---
                
-              clear
+                clear
                 afficher_bienvenue
 
                 while true; do
@@ -444,55 +444,93 @@ echo -e "   - Ne partagez jamais votre mot de passe maître."
                     # Vérifie que la réponse est exactement 'y', 'Y', 'n' ou 'N'
                     if [[ "$Choix_Creation_Cle" =~ ^[yYnN]$ ]]; then
                         if [[ "$Choix_Creation_Cle" == "y" || "$Choix_Creation_Cle" == "Y" ]]; then
-                            clear
-                            afficher_bienvenue
-                            echo -e "${YELLOW}=== Création d'une nouvelle clé GPG ===${NC}\n"
-                            echo -e "${YELLOW}Génération interactive de la clé avec${NC} ${WHITE}GnuPG${NC}${YELLOW}...${NC}\n\n\n"
-                            echo -e " => ${RED}!!! RAPPEL: !!!${NC}  (1) ${GREEN}RSA and RSA${NC}           => signature et chiffrement compatible avec pass <="
-                            echo
-                            gpg --full-generate-key
 
-                            LAST_CLE=$(gpg --list-keys --keyid-format long | grep -o '[0-9A-F]\{40\}' | tail -n1)
+                            creation_cle() {
+                                clear
+                                afficher_bienvenue
+                                echo -e "${YELLOW}=== Création d'une nouvelle clé GPG ===${NC}\n"
+                                echo -e "${YELLOW}Génération interactive de la clé avec${NC} ${WHITE}GnuPG${NC}${YELLOW}...${NC}\n\n\n"
+                                echo -e " => ${RED}!!! RAPPEL: !!!${NC}  (1) ${GREEN}RSA and RSA${NC}           => signature et chiffrement compatible avec pass <="
+                                echo
+                                gpg --full-generate-key
 
-                            msg="Veuillez patientez"
-                            echo -e "\n\n"
-                            BLA::start_loading_animation "$msg" "${BLA_passing_dots[@]}"
-                            sleep 5
-                            BLA::stop_loading_animation
+                                LAST_CLE=$(gpg --list-keys --keyid-format long | grep -o '[0-9A-F]\{40\}' | tail -n1)
 
-                            clear
-                            afficher_bienvenue
-                            echo -e "\n${GREEN}[√] Clé GPG créée.${NC}\n"
-                            echo -e "${WHITE}Fingerprint : ${GREEN}${LAST_CLE}${NC}\n"
-                            sleep 4
+                                msg="Veuillez patientez"
+                                echo -e "\n\n"
+                                BLA::start_loading_animation "$msg" "${BLA_passing_dots[@]}"
+                                sleep 5
+                                BLA::stop_loading_animation
+
+                                clear
+                                afficher_bienvenue
+                                echo -e "\n${GREEN}[√] Clé GPG créée.${NC}\n"
+                                echo -e "${WHITE}Fingerprint : ${GREEN}${LAST_CLE}${NC}\n"
+                                sleep 4
+                            }
+
+                            creation_cle
                             break
 
                         elif [[ "$Choix_Creation_Cle" == "n" || "$Choix_Creation_Cle" == "N" ]]; then
+
                             clear
                             afficher_bienvenue
                             echo -e "${YELLOW}=== Choisissez une clé GPG existante ===${NC}\n"
 
-                            gpg --list-keys --keyid-format long | grep -o '[0-9A-F]\{40\}' | nl -w2 -s'. '
-                            echo
+                            # Liste des clés GPG format 40 caractères hexadécimaux
+                            liste="$(gpg --list-keys --keyid-format long | grep -oi '[0-9a-f]\{40\}' | nl -w2 -s'. ')"
 
-                            read -rp "Entrez le fingerprint (ou laissez vide pour utiliser la dernière clé listée) : " CLE
+                            if [[ -z "$liste" ]]; then
+                                echo -e "${RED} Aucune clé existante ... ${NC}\n"
 
-                            if [[ -z "$CLE" ]]; then
-                                LAST_CLE=$(gpg --list-keys --keyid-format long | grep -o '[0-9A-F]\{40\}' | tail -n1)
-                                echo -e "${WHITE}Utilisation de la clé : ${GREEN}${LAST_CLE}${NC}"
-                            elif [[ "$CLE" =~ ^[0-9A-Fa-f]{40}$ ]]; then
-                                LAST_CLE="$CLE"
-                                echo -e "${WHITE}Clé sélectionnée : ${GREEN}${LAST_CLE}${NC}"
+                                while true; do
+                                    echo -e "${YELLOW}Souhaitez-vous créer une nouvelle clé GPG ? [y/n] : ${NC}"
+                                    read -r Choix_Creation_Cle
+
+                                    if [[ "$Choix_Creation_Cle" =~ ^[yYnN]$ ]]; then
+                                        if [[ "$Choix_Creation_Cle" == "y" || "$Choix_Creation_Cle" == "Y" ]]; then
+                                            creation_cle
+                                            break
+
+                                        elif [[ "$Choix_Creation_Cle" == "n" || "$Choix_Creation_Cle" == "N" ]]; then
+                                            echo -e "${RED} Sans Clé GPG G.Cert ne peux pas fonctionner...${NC}\n"
+                                            echo -e "${RED} Le script d'installation va quitter...${NC}\n"
+                                            sleep 2
+                                            exit 1
+                                        fi
+
+                                    else
+                                        echo -e "${RED}Erreur : entrez uniquement 'y' ou 'n'.${NC}"
+                                    fi
+                                done
+
                             else
-                                echo -e "${RED}Clé invalide. Doit être 40 caractères hexadécimaux (0-9, A-F).${NC}"
-                                continue
+                                echo -e "$liste\n"
+                                read -rp "Entrez le fingerprint (ou utiliser la dernière clé listée par défaut en appuyant sur [Entrée]) : " CLE
+
+                                if [[ -z "$CLE" ]]; then
+                                    LAST_CLE=$(gpg --list-keys --keyid-format long | grep -o '[0-9A-F]\{40\}' | tail -n1)
+                                    echo -e "${WHITE}Utilisation de la clé : ${GREEN}${LAST_CLE}${NC}"
+
+                                elif [[ "$CLE" =~ ^[0-9A-Fa-f]{40}$ ]]; then
+                                    LAST_CLE="$CLE"
+                                    echo -e "${WHITE}Clé sélectionnée : ${GREEN}${LAST_CLE}${NC}"
+
+                                else
+                                    echo -e "${RED}Clé invalide. Doit être 40 caractères hexadécimaux (0-9, A-F).${NC}"
+                                    continue
+                                fi
                             fi
+
                             break
                         fi
+
                     else
                         echo -e "${RED}Erreur : entrez uniquement 'y' ou 'n'.${NC}"
                     fi
                 done
+
 
 
 
