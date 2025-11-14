@@ -533,62 +533,56 @@ echo -e "   - Ne partagez jamais votre mot de passe maître."
                 echo -e "\n${YELLOW}Initialisation de ${WHITE}pass${NC} ${YELLOW}avec la clé${NC} ${GREEN}${LAST_CLE}${NC}${YELLOW}...${NC}\n\n"
 
                 while true; do
-                    echo -e "${YELLOW}Êtes-vous sûr de vouloir utiliser cette clé ? [y/n] : ${NC}"
-                    read Choix_Valide_Cle
+                echo -e "${YELLOW}Êtes-vous sûr de vouloir utiliser cette clé ? [y/n] : ${NC}"
+                read Choix_Valide_Cle
 
-                    if [[ "$Choix_Valide_Cle" =~ ^[yY]$ ]]; then
-                        if pass init "$LAST_CLE" >/dev/null 2>&1; then
-                            
-                            # Vérifie la création du répertoire du Password Store
-                            if [[ -d "$HOME/.password-store" ]]; then
-                                clear
-                                afficher_bienvenue
-                                echo -e "${YELLOW}=== Structure du Password Store G.cert ===${NC}\n"
+                if [[ "$Choix_Valide_Cle" =~ ^[yY]$ ]]; then
+                    if pass init "$LAST_CLE" >/dev/null 2>&1; then
+                        
+                        # Vérifie la création du répertoire du Password Store
+                        if [[ -d "$HOME/.password-store" ]]; then
+                            clear
+                            afficher_bienvenue
+                            echo -e "${YELLOW}=== Structure du Password Store G.cert ===${NC}\n"
 
-                                echo -e "${GREEN}[√]${NC}${WHITE}Password Store${NC}   - Répertoire local où pass stocke tous les mots de passe"
-                                echo -e "└── ${WHITE}[2]${NC}${YELLOW}gcert${NC}       - Dossier contenant les Mots de passe"
-                                echo -e "    └── ${WHITE}[3]wan${NC}      - Mot de passe pour le service WAN"
-                                echo -e "    └── ${WHITE}[4]lan${NC}      - Mot de passe pour le service LAN"
-                                echo -e "    └── ${WHITE}[5]gestion${NC}  - Mot de passe pour le service Gestion"
-                                echo -e "    └── ${WHITE}[6]certif${NC}   - Mot de passe pour le service Certificats"
-                                echo -e "    └── ${WHITE}[7]logs${NC}     - Mot de passe pour le service Logs\n\n"
-                                echo -e "\n\n${GREEN}Password Store créé avec succès !${NC}"
-                                sleep 3
-                                break        
-                            else
-                                echo -e "${RED}Erreur : le répertoire .password-store n'a pas été créé.${NC}"
-                                sleep 3
-                                exit 1
-                            fi
-
+                            echo -e "${GREEN}[√]${NC}${WHITE}Password Store${NC}   - Répertoire local où pass stocke tous les mots de passe"
+                            echo -e "└── ${WHITE}[2]${NC}${YELLOW}gcert${NC}       - Dossier contenant les Mots de passe"
+                            echo -e "    └── ${WHITE}[3]wan${NC}      - Mot de passe pour le service WAN"
+                            echo -e "    └── ${WHITE}[4]lan${NC}      - Mot de passe pour le service LAN"
+                            echo -e "    └── ${WHITE}[5]gestion${NC}  - Mot de passe pour le service Gestion"
+                            echo -e "    └── ${WHITE}[6]certif${NC}   - Mot de passe pour le service Certificats"
+                            echo -e "    └── ${WHITE}[7]logs${NC}     - Mot de passe pour le service Logs\n\n"
+                            echo -e "\n\n${GREEN}Password Store créé avec succès !${NC}"
+                            sleep 3
+                            break
                         else
-                            echo -e "${RED}Erreur : impossible d’initialiser le Password Store avec la clé ${LAST_CLE}.${NC}"
+                            echo -e "${RED}Erreur : le répertoire .password-store n'a pas été créé.${NC}"
                             sleep 3
                             exit 1
                         fi
 
-                    elif [[ "$Choix_Valide_Cle" =~ ^[nN]$ ]]; then
-                        
-
-                                echo -e "${YELLOW}G.Cert à besoin d'une clé GPG pour la le chiffrement des mots de passes...${NC}\n"
-                                echo -e "${RED}Le programme d'intalation va quitter...${NC}" 
-                                	
-                                    msg="Veuillez patientez"
-                                    echo -e "\n\n"
-                                    BLA::start_loading_animation "$msg" "${BLA_passing_dots[@]}"
-                                    sleep 4
-                                    BLA::stop_loading_animation
-                                 
-                                exit 1
-                            else
-                                echo -e "${RED}Réponse invalide. Tapez y ou n.${NC}"
-                            fi
-                        done
-
                     else
-                        echo -e "${RED}Choix invalide.${NC}"
+                        echo -e "${RED}Erreur : impossible d’initialiser le Password Store avec la clé ${LAST_CLE}.${NC}"
+                        sleep 3
+                        exit 1
                     fi
-                done
+
+                elif [[ "$Choix_Valide_Cle" =~ ^[nN]$ ]]; then
+                    echo -e "${YELLOW}G.Cert à besoin d'une clé GPG pour le chiffrement des mots de passe...${NC}\n"
+                    echo -e "${RED}Le programme d'installation va quitter...${NC}" 
+
+                    msg="Veuillez patientez"
+                    echo -e "\n\n"
+                    BLA::start_loading_animation "$msg" "${BLA_passing_dots[@]}"
+                    sleep 4
+                    BLA::stop_loading_animation
+                    exit 1
+
+                else
+                    # Si l'utilisateur ne tape pas y/n
+                    echo -e "${RED}Réponse invalide. Tapez y ou n.${NC}"
+                fi
+            done
 
 
 # =============================== CREATION MOT DE PASSE ===============================
