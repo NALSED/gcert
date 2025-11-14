@@ -1,0 +1,37 @@
+# Python cache
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Virtual environments
+venv/
+.env/
+.venv/
+
+# Build / packaging
+build/
+dist/
+*.egg-info/
+
+# Logs & temp files
+*.log
+*.tmp
+*.swp
+*.swo
+
+# System files
+.DS_Store
+Thumbs.db
+
+# Shell script artifacts (just in case)
+*.bak
+
+# VSCode / IDE
+.vscode/
+.idea/
+*.code-workspace
+
+# Test output
+test/*.log
+test/__pycache__
