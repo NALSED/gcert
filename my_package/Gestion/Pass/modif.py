@@ -14,6 +14,12 @@ from my_package.utils import COLOR_OK, COLOR_NOK, COLOR_BORDER, COLOR_TEXT, GREE
 Pass_Store = os.path.expanduser("~/.password-store")
 Pass_Store_gcert = os.path.expanduser("~/.password-store/gcert")
 
+Wan = os.path.expanduser("~/.password-store/gcert/wan.gpg")
+Lan = os.path.expanduser("~/.password-store/gcert/lan.gpg")
+Gestion = os.path.expanduser("~/.password-store/gcert/gestion.gpg")
+Certif = os.path.expanduser("~/.password-store/gcert/certif.gpg")
+Log = os.path.expanduser("~/.password-store/gcert/logs.gpg")
+
 # =============================== SCRIPT ==============================
 class Modif:
     # Bannière
@@ -54,7 +60,7 @@ class Modif:
 
             # Explications / choix 
             self.show_banner()
-            subprocess.run(["rm", "-rf", Pass_Store], check=True)
+            subprocess.run(["rm", "-rf", Wan, Lan, Gestion, Certif, Log], check=True)
             subprocess.run([
                 "gum", "style",
                 "--foreground", COLOR_TEXT,
