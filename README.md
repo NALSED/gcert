@@ -1,3 +1,7 @@
+# DOCKER
+       docker run -ti --name gcert debian:latest
+       apt update && apt -y install sudo git
+
 # LINUX
       
       git clone https://github.com/NALSED/gcert.git
@@ -133,5 +137,6 @@
                      ├
 └──
 ├──  
+
 
 
