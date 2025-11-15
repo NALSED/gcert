@@ -135,15 +135,26 @@ def erase():
                     f"Nouvelle tentative de suppression de la clé : {key_id}"
                 ])
                 time.sleep(2)
+                    
+                    show_banner()
+                    result = subprocess.run([
+                        "gum", "choose",
+                        "--header", "\n\nVeuillez choisir ...",
+                        "--limit", "1",
+                        "--height", "10",
+                        "Essayer à nouveau une suppression",
+                        "Retour menu principal"
+                    ], text=True, stdout=subprocess.PIPE)
 
-                show_banner()
-                subprocess.run([
-                    "gum", "spin",
-                    "--spinner", "dot",
-                    "--title", "Lancement de la suppression",
-                    "--", "bash", "-c", "sleep 2",
-                ])
-                erase()
+                    choix = result.stdout.strip()
+                    # Redirection => effcement
+                    if choix == "Essayer à nouveau une suppression":
+                        erase()
+
+                    # Redirection => menu principale
+                    elif choix == "Retour menu principal":
+                        from main import main 
+                        main()
 
             else:
                 show_banner()

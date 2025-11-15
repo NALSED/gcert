@@ -425,124 +425,148 @@ echo -e "   - Ne partagez jamais votre mot de passe maître."
                             fi
                         done
 
+                while true; do
+
                 clear
                 afficher_bienvenue
+                echo -e "${YELLOW}=== Clé GPG ===${NC}\n\n"
+                echo -e "${YELLOW}[1] Créer un nouvelle Clé${NC}\n"
+                echo -e "${YELLOW}[2] Entrer un clé existente${NC}\n"
+                echo -e "${YELLOW}[3] Sortir...${NC}\n"
+                                                        
+                read -p "Choisissez une option: " choix_gpg_1
 
-                echo -e "${YELLOW}=== Création Clé GPG et Mots de Passe G.cert ===${NC}\n"
-                echo -e "${RED}!!! Attention si vous utilisez votre propre Clé GPG... !!!${NC}"
-                echo -e "${RED}!!! Vous devez être en possession de la Pass Phrase de la clé... !!!${NC}\n\n"
-                sleep 4
-                # --- Création ou choix de la clé GPG ---
-               
-               
-                                clear
-                                afficher_bienvenue
+                case "$choix_gpg_1" in
 
-                                while true; do
-                                    echo -e "${YELLOW}Souhaitez-vous créer une nouvelle clé GPG ? [y/n] : ${NC}"
-                                    read -r Choix_Creation_Cle
+                1)
+                    clear
+                    afficher_bienvenue
+                    echo -e "${YELLOW}=== Création d'une nouvelle clé GPG ===${NC}\n"
+                    echo -e "${YELLOW}Génération interactive de la clé avec${NC} ${WHITE}GnuPG${NC}${YELLOW}...${NC}\n\n\n"
+                    echo -e " ${RED}=> !!! RAPPEL: !!!${NC}  (1) ${GREEN}RSA and RSA${NC}  => compatible avec pass"
+                    echo
+                    gpg --full-generate-key
+                    # donne la dernière clé créé
+                    LAST_CLE=$(gpg --list-keys --keyid-format long | grep -o '[0-9A-F]\{40\}' | tail -n1)
+                    # Si pas de clé le sciprt sort
+                    [[ -z "$LAST_CLE" ]] && { echo -e "${RED}Aucune clé trouvée, le programme d'installation va quitter...${NC}"; sleep 2; exit 1; }
+                           
+                    msg="Veuillez patientez"
+                    echo -e "\n\n"
+                    BLA::start_loading_animation "$msg" "${BLA_passing_dots[@]}"
+                    sleep 5
+                    BLA::stop_loading_animation
 
-                                    if [[ "$Choix_Creation_Cle" =~ ^[yYnN]$ ]]; then
+                    clear
+                    afficher_bienvenue
+                    echo -e "\n${GREEN}[√] Clé GPG créée.${NC}\n"
+                    echo -e "${WHITE}Fingerprint : ${GREEN}${LAST_CLE}${NC}\n"
+                    sleep 4
+                    break
 
-                                        # --- Création d’une nouvelle clé ---
-                                        if [[ "$Choix_Creation_Cle" == "y" || "$Choix_Creation_Cle" == "Y" ]]; then
+                ;;
 
-                                            clear
-                                            afficher_bienvenue
-                                            echo -e "${YELLOW}=== Création d'une nouvelle clé GPG ===${NC}\n"
-                                            echo -e "${YELLOW}Génération interactive de la clé avec${NC} ${WHITE}GnuPG${NC}${YELLOW}...${NC}\n\n\n"
-                                            echo -e " => ${RED}!!! RAPPEL: !!!${NC}  (1) ${GREEN}RSA and RSA${NC}  => compatible avec pass"
-                                            echo
-                                            gpg --full-generate-key
+                2)
+                    while true; do
+                        clear
+                        afficher_bienvenue
+                        echo -e "${YELLOW}=== Création d'une nouvelle clé GPG ===${NC}\n"
+                        echo -e " ${RED}=> !!! RAPPEL: !!!${NC}  ${WHITE}Vous devez être en possession de la Pass Phrase de la clé...${NC}"
+                        echo
+                        
+                        echo -e "${YELLOW}[4] Entrer un Clé...${NC}"
+                        echo -e "${YELLOW}[5] Sortir...${NC}\n"
+                                                        
+                        read -p "Choisissez une option: " choix_gpg_2
 
-                                            LAST_CLE=$(gpg --list-keys --keyid-format long | grep -o '[0-9A-F]\{40\}' | tail -n1)
+                        case "$choix_gpg_2" in
+                        4)
+                            clear
+                            afficher_bienvenue
+                            echo -e "${RED}Vous devez être en possession de la passphrase de la clé...${NC}\n\n"
+                            sleep 2
 
-                                            msg="Veuillez patientez"
-                                            echo -e "\n\n"
-                                            BLA::start_loading_animation "$msg" "${BLA_passing_dots[@]}"
-                                            sleep 5
-                                            BLA::stop_loading_animation
-
-                                            clear
-                                            afficher_bienvenue
-                                            echo -e "\n${GREEN}[√] Clé GPG créée.${NC}\n"
-                                            echo -e "${WHITE}Fingerprint : ${GREEN}${LAST_CLE}${NC}\n"
-                                            sleep 4
-
-                                            break
-                                        fi
-
-                                        # --- Utilisation d’une clé existante ---
-                                        if [[ "$Choix_Creation_Cle" == "n" || "$Choix_Creation_Cle" == "N" ]]; then
-                                            
-                                            clear
-                                            afficher_bienvenue
-                                            echo -e "${YELLOW}[1] Entrer un Clé...${NC}"
-                                            echo -e "${YELLOW}[2] Sortir...${NC}\n"
-                                            
-                                            read -p "Choisissez une option: " choix_gpg
-
-                                            case "$choix_gpg" in
-                                            1)
-                                                clear
-                                                afficher_bienvenue
-                                                echo -e "${RED}Vous devez être en possession de la passphrase.${NC}\n\n"
-                                                sleep 2
-
-                                                clear
-                                                afficher_bienvenue
+                            clear
+                            afficher_bienvenue
+                                                                
+                            cle=$(gpg --list-keys --keyid-format long | grep -o '[0-9A-F]\{40\}' | nl -w2 -s'. ')
+                                                                
+                            echo -e "$cle\n"
+                                                                
+                            echo -e "${YELLOW}Veuillez entrer le fingerprint de la clé GPG : ${NC}\n"
+                            read -r LAST_CLE
+                            #Lit en supprimant les espaces au début et à la fin
+                            LAST_CLE="${LAST_CLE//[[:space:]]/}"                                    
+                                                                
+                                if [[ "$LAST_CLE" =~ ^[0-9A-Fa-f]{40}$ ]]; then
+                                    echo -e "${WHITE}Clé sélectionnée : ${GREEN}${LAST_CLE}${NC}"
+                                break 2
+                                else
+                                    echo -e "${RED}Clé invalide. Doit être 40 caractères hexadécimaux (0-9, A-F).${NC}"
+                                continue 
+                                fi
+                        ;;
+                
+                        5)
+                            clear
+                            afficher_bienvenue
+                            echo -e "${RED}Le programme d'instalation va quitter...${NC}" 
                                                 
-                                                cle=$(gpg --list-keys --keyid-format long | grep -o '[0-9A-F]\{40\}' | nl -w2 -s'. ')
-                                                
-                                                echo -e "$cle\n"
-                                                
-                                                echo -e "${YELLOW}Veuillez entrer le fingerprint de la clé GPG...${NC}\n"
-                                                read LAST_CLE
-                                                
-                                                
-                                                if [[ "$LAST_CLE" =~ ^[0-9A-Fa-f]{40}$ ]]; then
-                                                    echo -e "${WHITE}Clé sélectionnée : ${GREEN}${LAST_CLE}${NC}"
-                                                else
-                                                    echo -e "${RED}Clé invalide. Doit être 40 caractères hexadécimaux (0-9, A-F).${NC}"
-                                                    continue
-                                                fi
-                                                
-                                                
-                                                ;;
-                                            2)
-                                                
-                                                clear
-                                                afficher_bienvenue
-                                                echo -e "${RED}Le programme d'intalation va quitter...${NC}" 
-                                	
-                                                msg="Veuillez patientez"
-                                                echo -e "\n"
-                                                BLA::start_loading_animation "$msg" "${BLA_passing_dots[@]}"
-                                                sleep 4
-                                                BLA::stop_loading_animation
-                                            
-                                                exit 1
-                                                ;;
-                                            *)
-                                                echo -e "${RED}Erreur, Réponse invalide .${NC}"
-                                                ;;
-                                            esac 
-                    
-                                        fi
+                            msg="Veuillez patientez"
+                            echo -e "\n"
+                            BLA::start_loading_animation "$msg" "${BLA_passing_dots[@]}"
+                            sleep 4
+                            BLA::stop_loading_animation
+                            
+                            exit 1
+                            ;;
+                        *)
+                            echo -e "${RED}Erreur, Réponse invalide .${NC}"
+                
+                        ;;
+                        esac
 
-                                    else
-                                        echo -e "${RED}Erreur : entrez uniquement 'y' ou 'n'.${NC}"
-                                    fi
+                    done
+                ;;
+                
+                3)
+                    clear
+                    afficher_bienvenue
+                    echo -e "${RED}Le programme d'instalation va quitter...${NC}" 
+                                                        
+                    msg="Veuillez patientez"
+                    echo -e "\n"
+                    BLA::start_loading_animation "$msg" "${BLA_passing_dots[@]}"
+                    sleep 4
+                    BLA::stop_loading_animation
+                                    
+                    exit 1         
+                ;;
 
-                                done
+                *)
+                    echo -e "${RED}Erreur, Réponse invalide .${NC}"
+                ;;
+                esac 
+
+            done
                             
 
                 # Initialiser pass avec la clé choisie
                 clear
                 afficher_bienvenue
-                echo -e "\n${YELLOW}Initialisation de ${WHITE}pass${NC} ${YELLOW}avec la clé${NC} ${GREEN}${LAST_CLE}${NC}${YELLOW}...${NC}\n\n"
+                echo -e "\n${YELLOW}Initialisation de ${WHITE}pass${NC} ${YELLOW}avec la clé${NC} ${GREEN}${LAST_CLE}${NC}${YELLOW}...${NC}\n"
+                
+                msg="Veuillez patientez"
+                echo -e "\n"
+                BLA::start_loading_animation "$msg" "${BLA_passing_dots[@]}"
+                sleep 2
+                BLA::stop_loading_animation
+
 
                 while true; do
+                clear
+                afficher_bienvenue
+                echo -e "${YELLOW}Clé GPG:${NC} ${GREEN}${LAST_CLE}${NC}\n"
                 echo -e "${YELLOW}Êtes-vous sûr de vouloir utiliser cette clé ? [y/n] : ${NC}"
                 read Choix_Valide_Cle
 
