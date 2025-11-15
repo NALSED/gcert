@@ -1,6 +1,7 @@
 # DOCKER
        docker run -ti --name gcert debian:latest
        apt update && apt -y install sudo git
+       docker run -ti --name gcert debian:latest
 ---
        docker stop gcert
        docker rm -f gcert
@@ -140,6 +141,7 @@
                      ├
 └──
 ├──  
+
 
 
 
