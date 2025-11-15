@@ -7,7 +7,7 @@ import signal
 import psutil
 import time
 from my_package.Gestion.Pass.changement_mdp import changement_mdp
-from my_package.utils import COLOR_OK, COLOR_NOK, COLOR_BORDER, COLOR_TEXT, GREEN, YELLOW, WHITE, NC, CHECK, show_banner
+from my_package.utils import COLOR_OK, COLOR_NOK, COLOR_BORDER, COLOR_TEXT, GREEN, YELLOW, WHITE, RED, NC, CHECK, show_banner
 
 
 # === CHEMIN VERIF MDP ===
@@ -55,7 +55,7 @@ class Modif:
                 "gum", "style",
                 "--foreground", COLOR_OK,
                 "--padding", "1 2",
-                "\nMot de passe sudo correct\nAccès autorisé\n"
+                "\nMot de passe sudo correct\n\nAccès autorisé\n"
             ])
             time.sleep(2)
 

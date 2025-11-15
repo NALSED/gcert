@@ -14,6 +14,7 @@ GREEN = "\033[32m"
 YELLOW = "\033[33m"
 WHITE = "\033[37m"
 NC = "\033[0m"
+RED = '\033[0;31m'
 
 CHECK = "√"
 
