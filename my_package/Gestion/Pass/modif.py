@@ -57,6 +57,7 @@ class Modif:
                 "--padding", "1 2",
                 "\nMot de passe sudo correct\nAccès autorisé\n"
             ])
+            time.sleep(2)
 
             # Explications / choix 
             self.show_banner()
@@ -105,6 +106,7 @@ class Modif:
 
             # génération de la clé GPG
             self.show_banner()
+            print(f" {RED}=> !!! RAPPEL: !!!{NC}  (1) {GREEN}RSA and RSA{NC}  => compatible avec pass")
             subprocess.run(["gpg", "--full-generate-key"])
 
             # Dernier fingerprint
@@ -154,7 +156,9 @@ class Modif:
                     print(f"    └── {WHITE}[6]certif{NC}   - Mot de passe pour le service Certificats")
                     print(f"    └── {WHITE}[7]logs{NC}     - Mot de passe pour le service Logs\n")
                     time.sleep(2)
-
+                
+                    changement_mdp()
+                
                 else:
                     subprocess.run([
                         "gum", "style",
@@ -175,7 +179,7 @@ class Modif:
                         "--", "bash", "-c", "sleep 3",
                     ])
 
-                    changement_mdp()
+                    
 
             else:
                 self.show_banner()
