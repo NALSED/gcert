@@ -20,14 +20,17 @@ Log = os.path.expanduser("~/.password-store/gcert/logs.gpg")
 def changement_mdp():
     # ==================== WAN ====================
     while True:
+        # Suppression dossier pass des mots de passe
         subprocess.run(["rm", "-rf", Wan, Lan, Gestion, Certif, Log], check=True)
         show_banner()
+        # nouveau mdp
         result = subprocess.run(
             ["gum", "input", "--password", "--prompt", "Veuillez entrer un nouveau mot de passe Wan :"],
             text=True, stdout=subprocess.PIPE
         )
         choix_wan = result.stdout.strip()
 
+        # confirmation
         show_banner()
         result = subprocess.run(
             ["gum", "input", "--password", "--prompt", "Veuillez confirmer le nouveau mot de passe Wan :"],
@@ -35,10 +38,12 @@ def changement_mdp():
         )
         confirm_choix_wan = result.stdout.strip()
 
+        # Test nouveau mdp = confirmation
         if choix_wan == confirm_choix_wan:
             pw = choix_wan + "\n" + confirm_choix_wan + "\n"
             subprocess.run(["pass", "insert", "-f", "gcert/wan"], input=pw, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, text=True)
 
+            # Test existence
             if os.path.exists(Wan):
                 show_banner()
                 subprocess.run([
@@ -49,15 +54,7 @@ def changement_mdp():
                 ])
                 time.sleep(2)
 
-                show_banner()
-                subprocess.run([
-                    "gum", "style",
-                    "--foreground", COLOR_OK,
-                    "--padding", "1 2",
-                    "Création du Mot de Passe Wan OK"
-                ])
-                time.sleep(2)
-
+                # récap
                 show_banner()
                 print(f"{GREEN}[{CHECK}]{NC}{WHITE} Password Store{NC}   - Répertoire local où pass stocke tous les mots de passe")
                 print(f"└── {GREEN}[{CHECK}]{NC}{WHITE}gcert{NC}       - Dossier contenant les Mots de passe")
@@ -66,7 +63,15 @@ def changement_mdp():
                 print(f"    └── {WHITE}[5]gestion{NC}  - Mot de passe pour le service Gestion")
                 print(f"    └── {WHITE}[6]certif{NC}   - Mot de passe pour le service Certificats")
                 print(f"    └── {WHITE}[7]logs{NC}     - Mot de passe pour le service Logs\n")
+
+                subprocess.run([
+                    "gum", "style",
+                    "--foreground", COLOR_OK,
+                    "--padding", "1 2",
+                    "Création du Mot de Passe Wan OK"
+                ])
                 time.sleep(3)
+
                 break
             else:
                 subprocess.run([
@@ -110,6 +115,13 @@ def changement_mdp():
 
             if os.path.exists(Lan):
                 show_banner()
+                print(f"{GREEN}[{CHECK}]{NC}{WHITE} Password Store{NC}   - Répertoire local où pass stocke tous les mots de passe")
+                print(f"└── {GREEN}[{CHECK}]{NC}{WHITE}gcert{NC}       - Dossier contenant les Mots de passe")
+                print(f"    └── {GREEN}[{CHECK}]{NC}{WHITE}wan{NC}      - Mot de passe pour le service WAN")
+                print(f"    └── {GREEN}[{CHECK}]{NC}{WHITE}lan{NC}      - Mot de passe pour le service LAN")
+                print(f"    └── {WHITE}[5]gestion{NC}  - Mot de passe pour le service Gestion")
+                print(f"    └── {WHITE}[6]certif{NC}   - Mot de passe pour le service Certificats")
+                print(f"    └── {WHITE}[7]logs{NC}     - Mot de passe pour le service Logs\n")
                 subprocess.run([
                     "gum", "style",
                     "--foreground", COLOR_OK,
@@ -160,6 +172,13 @@ def changement_mdp():
 
             if os.path.exists(Gestion):
                 show_banner()
+                print(f"{GREEN}[{CHECK}]{NC}{WHITE} Password Store{NC}   - Répertoire local où pass stocke tous les mots de passe")
+                print(f"└── {GREEN}[{CHECK}]{NC}{WHITE}gcert{NC}       - Dossier contenant les Mots de passe")
+                print(f"    └── {GREEN}[{CHECK}]{NC}{WHITE}wan{NC}      - Mot de passe pour le service WAN")
+                print(f"    └── {GREEN}[{CHECK}]{NC}{WHITE}lan{NC}      - Mot de passe pour le service LAN")
+                print(f"    └── {GREEN}[{CHECK}]{NC}{WHITE}gestion{NC}  - Mot de passe pour le service Gestion")
+                print(f"    └── {WHITE}[6]certif{NC}   - Mot de passe pour le service Certificats")
+                print(f"    └── {WHITE}[7]logs{NC}     - Mot de passe pour le service Logs\n")
                 subprocess.run([
                     "gum", "style",
                     "--foreground", COLOR_OK,
@@ -210,13 +229,20 @@ def changement_mdp():
 
             if os.path.exists(Certif):
                 show_banner()
+                print(f"{GREEN}[{CHECK}]{NC}{WHITE} Password Store{NC}   - Répertoire local où pass stocke tous les mots de passe")
+                print(f"└── {GREEN}[{CHECK}]{NC}{WHITE}gcert{NC}       - Dossier contenant les Mots de passe")
+                print(f"    └── {GREEN}[{CHECK}]{NC}{WHITE}wan{NC}      - Mot de passe pour le service WAN")
+                print(f"    └── {GREEN}[{CHECK}]{NC}{WHITE}lan{NC}      - Mot de passe pour le service LAN")
+                print(f"    └── {GREEN}[{CHECK}]{NC}{WHITE}gestion{NC}  - Mot de passe pour le service Gestion")
+                print(f"    └── {GREEN}[{CHECK}]{NC}{WHITE}certif{NC}   - Mot de passe pour le service Certificats")
+                print(f"    └── {WHITE}[7]logs{NC}     - Mot de passe pour le service Logs\n")
                 subprocess.run([
                     "gum", "style",
                     "--foreground", COLOR_OK,
                     "--padding", "1 2",
                     "Création du Mot Certif OK"
                 ])
-                time.sleep(3)
+                time.sleep(2)
                 break
             else:
                 subprocess.run([
@@ -259,7 +285,13 @@ def changement_mdp():
             subprocess.run(["pass", "insert", "-f", "gcert/logs"], input=pw, text=True)
 
             if os.path.exists(Log):
-                show_banner()
+                print(f"{GREEN}[{CHECK}]{NC}{WHITE} Password Store{NC}   - Répertoire local où pass stocke tous les mots de passe")
+                print(f"└── {GREEN}[{CHECK}]{NC}{WHITE}gcert{NC}       - Dossier contenant les Mots de passe")
+                print(f"    └── {GREEN}[{CHECK}]{NC}{WHITE}wan{NC}      - Mot de passe pour le service WAN")
+                print(f"    └── {GREEN}[{CHECK}]{NC}{WHITE}lan{NC}      - Mot de passe pour le service LAN")
+                print(f"    └── {GREEN}[{CHECK}]{NC}{WHITE}gestion{NC}  - Mot de passe pour le service Gestion")
+                print(f"    └── {GREEN}[{CHECK}]{NC}{WHITE}certif{NC}   - Mot de passe pour le service Certificats")
+                print(f"    └── {WHITE}[7]logs{NC}     - Mot de passe pour le service Logs\n")
                 subprocess.run([
                     "gum", "style",
                     "--foreground", COLOR_OK,

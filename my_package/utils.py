@@ -26,7 +26,7 @@ def show_banner():
 
 def passphrase():
     subprocess.run(
-            ["pass", "show", "admin/gestion_passphrase_NE_PAS_SUPPRIMER"],
+            ["pass", "show", "gcert/wan"],
             stdout=subprocess.DEVNULL,
             stderr=subprocess.DEVNULL,
             check=True
