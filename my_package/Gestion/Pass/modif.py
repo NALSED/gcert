@@ -61,7 +61,7 @@ class Modif:
 
             # Explications / choix 
             self.show_banner()
-            subprocess.run(["rm", "-rf", Wan, Lan, Gestion, Certif, Log], check=True)
+            subprocess.run(["rm", "-rf", Pass_Store], check=True)
             subprocess.run([
                 "gum", "style",
                 "--foreground", COLOR_TEXT,
@@ -80,9 +80,9 @@ class Modif:
             input("Appuyez sur Entrée pour continuer...")
 
             self.show_banner()
-            print(f"{YELLOW}===================================================={NC}")
+            print(f"{YELLOW}================================================================================================={NC}")
             print(f"{WHITE}INFORMATION : Clé GPG pour le gestionnaire de mots de passe 'pass'{NC}")
-            print(f"{YELLOW}===================================================={NC}")
+            print(f"{YELLOW}================================================================================================={NC}")
             print(f"Pour utiliser {GREEN}pass{NC}, seule une clé {GREEN}RSA capable de signer et chiffrer{NC} est compatible.")
             print("\nLes options disponibles lors de la création d'une clé GPG :")
             print(f"  (1) {GREEN}RSA and RSA{NC}           => signature et chiffrement compatible avec pass")
@@ -92,7 +92,7 @@ class Modif:
             print(f"  (9) ECC (sign and encrypt)           => non compatible (Attention par défaut)")
             print(f" (10) ECC (sign only)                  => non compatible")
             print(f" (14) Existing key from card           => Clé RSA existante ET RSA chiffrante")
-            print(f"\n{YELLOW}===================================================={NC}\n")
+            print(f"\n{YELLOW}============================================================================================={NC}\n")
 
             input("Appuyez sur Entrée pour continuer...")
 
@@ -106,7 +106,7 @@ class Modif:
 
             # génération de la clé GPG
             self.show_banner()
-            print(f" {RED}=> !!! RAPPEL: !!!{NC}  (1) {GREEN}RSA and RSA{NC}  => compatible avec pass")
+            print(f" {RED}=> !!! RAPPEL: !!!{NC}  (1) {GREEN}RSA and RSA{NC}  => compatible avec pass\n\n")
             subprocess.run(["gpg", "--full-generate-key"])
 
             # Dernier fingerprint

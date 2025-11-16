@@ -53,7 +53,7 @@ def gpg():
             "--limit", "1",
             "--height", "10",
             "Continuer",
-            "Création Clé GPG et Mot De Passe",
+            "Réinitialiser Clé GPG et Mot De Passe",
             "Quitter"
         ], text=True, stdout=subprocess.PIPE)
 
@@ -64,7 +64,7 @@ def gpg():
             return
 
         # Redirection => GPG MDP
-        elif choix == "Création Clé GPG et Mot De Passe":
+        elif choix == "Réinitialiser Clé GPG et Mot De Passe":
             from my_package.Gestion.Pass.modif  import Modif
             m = Modif()
             m.gpg_mdp()
