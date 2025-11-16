@@ -291,7 +291,7 @@ def changement_mdp():
                 print(f"    └── {GREEN}[{CHECK}]{NC}{WHITE}lan{NC}      - Mot de passe pour le service LAN")
                 print(f"    └── {GREEN}[{CHECK}]{NC}{WHITE}gestion{NC}  - Mot de passe pour le service Gestion")
                 print(f"    └── {GREEN}[{CHECK}]{NC}{WHITE}certif{NC}   - Mot de passe pour le service Certificats")
-                print(f"    └── {WHITE}[7]logs{NC}     - Mot de passe pour le service Logs\n")
+                print(f"    └── {GREEN}[{CHECK}]{NC}{WHITE}logs{NC}     - Mot de passe pour le service Logs\n")
                 subprocess.run([
                     "gum", "style",
                     "--foreground", COLOR_OK,
@@ -312,7 +312,7 @@ def changement_mdp():
                 subprocess.run([
                     "gum", "spin",
                     "--spinner", "dot",
-                    "--title", "TEXTE",
+                    "--title", "Retour Menu Principal",
                     "--", "bash", "-c", "sleep 1",
                 ])
                 from main import main
