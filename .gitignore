@@ -1,0 +1,42 @@
+# Python cache
+__pycache__/
+*.py[cod]
+
+# Virtual environments
+venv/
+.env/
+.venv/
+
+# Build / packaging
+build/
+dist/
+*.egg-info/
+gcert.egg-info/
+
+# Logs & temp files
+*.log
+*.tmp
+*.swp
+*.swo
+
+# System files
+.DS_Store
+Thumbs.db
+
+# Shell script artifacts
+*.bak
+AGEN GPG.sh
+
+
+# IDE / Editor
+.vscode/
+.idea/
+*.code-workspace
+
+# Test output
+test/__pycache__/
+test/*.log
+
+# Fichier en cours
+TEMPLATE.py
+AGEN GPG.sh

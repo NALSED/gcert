@@ -1,0 +1,10 @@
+
+{
+  "wan": true,
+  "lan": true,
+  "certif": true,
+  "logs": true,
+  "gestion": true,
+  "all": true
+}
+
