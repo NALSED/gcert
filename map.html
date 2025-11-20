@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<title>Carte d'interaction des scripts GCert</title>
+<script type="module">
+  import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs';
+  mermaid.initialize({ startOnLoad: true });
+</script>
+</head>
+<body>
+<h2>📊 Flux d'interaction des scripts GCert</h2>
+
+<div class="mermaid">
+flowchart TD
+    %% Styles des couleurs
+    classDef shell fill:#4CAF50,stroke:#333,stroke-width:1px,color:#fff;
+    classDef main fill:#2196F3,stroke:#333,stroke-width:1px,color:#fff;
+    classDef gestion fill:#FF9800,stroke:#333,stroke-width:1px,color:#fff;
+    classDef logs fill:#E91E63,stroke:#333,stroke-width:1px,color:#fff;
+    classDef doc fill:#9C27B0,stroke:#333,stroke-width:1px,color:#fff;
+
+    %% Shell
+    GSH[g_cert.sh]:::shell --> LOAD[load.sh]:::shell
+
+    %% Script principal
+    MAIN[main.py]:::main --> ACC[acces.py]:::gestion
+    MAIN --> GM[gestion_menu.py]:::gestion
+    MAIN --> MOD[modif.py]:::gestion
+    MAIN --> CERT[Certifs/certif.py]:::gestion
+    MAIN --> LAN[Lan/lan.py]:::gestion
+    MAIN --> WAN[Wan/wan.py]:::gestion
+    MAIN --> LOGM[Logs/logs_Menu.py]:::logs
+
+    %% Gestion Menu
+    GM --> GC[Gestion/Certif/gestion_certif.py]:::gestion
+    GM --> GP[Gestion/Pass/gestion_pass.py]:::gestion
+
+    %% Gestion Pass
+    GP --> DK[Gestion/Key/delete_key.py]:::gestion
+    GP --> MM[Gestion/Pass/modif_mdp.py]:::gestion
+    GP --> EM[Gestion/Pass/etat_mdp.py]:::gestion
+
+    DK --> MMG[Gestion/Key/modif_mdp_gpg.py]:::gestion
+    MMG --> CH[Gestion/Pass/changement_mdp.py]:::gestion
+
+    EM --> CA[Gestion/Pass/config_auth.py]:::gestion
+    CA --> AUTH[script/auth_config.json]:::doc
+
+    %% Logs
+    LOGM --> LOGA[Logs/logs_Arch.py]:::logs
+
+    %% Documentation
+    DOC[script/doc.md]:::doc
+
+    %% Utilitaires
+    UTILS[utils.py]:::main
+    MAIN --> UTILS
+    ACC --> UTILS
+    GM --> UTILS
+    GP --> UTILS
+    CERT --> UTILS
+</div>
+</body>
+</html>
