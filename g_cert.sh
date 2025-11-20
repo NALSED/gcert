@@ -692,34 +692,7 @@ echo -e "   - Ne partagez jamais votre mot de passe maître."
                             echo -e "    └── ${WHITE}[7]logs${NC}     - Mot de passe pour le service Logs\n\n"
                             echo -e "${GREEN}Mots de passe identiques.${NC}"
                             sleep 2
-                            # Création du embranchement caché dans pass pour la gestion des mot de passe dans gcert
-                            # Ici on créé un embrenchement qui ne sera jamais supprimé, mais qu'il faut garder à tout pris pour le fonctionement de gcert
                             
-                            #=== REEL ARBORECENCE DE PASS ===
-                            #Password Store
-                            #├── admin
-                            #│   └── gestion_passphrase_NE_PAS_SUPPRIMER
-                            #└── gcert
-                            #    ├── certif
-                            #    ├── gestion
-                            #    ├── lan
-                            #    ├── logs
-                            #    └── wan
-                            
-                            # Création gestion de la passphrase
-                            # Cette partie sera un est pour le déclanchement de la passphrase dans le programme afin de pourvoir utiliser les mot de passe du gestionaire pass.
-                            printf '%s\n' "AdimGc3rt" | pass insert -f --multiline admin/gestion_passphrase_NE_PAS_SUPPRIMER >/dev/null 2>&1
-                            if [[ -f "$HOME/.password-store/admin/gestion_passphrase_NE_PAS_SUPPRIMER.gpg" ]]; then
-                                clear
-                                afficher_bienvenue
-                                
-                                echo -e "${GREEN}Gestion PassPhrase OK...${NC}"
-                                sleep 2
-                            else
-                                echo -e "${RED}Problème lors de la Gestion de la PassPhrase...${NC}"
-                                sleep 2
-                                exit 1
-                            fi
                             # Création du mot de passe wan
                             printf '%s\n' "$Wan" | pass insert -f --multiline gcert/wan >/dev/null 2>&1
 
