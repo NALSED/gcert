@@ -25,7 +25,7 @@ def afficher_etat_services():
     
     # Récupère tous les statuts des services depuis le JSON
     config = get_all_status() 
-    services = ["wan", "lan", "gestion", "coffre", "logs"] # Liste des services à afficher
+    services = ["wan", "lan", "gestion", "certif", "logs"] # Liste des services à afficher
     colored_data = [] # tableau couleur
 
     for service in services:
