@@ -145,25 +145,43 @@
                 └── "Création Clé GPG + MDP" Et retour Menu Principal
 
 
-
-
-
-
-
-
-                     ├
-└──
-├──  
-
-
-
-
-
-
-
-
-
-
+# Arborecence du projet et détail fichier .py 
+           
+                  g_cert.sh => Script d'installation
+                  main.py => Script principal gcert
+                  README.md
+                  setup.py => fichier setup
+                  my_package/
+                  ├── script/
+                  |    ├── doc.md => Documentation gcert
+                  |    ├── load.sh => Animation g_cert.sh
+                  |    ├── auth_config.json => Activation / Désactivation MDP gcert
+                  ├── utils.py => Variables communes
+                  ├── Certifs/ 
+                  │   └── certif.py => Depuis main.py : Menu de coffre fort certificats ssl (en cours)
+                  ├── Gestion/
+                  │   ├── Certif/
+                  │   │   └── gestion_certif.py => Depuis gestion_menu.py : Permet l'administration des certificats ssl
+                  │   ├── Key/
+                  │   │    ├── mofif_mdp_gpg.py => Depuis delete_key.py : Supprimme le Password Store courant / création clé GPG et Password Store
+                  │   │    └── delete_key.py => Depuis gestion_pass.py : Liste et supprime clé GPG
+                  |   |     
+                  │   ├── Pass/
+                  │   │   ├── acces.py => Depuis main.py Permet l'accés au service par Mot de passe
+                  │   │   ├── changement_mdp.py => Depuis modif.py ou modif_mdp_gpg.py : Créé de nouveau mot de passe
+                  │   │   ├── config_auth.py => Avec etat_mdp.py et auth_config.json : Permet à etat_mdp.py de fonctionner. 
+                  │   │   ├── etat_mdp.py Depuis => Depuis gestion_pass.py : Active ou désactive l’accès par mot de passe aux services et indique son état.(Permet de bypass access.py si désectivation Mot De Passe et fait direct main.py service)
+                  │   │   ├── gestion_pass.py => Depuis gestion_menu.py : Menu de Gestion Mot de pass et clé GPG.
+                  │   │   ├── modif.py => Depuis main.py : Efface le Password Store Et créé un nouvelle clé GPG (Utiliser en cas d'oublie de la passphrase).
+                  │   │   └── modif_mdp.py => Depuis gestion_pass.py : Permet la modification des mots de passe, sans supprimmer Password Store et Clé GPG.
+                  │   └── gestion_menu.py => Depuis main.py : Menu de gestion Certificat ou Mot de passe et clé GPG. 
+                  ├── Lan/
+                  │   └── lan.py => Depuis main.py : Menu de création certificat LAN (en cours)
+                  ├── Wan/
+                  │   └── wan.py => Depuis main.py : Menu de création certificat WAN (en cours)
+                  └── Logs/
+                      ├── logs_Arch.py Permet la mise en place de Logs (en cours)
+                      └── logs_Menu.py => Depuis main.py : Menu de gestion des logs (en cours)
 
 
 
