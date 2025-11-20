@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+
 """
 Ce module a pour but de créer la base des différents logs utilisés par les autres modules.
 Un logger sera appliqué à chaque module et les messages seront enregistrés dans les fichiers correspondants.

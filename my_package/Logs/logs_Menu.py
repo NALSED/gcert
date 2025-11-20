@@ -1,4 +1,12 @@
 #!/usr/bin/env python3
+
+"""
+=> Depuis main.py
+    Permet l'accés au différent niveau de logs
+
+
+"""
+
 import os
 import sys
 import subprocess

@@ -1,4 +1,13 @@
 #!/usr/bin/env python3
+
+"""
+=> Depuis main.py
+    Permet un accées par mot de passe aux différent service.
+
+        Couplé à etat_mdp.py et config_auth.py , activation /désactivation possibles des mots de passe.
+
+    """
+
 import os         
 import pyfiglet
 import sys
@@ -14,6 +23,8 @@ count = 0
 
 # ============================= WAN =============================
 def Wan_Pass():
+    
+    # Test True False du fichier .json
     if not get_auth_status("wan"):
         # Accès direct sans mot de passe
         from my_package.Wan.wan import Wan
@@ -22,6 +33,7 @@ def Wan_Pass():
         return
     
     global count
+    # 3 essair pour le mdp
     while count < 3:
         show_banner()
         result1 = subprocess.run(
@@ -38,6 +50,7 @@ def Wan_Pass():
 
         if wan_pass == user_pass_wan:
             show_banner()
+            # mot de passe ok
             subprocess.run([
                 "gum", "style",
                 "--foreground", COLOR_OK,
@@ -45,6 +58,7 @@ def Wan_Pass():
                 "Mot de passe Correct"
             ])
             time.sleep(2)
+           
             show_banner()
             subprocess.run([
                 "gum", "spin",
@@ -233,7 +247,7 @@ def Gestion_Pass():
 # ============================= CERTIF =============================
 def Certif_Pass():
     
-    if not get_auth_status("certif"):
+    if not get_auth_status("coffre"):
         # Accès direct sans mot de passe
         from my_package.Certif.certif import Certif
         c = Certif()

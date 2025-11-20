@@ -1,13 +1,18 @@
+"""
+=> Depuis main.py
+    
+    Suppression Password Store et Création clé GPG
+
+        Redirection => changement_mdp.py : Création mot de passe puis retout main.py
+    """
+
 #!/usr/bin/env python3
 import os         
-import pyfiglet
 import sys
 import subprocess
-import signal
-import psutil
 import time
 from my_package.Gestion.Pass.changement_mdp import chang_mdp
-from my_package.utils import COLOR_OK, COLOR_NOK, COLOR_BORDER, COLOR_TEXT, GREEN, YELLOW, WHITE, RED, NC, CHECK, WAN, LAN, GESTION, CERTIF, LOGS, show_banner
+from my_package.utils import COLOR_OK, COLOR_NOK, COLOR_TEXT, GREEN, YELLOW, WHITE, RED, NC, CHECK, show_banner
 
 
 # === CHEMIN VERIF MDP ===

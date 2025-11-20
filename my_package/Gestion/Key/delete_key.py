@@ -1,4 +1,23 @@
 #!/usr/bin/env python3
+
+"""
+Depuis gestion_pass.py
+
+    Ce script permet de gérer les clé GPG: lister ,supprimmer.
+        
+        Test si la clé GPG est celle de pass pour la gestion de mot de passe,
+        Si c'est le cas Message alerte, possiblité de supprimmer quand même. 
+    
+    => redirection vers modif_mdp_gpg.py
+
+        
+        modif_mdp_gpg.py : * Suppression de Password store.(Lié à l'ancienne clé)
+                           * Création ou utilisation d'une clé existante pour la création de Password store       
+        
+        => redirection vers changement_mdp.py
+            changement_mdp.py : Création nouveau Mot de Passe.
+"""
+
 import subprocess
 import time
 import datetime
@@ -231,8 +250,8 @@ def erase():
                 
                 # Redirection création mot de passe propre à la suppression de clé :
                 
-                # === CREATION MDP APRES SUP GPG
-                from my_package.Gestion.Key.modif_mdp import Modif_mdp
+                # === CREATION MDP APRES SUP GPG ===
+                from my_package.Gestion.Key.modif_mdp_gpg import Modif_mdp
                 m = Modif_mdp()
                 m.gpg_mdp()
                 return

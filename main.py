@@ -1,10 +1,9 @@
 #!/usr/bin/env python3
 
 """
-Ce script teste la présence des prérequis à l'exécution du programme. 
-Le cas échéant, il installe les dépendances. 
-Enfin, il met en place un menu à choix multiples et redirige vers les autres scripts présents dans my_package.
-"""
+Script principale:  * Suppression Clé GPG et Mot De Passe Si oubli 
+                    * Menu des différents service
+"""     
 import os
 import sys
 import subprocess

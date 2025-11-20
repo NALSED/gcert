@@ -1,12 +1,16 @@
 #!/usr/bin/env python3
+
+"""
+=> Depuis gestion_pass.py
+
+    Permet de changer les mot de passe d'accées aux différents services
+"""
+
 import os
-import pyfiglet
 import sys
 import subprocess
-import signal
-import psutil
 import time
-from my_package.utils import COLOR_OK, COLOR_NOK, COLOR_BORDER, COLOR_TEXT, GREEN, YELLOW, WHITE, NC, CHECK, WAN, LAN, GESTION, CERTIF, LOGS, show_banner
+from my_package.utils import COLOR_OK, COLOR_NOK, COLOR_BORDER, WAN, LAN, GESTION, CERTIF, LOGS, show_banner
 
 Wan = os.path.expanduser("~/.password-store/gcert/wan.gpg")
 Lan = os.path.expanduser("~/.password-store/gcert/lan.gpg")

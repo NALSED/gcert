@@ -1,14 +1,22 @@
 #!/usr/bin/env python3
+
+""" 
+Depuis Delete_key.py    
+
+    Ce script permet Supprimme le Password store.(Lié à l'ancienne clé)
+    La Création ou utilisation d'une clé existante pour la création de Password store.  
+
+        => redirection vers changement_mdp.py
+            changement_mdp.py : Création nouveau Mot de Passe.        
+"""
+
 import os         
-import pyfiglet
 import sys
 import subprocess
-import signal
-import psutil
 import time
-import re
+import re # Permet d'utiliser les expressions régulières, chaine ou motif
 from my_package.Gestion.Pass.changement_mdp import chang_mdp
-from my_package.utils import COLOR_OK, COLOR_NOK, COLOR_BORDER, COLOR_TEXT, GREEN,RED, YELLOW, WHITE, NC, CHECK, WAN, LAN, GESTION, CERTIF, LOGS, show_banner, RED
+from my_package.utils import COLOR_OK, COLOR_NOK, COLOR_TEXT, GREEN,RED, YELLOW, WHITE, NC, CHECK, show_banner, RED
 
 
 # === CHEMIN VERIF MDP ===
@@ -23,21 +31,29 @@ class Modif_mdp:
 
     # Récupération du dernier fingerprint de clé GPG
     def fingerprint(self):
+       
+        """Récupère les fingerprint en brut et les traite pour ne retranscrire que le format caractères héxa
+        """
         out = subprocess.run(
             ["gpg", "--with-colons", "--list-keys"],
             text=True, capture_output=True
         ).stdout
 
+         # Analyse le résultat ligne par ligne
         for line in out.splitlines():
             if line.startswith("fpr:"):
                 parts = line.split(":")
+                # Le fingerprint se trouve en index 9 
                 if len(parts) > 9 and parts[9]:
-                    self.last_fp = parts[9]
+                    self.last_fp = parts[9] # Stocke le dernier fingerprint trouvé
+        
+         # Renvoie le fingerprint s’il a été trouvé, sinon None
         return getattr(self, "last_fp", None)
 
     # ============================= NOUVELLE CLE =============================
     def new(self):        
         self.show_banner()
+        
         subprocess.run([
             "gum", "spin",
             "--spinner", "dot",
@@ -47,12 +63,16 @@ class Modif_mdp:
 
         # génération de la clé GPG
         self.show_banner()
+        
+        # === ANIMATION ===
         print(f" {RED}=> !!! RAPPEL : !!!{NC}  (1) {GREEN}RSA and RSA{NC}  => compatible avec pass\n\n")
         subprocess.run(["gpg", "--full-generate-key"])
 
         # Dernier fingerprint
         self.fingerprint()
         show_fp = getattr(self, "last_fp", None)
+
+        # si fingerprint donc clé présente, création de Password Store
 
         if show_fp:
             
@@ -64,6 +84,9 @@ class Modif_mdp:
                 f"=== Création Password Store ===\n\nAvec le fingerprint {show_fp}"
             ])
             time.sleep(2)
+            
+
+
             self.show_banner()
             subprocess.run([
                 "gum", "spin",
@@ -72,7 +95,7 @@ class Modif_mdp:
                 "--", "bash", "-c", "sleep 3",
             ])
 
-            # Création du passtore
+            # Création du passtore avec sortie standart et erreur vers /dev/null
             self.show_banner()
             result_pass = subprocess.run(
                 ["pass", "init", show_fp], 
@@ -80,6 +103,7 @@ class Modif_mdp:
                 stderr=subprocess.DEVNULL
             )
             
+            # Test création Password Store, si problème message erreur
             if result_pass.returncode != 0:
                 subprocess.run([
                     "gum", "style",
@@ -88,6 +112,7 @@ class Modif_mdp:
                     "Erreur lors de l'initialisation de pass. Vérifiez votre clé GPG."
                 ])
                 time.sleep(3)
+                
                 self.show_banner()
                 subprocess.run([
                     "gum", "spin",
@@ -137,6 +162,7 @@ class Modif_mdp:
                     "Un processus complet de clé GPG et Mots de passe va être initialisé..."
                 ])
                 time.sleep(3)
+                
                 self.show_banner()
                 subprocess.run([
                     "gum", "spin",

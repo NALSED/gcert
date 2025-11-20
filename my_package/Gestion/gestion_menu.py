@@ -1,4 +1,12 @@
 #!/usr/bin/env python3
+
+"""
+=> Depuis main.py
+
+    Menu de Gestion Certificats ou Mots de Passe et Clé GPG
+
+"""
+
 import sys
 import subprocess
 import time

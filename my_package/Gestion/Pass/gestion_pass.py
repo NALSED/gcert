@@ -1,4 +1,12 @@
 #!/usr/bin/env python3
+
+"""
+=> Depuis gestion_menu.py
+
+    Menu des différentes options de gestion mot de passe et clé GPG.
+"""
+
+
 import os
 import pyfiglet
 import sys
