@@ -51,7 +51,7 @@ try:
                     CERTIF,
                     GESTION,
                     LOGS,
-                    "Annuler"
+                    "Retour"
                 ], text=True, stdout=subprocess.PIPE)
 
                 choix_2 = result.stdout.strip()
@@ -66,9 +66,9 @@ try:
                     gestion()
                 elif choix_2 == LOGS:
                     log()
-                elif choix_2 == "Annuler":
-                    from my_package.Gestion.Pass.gestion_pass import gestion_pass
-                    g = gestion_pass()
+                elif choix_2 == "Retour":
+                    from my_package.Gestion.Pass.gestion_pass import gestion_pass_menu
+                    g = gestion_pass_menu()
                     g.menu_pass()
 
         elif choix_1 == "Menu Principale":

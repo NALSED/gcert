@@ -2,7 +2,7 @@
 {
   "wan": true,
   "lan": true,
-  "certif": true,
+  "coffre": true,
   "logs": true,
   "gestion": true,
   "all": true
