@@ -130,7 +130,7 @@ Password Store
 
 Il est possible d’administrer, créer ou supprimer des mots de passe directement via **pass**, en dehors du programme **G.Cert**.  
 
-⚠️ **Attention :** pour le bon fonctionnement de **G.Cert**, il est impératif de conserver les **noms** et **l’architecture du répertoire de mots de passe**.
+**Attention :** pour le bon fonctionnement de **G.Cert**, il est impératif de conserver les **noms** et **l’architecture du répertoire de mots de passe**.
 
 **Rappel des commandes principales :**
 ```bash
@@ -163,4 +163,4 @@ An entry already exists for gcert/certif. Overwrite it? [y/N]
 ```
 
 
-💡 **Remarque :**!!!  G.Cert ne prend **PAS** en charge la génération automatique de mots de passe aléatoires.!!! 
+**Remarque :**!!!  G.Cert ne prend **PAS** en charge la génération automatique de mots de passe aléatoires.!!! 
