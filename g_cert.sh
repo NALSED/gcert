@@ -36,7 +36,7 @@ source "$MAIN_BASH"
 
 # Prérequis/Dépendances python
 #BASH
-PREREQUIS=(curl gnupg gum gocryptfs python3 python3-pip pipx python3.13-venv  pass tmux)
+PREREQUIS=(curl gnupg gum python3 python3-pip pipx python3.13-venv  pass tmux)
 
 #PYTHON
 dependencies=(pyfiglet psutil cryptography python-nmap termcolor colorlog tabulate rich)
@@ -52,6 +52,16 @@ repo_gum() {
     echo "deb [signed-by=/etc/apt/keyrings/charm.gpg] https://repo.charm.sh/apt/ /" | sudo tee /etc/apt/sources.list.d/charm.list > /dev/null 2>&1
     sudo apt -qq update -y > /dev/null 2>&1 && sudo apt install -qq gum -y > /dev/null 2>&1
 }
+
+# VAULT 
+
+repo_vault() {
+    sudo apt -qq update -y > /dev/null && sudo apt install -y gnupg wget lsb-release > /dev/null 2>&1
+    curl -fsSL https://apt.releases.hashicorp.com/gpg | sudo gpg --dearmor -o /usr/share/keyrings/hashicorp-archive-keyring.gpg > /dev/null 2>&1
+    echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/hashicorp-archive-keyring.gpg] https://apt.releases.hashicorp.com $(lsb_release -cs) main" | sudo tee /etc/apt/sources.list.d/hashicorp.list > /dev/null 2>&1
+    sudo apt -qq update -y > /dev/null 2>&1 && sudo apt install -qq vault -y > /dev/null 2>&1
+}
+
 
 # DOCUMENTATION
 afficher_doc() {
@@ -159,10 +169,11 @@ clear
                                 echo -e "${WHITE}             Récapitulatif des étapes d'installation${NC}"
                                 echo -e "${YELLOW}============================================================${NC}\n\n"
                                 
-                                echo -e "[1/4] Installation des prérequis...\n" 
-                                echo -e "[2/4] Création de l'environnement Python...\n" 
-                                echo -e "[3/4] Création de la clé GPG et du mot de passe...\n" 
-                                echo -e "[4/4] Lancement du service G_Cert...\n\n"
+                                echo -e "[1/5] Installation des prérequis...\n" 
+                                echo -e "[2/5] Création de l'environnement Python...\n" 
+                                echo -e "[3/5] Création de la clé GPG et du mot de passe...\n" 
+                                echo -e "[4/5] Installation et configuration de Vault"
+                                echo -e "[4/5] Lancement du service G_Cert...\n\n"
                             while true; do
                             read -p "Appuyez sur [Entrée] pour continuer : " input
                         
@@ -183,7 +194,6 @@ clear
                         echo -e "${WHITE}• curl :${NC} pour récupérer des fichiers depuis Internet."
                         echo -e "${WHITE}• gnupg :${NC} pour générer vos clés RSA et chiffrer vos mots de passe."
                         echo -e "${WHITE}• gum :${NC} pour afficher des menus et messages clairs."
-                        echo -e "${WHITE}• gocryptfs :${NC} pour sécuriser localement vos fichiers de mots de passe."
                         echo -e "${WHITE}• Python 3 (+ venv, pip, pipx) :${NC} pour exécuter les scripts de G.cert."
                         echo -e "${WHITE}• pass :${NC} pour gérer vos mots de passe chiffrés."
                         echo -e "${WHITE}• tmux :${NC} pour gérer des sessions terminal persistantes.\n"
@@ -287,9 +297,10 @@ clear
                                 echo -e "${YELLOW}============================================================${NC}\n\n"
                                
                                 echo -e "${GREEN}[√] Installation des prérequis...${NC}\n" 
-                                echo -e "[2/4] Création de l'environnement Python...\n" 
-                                echo -e "[3/4] Création de la clé GPG et du mot de passe...\n" 
-                                echo -e "[4/4] Lancement du service G_Cert...\n\n"
+                                echo -e "[2/5] Création de l'environnement Python...\n" 
+                                echo -e "[3/5] Création de la clé GPG et du mot de passe...\n" 
+                                echo -e "[4/5] Installation et configuration de Vault"
+                                echo -e "[5/5] Lancement du service G_Cert...\n\n"
                                 
                                 
                         
@@ -386,8 +397,9 @@ echo -e "   - Ne partagez jamais votre mot de passe maître."
                                 
                                 echo -e "${GREEN}[√] Installation des prérequis...${NC}\n" 
                                 echo -e "${GREEN}[√] Création de l'environnement Python...${NC}\n" 
-                                echo -e "[3/4] Création de la clé GPG et du mot de passe...\n" 
-                                echo -e "[4/4] Lancement du service G_Cert...\n\n"
+                                echo -e "[3/5] Création de la clé GPG et du mot de passe...\n" 
+                                echo -e "[4/5] Installation et configuration de Vault"
+                                echo -e "[5/5] Lancement du service G_Cert...\n\n"
                         
                         while true; do
                             read -p "Appuyez sur [Entrée] pour continuer : " input
@@ -1032,6 +1044,148 @@ echo -e "   - Ne partagez jamais votre mot de passe maître."
                     done
 
 
+# =============================== VAULT ===============================
+
+                            clear
+                            afficher_bienvenue
+
+                                # récapitulation 
+                                echo -e "Date        : ${YELLOW}${NOW}${NC}"
+                                echo -e "Utilisateur : ${YELLOW}${USER_NAME}${NC}"
+                                echo -e "Hôte        : ${YELLOW}${HOST_NAME}${NC}\n\n"
+                                echo -e "${YELLOW}============================================================${NC}"
+                                echo -e "${WHITE}             Récapitulatif des étapes d'installation${NC}"
+                                echo -e "${YELLOW}============================================================${NC}\n\n"
+                              
+                                echo -e "${GREEN}[√] Installation des prérequis...${NC}\n" 
+                                echo -e "${GREEN}[√] Création de l'environnement Python...${NC}\n" 
+                                echo -e "${GREEN}[√] Création de la clé GPG et du mot de passe...${NC}\n" 
+                                echo -e "[4/5] Installation et configuration de Vault"
+                                echo -e "[5/5] Lancement du service G_Cert...\n\n"
+                            
+
+                                    while true; do
+                                        read -p "Appuyez sur [Entrée] pour continuer : " input
+                                    
+                                        if [[ -z "$input" ]]; then
+                                            
+                                        break
+                                        else
+                                            echo -e "\n${RED}Erreur : appuyez uniquement sur Entrée.${NC}\n"
+                                        fi
+                                    done
+
+                                clear
+                                afficher_bienvenue
+
+
+                                echo -e "${YELLOW}=== Installation et Initialisation de Vault ===${NC}\n"
+
+                                echo -e "${WHITE}[1] Installation de Vault :${NC}"
+                                echo -e "   - Ajout du dépôt HashiCorp et installation du paquet Vault."
+                                echo -e "   - Vérification de la présence du binaire vault.\n"
+
+                                echo -e "${WHITE}[2] Configuration de Vault :${NC}"
+                                echo -e "   - Création du fichier /etc/vault.d/vault.hcl."
+                                echo -e "   - Définition du stockage, du listener et des paramètres de sécurité.\n"
+
+                                echo -e "${WHITE}[3] Démarrage du service :${NC}"
+                                echo -e "   - Activation et démarrage du service systemd vault."
+                                echo -e "   - Vérification de l’état du service.\n"
+
+                                echo -e "${WHITE}[4] Initialisation et Unseal :${NC}"
+                                echo -e "   - Initialisation de Vault (vault operator init)."
+                                echo -e "   - Déverrouillage (unseal) du service.\n"
+
+                                echo -e "${WHITE}[5] PKI et Autorités de Certification :${NC}"
+                                echo -e "   - Activation des moteurs PKI LAN et WAN."
+                                echo -e "   - Création de la CA root et des CA intermédiaires."
+                                echo -e "   - Définition des rôles de certificats.\n"
+
+                                echo -e "${WHITE}[6] Audit et Sécurité :${NC}"
+                                echo -e "   - Activation des logs d’audit."
+                                echo -e "   - Traçabilité des opérations Vault.\n"
+
+                                    while true; do
+                                        read -p "Appuyez sur [Entrée] pour continuer : " input
+                                    
+                                        if [[ -z "$input" ]]; then
+                                            
+                                        break
+                                        else
+                                            echo -e "\n${RED}Erreur : appuyez uniquement sur Entrée.${NC}\n"
+                                        fi
+                                    done
+                                
+                                
+                                clear
+                                afficher_bienvenue
+
+                                        echo -e "${WHITE}[1] Installation de Vault :${NC}\n\n"
+
+                                        #Installation de Vault
+                                        msg="Veuillez patienter durant l'installation de Vault"
+                                        BLA::start_loading_animation "$msg" "${BLA_passing_dots[@]}"
+                                        
+                                        repo_vault
+
+                                        # Effacer la ligne du message dynamique
+                                        echo -ne "\r\033[K"
+                                        BLA::stop_loading_animation
+
+
+                                        if dpkg -s vault >/dev/null 2>&1; then
+                                            echo -e "${GREEN}Vault installé avec succès${NC}"
+                                        else
+                                            echo -e "${RED}Probléme lors de l'installation de Vault...${NC}\n"
+                                            echo -e "Veuillez consulter ${WHITE}/var/log/apt/history.log${NC} et ${WHITE}/var/log/apt/term.log${NC}, pour plus d'information"
+                                            sleep 5
+                                            exit 1
+                                        fi
+
+                                clear
+                                afficher_bienvenue
+
+                                    echo -e "${WHITE}[2] Configuration de Vault :${NC}\n\n"
+                                    
+                                    #Configuration de Vault
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 # =============================== LANCEMENT DU SCRIPT PYTHON ===============================
                             
                             clear
@@ -1047,7 +1201,8 @@ echo -e "   - Ne partagez jamais votre mot de passe maître."
                                 echo -e "${GREEN}[√] Installation des prérequis...${NC}\n" 
                                 echo -e "${GREEN}[√] Création de l'environnement Python...${NC}\n" 
                                 echo -e "${GREEN}[√] Création de la clé GPG et du mot de passe...${NC}\n" 
-                                echo -e "[4/4] Lancement du service G_Cert...\n\n"
+                                echo -e "${GREEN}[√] Installation et configuration de Vault${NC}\n"
+                                echo -e "[5/5] Lancement du service G_Cert...\n\n"
                             
                             while true; do
                             read -p "Appuyez sur [Entrée] pour continuer : " input
