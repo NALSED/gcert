@@ -474,7 +474,7 @@ clear
                                 # === Variables Pour le certificat Openssl de Vault  ===
                                 clear
                                 afficher_bienvenue
-                                echo -e "Création clé privée SSL et une demande de certificat associée"                                            
+                                echo -e "Création clé privée TLS et une demande de certificat associée"                                            
                                 sleep 2
 
                                 clear
@@ -724,19 +724,43 @@ DNS.1 = $dns_vault
 IP.1  = $ip_vault
 EOF
                                     
-                                    
-                                    
-                                clear
-                                afficher_bienvenue        
+       
                                     
                                     
                                     
                                     
                                     else
+                                        clear
+                                        afficher_bienvenue 
                                         echo -e "${RED}Réponse invalide. Tapez y ou n.${NC}"
                                     fi
                                 done
 
+                                clear
+                                afficher_bienvenue
+                                
+                                echo -e "Génération de la ${WHITE}clé privée TLS${NC} et ${WHITE}CSR${NC}"
+                                
+                                # Création de la clé privée
+                                sudo openssl genrsa -out /etc/vault/ssl/vault.key
+                                    # Test clé privé
+                                    if [ -f /etc/vault/ssl/vault.key ]; then
+                                        echo -e "${GREEN}OK : vault.key créé.${NC}"
+                                    else
+                                        echo -e "${RED}ERREUR : vault.key manquant${NC}"
+                                        echo -e "Le programme "
+                                        exit 1
+                                    fi
+
+                                
+                                sudo chmod 600 /etc/vault/ssl/vault.key
+                                
+                                
+                                sudo openssl req -new -key /etc/vault/ssl/vault.key -out /etc/vault/ssl/vault.csr -config /etc/vault/ssl/vault_tls.cnf 
+
+                                
+                                
+                                
                                 # === [3] CONFIGURATION DE VAULT === 
                                 clear
                                 afficher_bienvenue
