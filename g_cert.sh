@@ -439,15 +439,19 @@ clear
                                     fi
                                 done
 
-                                # Variable
+                                # Variable ID GPG ==========> Clé privée OpenSSL
                                 KEY_PRIVATE_TLS=$(gpg --list-keys --keyid-format long | grep -o '[0-9A-F]\{40\}' | tail -n1)
 
                                 # === Clé GPG pour unseal keys et le root token ===
                                 clear
                                 afficher_bienvenue
-                                
-                                echo -e "Création clés GPG, afin de protéger la ${WHITE}les unseal keys et le root token.${NC}"
-                                sleep 2
+                               
+                                msg="Création clés GPG, afin de protéger la Clée privée du certificat de Vault,les unseal keys et le root token"
+                                echo -e "\n"
+
+                                BLA::start_loading_animation "$msg" "${BLA_passing_dots[@]}"
+                                sleep 3
+                                BLA::stop_loading_animation
 
                                 # Génération
                                 gpg --full-generate-key
@@ -463,8 +467,11 @@ clear
                                     fi
                                 done
 
+                                # Variable ID GPG ==========> Clées Vault
                                 KEY_VAULT=$(gpg --list-keys --keyid-format long | grep -o '[0-9A-F]\{40\}' | tail -n1)
 
+
+                                # === Variables Pour le certificat Openssl de Vault  ===
                                 clear
                                 afficher_bienvenue
                                 echo -e "Création clé privée SSL et une demande de certificat associée"                                            
@@ -473,14 +480,17 @@ clear
                                 clear
                                 afficher_bienvenue
 
+                                # Choix utilisation nom de domain pour certificat
                                 while true; do
                                     read -p "Voulez-vous utiliser un nom de domaine, pour l'édition du certificat y/n" choix_domain_ssl
 
+                                    # Avec nom de domaine
                                     if [[ "$choix_domain_ssl" =~ ^[yY]$ ]]; then
                                         clear
                                         afficher_bienvenue
                                         read -p "Veuillez indiquer le nom de domaine (format => FQDN)" domain_ssl
 
+                                        # test si le nom de domaine existe
                                         if nslookup "$domain_ssl" > /dev/null 2>&1; then
                                             echo "Le domaine '$domain_ssl' existe et résout correctement."
                                             sleep 2
@@ -489,6 +499,7 @@ clear
                                             afficher_bienvenue
 
                                             while true; do
+                                                # NOM serveur
                                                 read -p "Veuillez indiquer le Nom principal du serveur (Common Name)\n" cn_vault
 
                                                 clear
@@ -511,6 +522,7 @@ clear
                                             afficher_bienvenue
 
                                             while true; do
+                                                # NOM DNS serveur 
                                                 read -p "Veuillez indiquer Nom DNS utilisé par les clients Vault (format => Nom + FQDN)\n" dns_vault
 
                                                 clear
@@ -532,9 +544,11 @@ clear
                                             while true; do
                                                 clear
                                                 afficher_bienvenue
-
+                                                
+                                                # Ip serveur
                                                 read -p "Veuillez indiquer l'IP du serveur Vault \n" ip_vault
 
+                                                # test format IP
                                                 if validate_ip "$ip_vault"; then
                                                     echo -e "${GREEN}IP valide${NC}"
                                                     sleep 1
@@ -565,7 +579,11 @@ clear
                                                 fi
                                             done
 
-                                                cat > vault_tls.cnf <<-EOF
+                                                # création répertoire
+                                                sudo mkdir -p /etc/vault/ssl
+
+                                                # Edition fichier certificat vault_tls.cnf
+                                                sudo tee /etc/vault/ssl/vault_tls.cnf <<-EOF
 [ req ]
 default_bits       = 4096
 prompt             = no
@@ -586,6 +604,7 @@ EOF
 
                                 
 
+                                        # Si le domaine ne repond pas ou n'existe pas sortie de script
                                         else
                                             echo "Le domaine '$domain_ssl' n'existe pas ou ne résout pas."
                                             echo "Veuillez résoudre le problème avant de poursuivre l'installation"
@@ -595,11 +614,13 @@ EOF
                                             exit 1
                                         fi
 
+                                    # Choix 2 pas de domaine
                                     elif [[ "$choix_domain_ssl" =~ ^[nN]$ ]]; then
                                             clear
                                             afficher_bienvenue
 
                                             while true; do
+                                                # NOM serveur
                                                 read -p "Veuillez indiquer le Nom principal du serveur (Common Name)\n" cn_vault
 
                                                 clear
@@ -622,6 +643,8 @@ EOF
                                             afficher_bienvenue
 
                                             while true; do
+                                                
+                                                # NOM DNS serveur
                                                 read -p "Veuillez indiquer Nom DNS utilisé par les clients Vault (format => Nom)\n" dns_vault
 
                                                 clear
@@ -644,8 +667,10 @@ EOF
                                                 clear
                                                 afficher_bienvenue
 
+                                                # Ip serveur
                                                 read -p "Veuillez indiquer l'IP du serveur Vault \n" ip_vault
 
+                                                # Test IP
                                                 if validate_ip "$ip_vault"; then
                                                     echo -e "${GREEN}IP valide${NC}"
                                                     sleep 1
@@ -676,7 +701,11 @@ EOF
                                                 fi
                                             done
                                             
-                                            cat > vault_tls.cnf <<-EOF
+                                            # création répertoire
+                                            sudo mkdir -p /etc/vault/ssl
+
+                                            # Edition fichier certificat vault_tls.cnf
+                                            sudo tee /etc/vault/ssl/vault_tls.cnf <<-EOF
 [ req ]
 default_bits       = 4096
 prompt             = no
@@ -697,7 +726,8 @@ EOF
                                     
                                     
                                     
-                                    
+                                clear
+                                afficher_bienvenue        
                                     
                                     
                                     
