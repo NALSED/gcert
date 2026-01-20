@@ -80,6 +80,20 @@ afficher_bienvenue() {
     echo -e "$message"
 }
 
+# Validation IP
+validate_ip() {
+                local ip="$1"
+                if [[ $ip =~ ^[0-9]{1,3}(\.[0-9]{1,3}){3}$ ]]; then
+                    IFS='.' read -r i1 i2 i3 i4 <<< "$ip"
+                    if (( i1 <= 255 && i2 <= 255 && i3 <= 255 && i4 <= 255 )); then
+                        return 0
+                    fi
+                fi
+                return 1
+            }
+
+
+
 # === FONCTIONNEMENT SCRIPT ===
 
 # Flag pour arrêter une répétition dans une boucle for.
@@ -170,10 +184,10 @@ clear
                                 echo -e "${YELLOW}============================================================${NC}\n\n"
                                 
                                 echo -e "[1/5] Installation des prérequis...\n" 
-                                echo -e "[2/5] Création de l'environnement Python...\n" 
-                                echo -e "[3/5] Création de la clé GPG et du mot de passe...\n" 
-                                echo -e "[4/5] Installation et configuration de Vault"
-                                echo -e "[4/5] Lancement du service G_Cert...\n\n"
+                                echo -e "[2/5] Installation et configuration de Vault"
+                                echo -e "[3/5] Création de l'environnement Python...\n" 
+                                echo -e "[4/5] Création de la clé GPG et du mot de passe...\n" 
+                                echo -e "[5/5] Lancement du service G_Cert...\n\n"
                             while true; do
                             read -p "Appuyez sur [Entrée] pour continuer : " input
                         
@@ -285,6 +299,478 @@ clear
                             echo -e "\n${RED}Erreur : appuyez uniquement sur Entrée.${NC}\n"
                         fi
                     done
+
+
+# =============================== VAULT ===============================
+
+                                clear
+                                afficher_bienvenue
+
+                                # Récapitulation Installation Générale
+                                echo -e "Date        : ${YELLOW}${NOW}${NC}"
+                                echo -e "Utilisateur : ${YELLOW}${USER_NAME}${NC}"
+                                echo -e "Hôte        : ${YELLOW}${HOST_NAME}${NC}\n\n"
+                                echo -e "${YELLOW}============================================================${NC}"
+                                echo -e "${WHITE}             Récapitulatif des étapes d'installation${NC}"
+                                echo -e "${YELLOW}============================================================${NC}\n\n"
+
+                                echo -e "${GREEN}[√] Installation des prérequis...${NC}\n" 
+                                echo -e "[2/5] Installation et configuration de Vault"
+                                echo -e "[3/5] Création de l'environnement Python...\n" 
+                                echo -e "[4/5] Création de la clé GPG et du mot de passe...\n" 
+                                echo -e "[5/5] Lancement du service G_Cert...\n\n"
+
+                                while true; do
+                                    read -p "Appuyez sur [Entrée] pour continuer : " input
+
+                                    if [[ -z "$input" ]]; then
+                                        break
+                                    else
+                                        echo -e "\n${RED}Erreur : appuyez uniquement sur Entrée.${NC}\n"
+                                    fi
+                                done
+
+                                clear
+                                afficher_bienvenue
+
+                                # Récapitulation Installation Vault
+
+                                echo -e "${YELLOW}=== Installation et Initialisation de Vault ===${NC}\n"
+
+                                echo -e "${WHITE}[1] Installation de Vault :${NC}"
+                                echo -e "   - Ajout du dépôt HashiCorp et installation du paquet Vault."
+                                echo -e "   - Vérification de la présence du binaire vault.\n"
+
+                                echo -e "${WHITE}[2] Clés GPG et Certificats TLS :${NC}"
+                                echo -e "   - Génération de la clé TLS et certificat (auto-signé ou CA existante)."
+                                echo -e "   - Création des clés GPG admin et chiffrement des unseal keys/root token."
+
+                                echo -e "${WHITE}[3] Configuration de Vault :${NC}"
+                                echo -e "   - Création du fichier /etc/vault.d/vault.hcl."
+                                echo -e "   - Définition du stockage, du listener et des paramètres de sécurité.\n"
+
+                                echo -e "${WHITE}[4] Démarrage du service :${NC}"
+                                echo -e "   - Activation et démarrage du service systemd vault."
+                                echo -e "   - Vérification de l'état du service.\n"
+
+                                echo -e "${WHITE}[5] Initialisation et Unseal :${NC}"
+                                echo -e "   - Initialisation de Vault (vault operator init)."
+                                echo -e "   - Déverrouillage (unseal) du service.\n"
+
+                                echo -e "${WHITE}[6] PKI et Autorités de Certification :${NC}"
+                                echo -e "   - Activation des moteurs PKI LAN et WAN."
+                                echo -e "   - Création de la CA root et des CA intermédiaires."
+                                echo -e "   - Définition des rôles de certificats.\n"
+
+                                echo -e "${WHITE}[7] Audit et Sécurité :${NC}"
+                                echo -e "   - Activation des logs d'audit."
+                                echo -e "   - Traçabilité des opérations Vault.\n"
+
+                                while true; do
+                                    read -p "Appuyez sur [Entrée] pour continuer : " input
+
+                                    if [[ -z "$input" ]]; then
+                                        break
+                                    else
+                                        echo -e "\n${RED}Erreur : appuyez uniquement sur Entrée.${NC}\n"
+                                    fi
+                                done
+
+                                # === [1] INSTALLATION DE VAULT ===
+                                clear
+                                afficher_bienvenue
+
+                                # Message [1]
+                                echo -e "${WHITE}[1] Installation de Vault :${NC}\n\n"
+
+                                msg="Veuillez patienter durant l'installation de Vault"
+                                BLA::start_loading_animation "$msg" "${BLA_passing_dots[@]}"
+
+                                # Installation
+                                repo_vault
+
+                                # Effacer la ligne du message dynamique
+                                echo -ne "\r\033[K"
+                                BLA::stop_loading_animation
+
+                                # test l'installation de Vault
+                                if dpkg -s vault >/dev/null 2>&1; then
+                                    echo -e "${GREEN}Vault installé avec succès${NC}"
+                                    sleep 2
+                                else
+                                    echo -e "${RED}Problème lors de l'installation de Vault...${NC}\n"
+                                    echo -e "Veuillez consulter ${WHITE}/var/log/apt/history.log${NC} et ${WHITE}/var/log/apt/term.log${NC}, pour plus d'information"
+                                    sleep 5
+                                    exit 1
+                                fi
+
+                                # === [2] CLÉS GPG ET CERTIFICATS ===    
+                                clear
+                                afficher_bienvenue    
+
+                                # Message [2]
+                                echo -e "${WHITE}[2] Clés GPG et Certificats TLS :${NC}\n"    
+
+                                msg="Initialisation Clé GPG et Certificats"
+                                echo -e "\n"
+
+                                BLA::start_loading_animation "$msg" "${BLA_passing_dots[@]}"
+                                sleep 2
+                                BLA::stop_loading_animation
+
+                                clear
+                                afficher_bienvenue
+
+                                # === Clé GPG pour clé privée TLS ===
+                                echo -e "Création clés GPG, afin de protéger la ${WHITE}clé privée TLS${NC}"
+                                sleep 2
+
+                                # Génération
+                                gpg --full-generate-key
+
+                                while true; do
+                                    echo -e "Veuillez enregistrer les informations ci-dessus\n"
+                                    read -p "Appuyez sur [Entrée] pour continuer : " input
+
+                                    if [[ -z "$input" ]]; then
+                                        break
+                                    else
+                                        echo -e "\n${RED}Erreur : appuyez uniquement sur Entrée.${NC}\n"
+                                    fi
+                                done
+
+                                # Variable
+                                KEY_PRIVATE_TLS=$(gpg --list-keys --keyid-format long | grep -o '[0-9A-F]\{40\}' | tail -n1)
+
+                                # === Clé GPG pour unseal keys et le root token ===
+                                clear
+                                afficher_bienvenue
+                                
+                                echo -e "Création clés GPG, afin de protéger la ${WHITE}les unseal keys et le root token.${NC}"
+                                sleep 2
+
+                                # Génération
+                                gpg --full-generate-key
+
+                                while true; do
+                                    echo -e "Veuillez enregistrer les informations ci-dessus\n"
+                                    read -p "Appuyez sur [Entrée] pour continuer : " input
+
+                                    if [[ -z "$input" ]]; then
+                                        break
+                                    else
+                                        echo -e "\n${RED}Erreur : appuyez uniquement sur Entrée.${NC}\n"
+                                    fi
+                                done
+
+                                KEY_VAULT=$(gpg --list-keys --keyid-format long | grep -o '[0-9A-F]\{40\}' | tail -n1)
+
+                                clear
+                                afficher_bienvenue
+                                echo -e "Création clé privée SSL et une demande de certificat associée"                                            
+                                sleep 2
+
+                                clear
+                                afficher_bienvenue
+
+                                while true; do
+                                    read -p "Voulez-vous utiliser un nom de domaine, pour l'édition du certificat y/n" choix_domain_ssl
+
+                                    if [[ "$choix_domain_ssl" =~ ^[yY]$ ]]; then
+                                        clear
+                                        afficher_bienvenue
+                                        read -p "Veuillez indiquer le nom de domaine (format => FQDN)" domain_ssl
+
+                                        if nslookup "$domain_ssl" > /dev/null 2>&1; then
+                                            echo "Le domaine '$domain_ssl' existe et résout correctement."
+                                            sleep 2
+
+                                            clear
+                                            afficher_bienvenue
+
+                                            while true; do
+                                                read -p "Veuillez indiquer le Nom principal du serveur (Common Name)\n" cn_vault
+
+                                                clear
+                                                afficher_bienvenue
+
+                                                echo -e "CN = $cn_vault\n"
+                                                read -p "Le CN est-il correct ? y/n" validation_cn
+
+                                                if [[ "$validation_cn" =~ ^[yY]$ ]]; then
+                                                    echo "CN confirmé : $cn_vault"
+                                                    break
+                                                elif [[ "$validation_cn" =~ ^[nN]$ ]]; then
+                                                    echo -e "${RED}Recommençons...${NC}"
+                                                else
+                                                    echo -e "${RED}Réponse invalide. Tapez y ou n.${NC}"
+                                                fi
+                                            done
+
+                                            clear
+                                            afficher_bienvenue
+
+                                            while true; do
+                                                read -p "Veuillez indiquer Nom DNS utilisé par les clients Vault (format => Nom + FQDN)\n" dns_vault
+
+                                                clear
+                                                afficher_bienvenue
+
+                                                echo -e "DNS.1 = $dns_vault\n"
+                                                read -p "Le DNS.1 est-il correct ? y/n" validation_dns1
+
+                                                if [[ "$validation_dns1" =~ ^[yY]$ ]]; then
+                                                    echo "DNS.1 confirmé : $dns_vault"
+                                                    break
+                                                elif [[ "$validation_dns1" =~ ^[nN]$ ]]; then
+                                                    echo -e "${RED}Recommençons...${NC}"
+                                                else
+                                                    echo -e "${RED}Réponse invalide. Tapez y ou n.${NC}"
+                                                fi
+                                            done
+
+                                            while true; do
+                                                clear
+                                                afficher_bienvenue
+
+                                                read -p "Veuillez indiquer l'IP du serveur Vault \n" ip_vault
+
+                                                if validate_ip "$ip_vault"; then
+                                                    echo -e "${GREEN}IP valide${NC}"
+                                                    sleep 1
+
+                                                    while true; do
+                                                        clear
+                                                        afficher_bienvenue
+
+                                                        echo -e "Adresse IP choisie pour Vault = $ip_vault\n"       
+                                                        read -p "L'adresse IP est-elle correcte ? y/n" validation_ip
+
+                                                        if [[ "$validation_ip" =~ ^[yY]$ ]]; then
+                                                            echo "IP confirmée : $ip_vault"
+                                                            sleep 1
+                                                            break 2
+                                                        elif [[ "$validation_ip" =~ ^[nN]$ ]]; then
+                                                            echo -e "${RED}Recommençons...${NC}"
+                                                            sleep 1
+                                                            break
+                                                        else
+                                                            echo -e "${RED}Réponse invalide. Tapez y ou n.${NC}"
+                                                            sleep 2
+                                                        fi
+                                                    done
+                                                else
+                                                    echo -e "${RED}IP invalide${NC}"
+                                                    sleep 2
+                                                fi
+                                            done
+
+                                                cat > vault_tls.cnf <<-EOF
+[ req ]
+default_bits       = 4096
+prompt             = no
+default_md         = sha256
+req_extensions     = req_ext
+distinguished_name = dn
+
+[ dn ]
+CN = $cn_vault.$domain_ssl
+
+[ req_ext ]
+subjectAltName = @alt_names
+
+[ alt_names ]
+DNS.1 = $dns_vault
+IP.1  = $ip_vault
+EOF
+
+                                
+
+                                        else
+                                            echo "Le domaine '$domain_ssl' n'existe pas ou ne résout pas."
+                                            echo "Veuillez résoudre le problème avant de poursuivre l'installation"
+                                            sleep 1
+                                            echo "Le programme d'installation va quitter"
+                                            sleep 2
+                                            exit 1
+                                        fi
+
+                                    elif [[ "$choix_domain_ssl" =~ ^[nN]$ ]]; then
+                                            clear
+                                            afficher_bienvenue
+
+                                            while true; do
+                                                read -p "Veuillez indiquer le Nom principal du serveur (Common Name)\n" cn_vault
+
+                                                clear
+                                                afficher_bienvenue
+
+                                                echo -e "CN = $cn_vault\n"
+                                                read -p "Le CN est-il correct ? y/n" validation_cn
+
+                                                if [[ "$validation_cn" =~ ^[yY]$ ]]; then
+                                                    echo "CN confirmé : $cn_vault"
+                                                    break
+                                                elif [[ "$validation_cn" =~ ^[nN]$ ]]; then
+                                                    echo -e "${RED}Recommençons...${NC}"
+                                                else
+                                                    echo -e "${RED}Réponse invalide. Tapez y ou n.${NC}"
+                                                fi
+                                            done
+
+                                            clear
+                                            afficher_bienvenue
+
+                                            while true; do
+                                                read -p "Veuillez indiquer Nom DNS utilisé par les clients Vault (format => Nom)\n" dns_vault
+
+                                                clear
+                                                afficher_bienvenue
+
+                                                echo -e "DNS.1 = $dns_vault\n"
+                                                read -p "Le DNS.1 est-il correct ? y/n" validation_dns1
+
+                                                if [[ "$validation_dns1" =~ ^[yY]$ ]]; then
+                                                    echo "DNS.1 confirmé : $dns_vault"
+                                                    break
+                                                elif [[ "$validation_dns1" =~ ^[nN]$ ]]; then
+                                                    echo -e "${RED}Recommençons...${NC}"
+                                                else
+                                                    echo -e "${RED}Réponse invalide. Tapez y ou n.${NC}"
+                                                fi
+                                            done
+
+                                            while true; do
+                                                clear
+                                                afficher_bienvenue
+
+                                                read -p "Veuillez indiquer l'IP du serveur Vault \n" ip_vault
+
+                                                if validate_ip "$ip_vault"; then
+                                                    echo -e "${GREEN}IP valide${NC}"
+                                                    sleep 1
+
+                                                    while true; do
+                                                        clear
+                                                        afficher_bienvenue
+
+                                                        echo -e "Adresse IP choisie pour Vault = $ip_vault\n"       
+                                                        read -p "L'adresse IP est-elle correcte ? y/n" validation_ip
+
+                                                        if [[ "$validation_ip" =~ ^[yY]$ ]]; then
+                                                            echo "IP confirmée : $ip_vault"
+                                                            sleep 1
+                                                            break 2
+                                                        elif [[ "$validation_ip" =~ ^[nN]$ ]]; then
+                                                            echo -e "${RED}Recommençons...${NC}"
+                                                            sleep 1
+                                                            break
+                                                        else
+                                                            echo -e "${RED}Réponse invalide. Tapez y ou n.${NC}"
+                                                            sleep 2
+                                                        fi
+                                                    done
+                                                else
+                                                    echo -e "${RED}IP invalide${NC}"
+                                                    sleep 2
+                                                fi
+                                            done
+                                            
+                                            cat > vault_tls.cnf <<-EOF
+[ req ]
+default_bits       = 4096
+prompt             = no
+default_md         = sha256
+req_extensions     = req_ext
+distinguished_name = dn
+
+[ dn ]
+CN = $cn_vault
+
+[ req_ext ]
+subjectAltName = @alt_names
+
+[ alt_names ]
+DNS.1 = $dns_vault
+IP.1  = $ip_vault
+EOF
+                                    
+                                    
+                                    
+                                    
+                                    
+                                    
+                                    
+                                    
+                                    else
+                                        echo -e "${RED}Réponse invalide. Tapez y ou n.${NC}"
+                                    fi
+                                done
+
+                                # === [3] CONFIGURATION DE VAULT === 
+                                clear
+                                afficher_bienvenue
+
+                                echo -e "${WHITE}[3] Configuration de Vault :${NC}\n\n"
+
+                                while true; do
+                                    echo -e "${WHITE}Choix de l'IP sur laquelle Vault sera accessible${NC}\n\n"
+
+                                    echo -e "[1] ${YELLOW}Local Host${NC}\n"
+                                    echo -e "Vault sera accessible uniquement depuis le réseau local.\n"
+
+                                    echo -e "[2] ${YELLOW}Adresse IP personnalisée${NC}\n"
+                                    echo -e "    Vault sera accessible depuis un autre réseau."
+                                    echo -e "    Des règles de pare-feu (notamment sur le port 8200) seront nécessaires.\n"
+
+                                    echo -e "[3] ${YELLOW}Sortir${NC}\n"
+
+                                    read -p "Choisissez une option: " choix_menu_vault
+
+                                    case "$choix_menu_vault" in
+
+                                        1)
+                                            # === Configuration via Local Host ===
+                                            clear
+                                            afficher_bienvenue
+
+                                            echo -e " === I)  ${YELLOW}Configuration de Vault avec IP Local Host...${NC} ===\n\n" 
+                                            sleep 3
+
+                                            msg="Configuration du fichier /etc/vault.d/vault.hcl"
+                                            echo -e "\n"
+                                            BLA::start_loading_animation "$msg" "${BLA_passing_dots[@]}"
+                                            sleep 4
+                                            BLA::stop_loading_animation
+                                        ;;
+
+                                        2)
+                                            :
+                                        ;;
+
+                                        3)
+                                            clear
+                                            afficher_bienvenue
+                                            echo -e "${RED}Le programme d'installation va quitter...${NC}" 
+                                                                                                        
+                                            msg="Veuillez patienter"
+                                            echo -e "\n"
+                                            BLA::start_loading_animation "$msg" "${BLA_passing_dots[@]}"
+                                            sleep 4
+                                            BLA::stop_loading_animation
+                                                                                
+                                            exit 1         
+                                        ;;
+
+                                        *)
+                                            echo -e "${RED}Erreur, Réponse invalide.${NC}"
+                                        ;;
+
+                                    esac
+
+                                done
+
+
 # =============================== DEPENDENCES via PIPX ===============================
                         
                                 clear
@@ -297,9 +783,9 @@ clear
                                 echo -e "${YELLOW}============================================================${NC}\n\n"
                                
                                 echo -e "${GREEN}[√] Installation des prérequis...${NC}\n" 
-                                echo -e "[2/5] Création de l'environnement Python...\n" 
-                                echo -e "[3/5] Création de la clé GPG et du mot de passe...\n" 
-                                echo -e "[4/5] Installation et configuration de Vault"
+                                echo -e "${GREEN}[√] Installation et configuration de Vault${NC}"
+                                echo -e "[3/5] Création de l'environnement Python...\n" 
+                                echo -e "[4/5] Création de la clé GPG et du mot de passe...\n" 
                                 echo -e "[5/5] Lancement du service G_Cert...\n\n"
                                 
                                 
@@ -396,9 +882,9 @@ echo -e "   - Ne partagez jamais votre mot de passe maître."
                                 echo -e "${YELLOW}============================================================${NC}\n\n"
                                 
                                 echo -e "${GREEN}[√] Installation des prérequis...${NC}\n" 
+                                echo -e "${GREEN}[√] Installation et configuration de Vault${NC}"
                                 echo -e "${GREEN}[√] Création de l'environnement Python...${NC}\n" 
-                                echo -e "[3/5] Création de la clé GPG et du mot de passe...\n" 
-                                echo -e "[4/5] Installation et configuration de Vault"
+                                echo -e "[4/5] Création de la clé GPG et du mot de passe...\n" 
                                 echo -e "[5/5] Lancement du service G_Cert...\n\n"
                         
                         while true; do
@@ -1042,149 +1528,6 @@ echo -e "   - Ne partagez jamais votre mot de passe maître."
                             echo "Veuillez réessayer."
                         fi
                     done
-
-
-# =============================== VAULT ===============================
-
-                            clear
-                            afficher_bienvenue
-
-                                # récapitulation 
-                                echo -e "Date        : ${YELLOW}${NOW}${NC}"
-                                echo -e "Utilisateur : ${YELLOW}${USER_NAME}${NC}"
-                                echo -e "Hôte        : ${YELLOW}${HOST_NAME}${NC}\n\n"
-                                echo -e "${YELLOW}============================================================${NC}"
-                                echo -e "${WHITE}             Récapitulatif des étapes d'installation${NC}"
-                                echo -e "${YELLOW}============================================================${NC}\n\n"
-                              
-                                echo -e "${GREEN}[√] Installation des prérequis...${NC}\n" 
-                                echo -e "${GREEN}[√] Création de l'environnement Python...${NC}\n" 
-                                echo -e "${GREEN}[√] Création de la clé GPG et du mot de passe...${NC}\n" 
-                                echo -e "[4/5] Installation et configuration de Vault"
-                                echo -e "[5/5] Lancement du service G_Cert...\n\n"
-                            
-
-                                    while true; do
-                                        read -p "Appuyez sur [Entrée] pour continuer : " input
-                                    
-                                        if [[ -z "$input" ]]; then
-                                            
-                                        break
-                                        else
-                                            echo -e "\n${RED}Erreur : appuyez uniquement sur Entrée.${NC}\n"
-                                        fi
-                                    done
-
-                                clear
-                                afficher_bienvenue
-
-
-                                echo -e "${YELLOW}=== Installation et Initialisation de Vault ===${NC}\n"
-
-                                echo -e "${WHITE}[1] Installation de Vault :${NC}"
-                                echo -e "   - Ajout du dépôt HashiCorp et installation du paquet Vault."
-                                echo -e "   - Vérification de la présence du binaire vault.\n"
-
-                                echo -e "${WHITE}[2] Configuration de Vault :${NC}"
-                                echo -e "   - Création du fichier /etc/vault.d/vault.hcl."
-                                echo -e "   - Définition du stockage, du listener et des paramètres de sécurité.\n"
-
-                                echo -e "${WHITE}[3] Démarrage du service :${NC}"
-                                echo -e "   - Activation et démarrage du service systemd vault."
-                                echo -e "   - Vérification de l’état du service.\n"
-
-                                echo -e "${WHITE}[4] Initialisation et Unseal :${NC}"
-                                echo -e "   - Initialisation de Vault (vault operator init)."
-                                echo -e "   - Déverrouillage (unseal) du service.\n"
-
-                                echo -e "${WHITE}[5] PKI et Autorités de Certification :${NC}"
-                                echo -e "   - Activation des moteurs PKI LAN et WAN."
-                                echo -e "   - Création de la CA root et des CA intermédiaires."
-                                echo -e "   - Définition des rôles de certificats.\n"
-
-                                echo -e "${WHITE}[6] Audit et Sécurité :${NC}"
-                                echo -e "   - Activation des logs d’audit."
-                                echo -e "   - Traçabilité des opérations Vault.\n"
-
-                                    while true; do
-                                        read -p "Appuyez sur [Entrée] pour continuer : " input
-                                    
-                                        if [[ -z "$input" ]]; then
-                                            
-                                        break
-                                        else
-                                            echo -e "\n${RED}Erreur : appuyez uniquement sur Entrée.${NC}\n"
-                                        fi
-                                    done
-                                
-                                
-                                clear
-                                afficher_bienvenue
-
-                                        echo -e "${WHITE}[1] Installation de Vault :${NC}\n\n"
-
-                                        #Installation de Vault
-                                        msg="Veuillez patienter durant l'installation de Vault"
-                                        BLA::start_loading_animation "$msg" "${BLA_passing_dots[@]}"
-                                        
-                                        repo_vault
-
-                                        # Effacer la ligne du message dynamique
-                                        echo -ne "\r\033[K"
-                                        BLA::stop_loading_animation
-
-
-                                        if dpkg -s vault >/dev/null 2>&1; then
-                                            echo -e "${GREEN}Vault installé avec succès${NC}"
-                                        else
-                                            echo -e "${RED}Probléme lors de l'installation de Vault...${NC}\n"
-                                            echo -e "Veuillez consulter ${WHITE}/var/log/apt/history.log${NC} et ${WHITE}/var/log/apt/term.log${NC}, pour plus d'information"
-                                            sleep 5
-                                            exit 1
-                                        fi
-
-                                clear
-                                afficher_bienvenue
-
-                                    echo -e "${WHITE}[2] Configuration de Vault :${NC}\n\n"
-                                    
-                                    #Configuration de Vault
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 # =============================== LANCEMENT DU SCRIPT PYTHON ===============================
                             
