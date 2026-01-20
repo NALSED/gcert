@@ -723,11 +723,7 @@ subjectAltName = @alt_names
 DNS.1 = $dns_vault
 IP.1  = $ip_vault
 EOF
-                                    
-       
-                                    
-                                    
-                                    
+                                               
                                     
                                     else
                                         clear
@@ -742,24 +738,225 @@ EOF
                                 echo -e "Génération de la ${WHITE}clé privée TLS${NC} et ${WHITE}CSR${NC}"
                                 
                                 # Création de la clé privée
-                                sudo openssl genrsa -out /etc/vault/ssl/vault.key
-                                    # Test clé privé
+                                sudo openssl genrsa -out /etc/vault/ssl/vault.key > /var/log/vault_tls.log 2>&1
+                                    
+                                    clear
+                                    afficher_bienvenue
+                                    # Test presence clé privé
                                     if [ -f /etc/vault/ssl/vault.key ]; then
                                         echo -e "${GREEN}OK : vault.key créé.${NC}"
+                                        sleep 2
                                     else
-                                        echo -e "${RED}ERREUR : vault.key manquant${NC}"
-                                        echo -e "Le programme "
+                                        echo -e "${RED}ERREUR : vault.key manquante...${NC}"
+                                        echo -e "Pour plus d'information voir le fichier : ${WHITE}/var/log/vault_tls.log${NC}" 
+                                        sleep 3
+                                        echo -e "Le programme d'installation va quitter"
+                                        sleep 1
                                         exit 1
                                     fi
 
-                                
+                                # droit strict sur vault.key
                                 sudo chmod 600 /etc/vault/ssl/vault.key
                                 
-                                
-                                sudo openssl req -new -key /etc/vault/ssl/vault.key -out /etc/vault/ssl/vault.csr -config /etc/vault/ssl/vault_tls.cnf 
+                                # création du CSR
+                                sudo openssl req -new -key /etc/vault/ssl/vault.key -out /etc/vault/ssl/vault.csr -config /etc/vault/ssl/vault_tls.cnf > /var/log/vault_tls.log 2>&1
 
+                                    clear
+                                    afficher_bienvenue
+                                    
+                                    # Test présence CSR
+                                    if [ -f /etc/vault/ssl/vault.csr ]; then
+                                        echo -e "${GREEN}OK : vault.csr créé.${NC}"
+                                        sleep 2
+                                    else
+                                        echo -e "${RED}ERREUR : vault.csr manquante...${NC}"
+                                        echo -e "Pour plus d'information voir le fichier : ${WHITE}/var/log/vault_tls.log${NC}" 
+                                        sleep 3
+                                        echo -e "Le programme d'installation va quitter"
+                                        sleep 1
+                                        exit 1
+                                    fi
+                                
+                                clear
+                                afficher_bienvenue
                                 
                                 
+
+                                while true; do
+                                     read -p "Veuillez entrer une valeur pour la durée de validité du certificat (Format => jour entre 1 et 365)" days_vault
+
+                                    if [[ "$days_vault" =~ ^[0-9]+$ ]] && (( days_vault >= 1 && days_vault <= 365 )); then
+                                        break
+                                    else
+                                        echo "Erreur : veuillez entrer un nombre entre 1 et 365."
+                                    fi
+                                done
+
+                                clear
+                                afficher_bienvenue
+
+                                while true; do
+
+                                    echo -e "${YELLOW}=== Avertissement Sécurité – Clé privée de la CA ===${NC}\n"
+
+                                    echo -e "${WHITE}[!] Signature avec une CA existante :${NC}"
+                                    echo -e "   - La signature d’un certificat nécessite que la clé privée de la CA soit"
+                                    echo -e "     accessible en clair de manière TEMPORAIRE."
+
+                                    echo -e "Bonnes pratiques:\n"
+                                    echo -e "   - La clé doit être déverrouillée uniquement pour la durée de la signature."
+                                    echo -e "   - Ne jamais stocker la clé de la CA en clair de façon permanente."
+                                    echo -e "   - Privilégier une CA hors ligne ou une CA intermédiaire dédiée."
+                                    echo -e "   - Rechiffrer ou supprimer immédiatement toute clé déchiffrée après usage.\n"
+
+
+                                    echo -e "${YELLOW}Choix du CA, veuillez choisir entre${NC}\n"
+                                    
+                                    echo -e "[1] Certificat auto signé" 
+                                    echo -e "[2] CA Existant\n\n"    
+                                    echo -e "[3]" Sortie Installation
+
+                                    read -p "Choix CA :" choix_ca
+
+                                    case "$choix_ca" in
+
+                                        1)
+                                        
+                                        clear
+                                        afficher_bienvenue
+                                        
+                                        echo -e "${WHITE}[1] Certificat auto signé${NC}\n"
+                                        sleep 1
+                                        
+                                        msg="Edition du certificat"
+                                            echo -e "\n"
+                                            BLA::start_loading_animation "$msg" "${BLA_passing_dots[@]}"
+                                            sleep 2
+                                            BLA::stop_loading_animation
+
+                                        openssl x509 -req -in /etc/vault/ssl/vault.csr -signkey /etc/vault/ssl/vault.key -out /etc/vault/ssl/vault.crt -days "$days_vault" -extensions req_ext -extfile /etc/vault/ssl/vault_tls.cnf >> /var/log/vault_tls.log 2>&1
+
+                                        clear
+                                        afficher_bienvenue
+                                        # Test présence du certificat
+                                        if openssl x509 -in /etc/vault/ssl/vault.crt -noout >/dev/null 2>&1; then
+                                            
+                                            echo -e "${GREEN}OK : vault.crt créé avec succès et valide.${NC}"
+                                            sleep 2
+                                        else
+                                            echo -e "${RED}ERREUR : vault.csr manquante...${NC}"
+                                            echo -e "Pour plus d'information voir le fichier : ${WHITE}/var/log/vault_tls.log${NC}" 
+                                            sleep 3
+                                            echo -e "Le programme d'installation va quitter"
+                                            sleep 1
+                                            exit 1
+                                        fi
+
+
+                                        ;;
+
+                                        2)
+
+                                        clear
+                                        afficher_bienvenue
+                                        
+                                        echo -e "${WHITE}[2] CA Existant${NC}"
+
+                                        read -p "Veuillez indiquer le chemin vers le CA existant (chemin absolue vers le fichier .crt)" ca_existant_crt
+
+                                        if [ -f "$ca_existant_crt" ]; then
+                                            echo -e "${GREEN}OK : le fichier existe.${NC}"
+                                            sleep 2
+                                        else
+                                            echo -e "${RED}ERREUR : dans la récupératio du fichier .crt...${NC}"
+                                            sleep 2
+                                            echo -e "Le programme d'installation va quitter"
+                                            sleep 1
+                                            exit 1
+                                        fi
+
+                                        clear
+                                        afficher_bienvenue
+                                        
+                                        read -p "Veuillez indiquer le chemin vers la clé privé" ca_private_key
+
+                                        if [ -f "$ca_private_key" ]; then
+                                            echo -e "${GREEN}OK : le fichier existe.${NC}"
+                                            sleep 2
+                                        else
+                                            echo -e "${RED}ERREUR : dans la récupératio du fichier .crt...${NC}"
+                                            sleep 2
+                                            echo -e "Le programme d'installation va quitter"
+                                            sleep 1
+                                            exit 1
+                                        fi
+                                        
+                                        while true; do
+                                            read -p "Veuillez entrer une valeur pour la durée de validité du certificat (Format => jour entre 1 et 365)" days_vault
+
+                                            if [[ "$days_vault" =~ ^[0-9]+$ ]] && (( days_vault >= 1 && days_vault <= 365 )); then
+                                                break
+                                            else
+                                                echo "Erreur : veuillez entrer un nombre entre 1 et 365."
+                                            fi
+                                        done
+                                        
+                                        clear
+                                        afficher_bienvenue
+                                        
+                                        msg="Edition du certificat"
+                                            echo -e "\n"
+                                            BLA::start_loading_animation "$msg" "${BLA_passing_dots[@]}"
+                                            sleep 2
+                                            BLA::stop_loading_animation
+
+                                        openssl x509 -req -in "$ca_existant_crt" -signkey "$ca_private_key" -out /etc/vault/ssl/vault.crt -days "$days_vault" -extensions req_ext -extfile /etc/vault/ssl/vault_tls.cnf >> /var/log/vault_tls.log 2>&1
+
+                                        clear
+                                        afficher_bienvenue
+                                        # Test présence du certificat
+                                        if openssl x509 -in /etc/vault/ssl/vault.crt -noout >/dev/null 2>&1; then
+                                            
+                                            echo -e "${GREEN}OK : vault.crt créé avec succès et valide.${NC}"
+                                            sleep 2
+                                        else
+                                            echo -e "${RED}ERREUR : vault.csr manquante...${NC}"
+                                            echo -e "Pour plus d'information voir le fichier : ${WHITE}/var/log/vault_tls.log${NC}" 
+                                            sleep 3
+                                            echo -e "Le programme d'installation va quitter"
+                                            sleep 1
+                                            exit 1
+                                        fi
+                                        
+                                        
+                                        
+                                        
+                                        ;;
+
+                                        3)
+                                            clear
+                                            afficher_bienvenue
+                                            echo -e "${RED}Le programme d'installation va quitter...${NC}" 
+                                                                                                        
+                                            msg="Veuillez patienter"
+                                            echo -e "\n"
+                                            BLA::start_loading_animation "$msg" "${BLA_passing_dots[@]}"
+                                            sleep 4
+                                            BLA::stop_loading_animation
+                                                                                
+                                            exit 1         
+                                        ;;
+
+                                        *)
+                                            echo -e "${RED}Erreur, Réponse invalide.${NC}"
+                                        ;;
+
+                                    esac
+
+                                done
+
+
+
                                 
                                 # === [3] CONFIGURATION DE VAULT === 
                                 clear
@@ -842,7 +1039,15 @@ EOF
                                 echo -e "[4/5] Création de la clé GPG et du mot de passe...\n" 
                                 echo -e "[5/5] Lancement du service G_Cert...\n\n"
                                 
-                                
+                                while true; do
+                                    read -p "Appuyez sur [Entrée] pour continuer : " input
+
+                                    if [[ -z "$input" ]]; then
+                                        break
+                                    else
+                                        echo -e "\n${RED}Erreur : appuyez uniquement sur Entrée.${NC}\n"
+                                    fi
+                                done
                         
                         while true; do
                             read -p "Appuyez sur [Entrée] pour continuer : " input
