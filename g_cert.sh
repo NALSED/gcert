@@ -48,18 +48,18 @@ dependencies=(pyfiglet psutil cryptography python-nmap termcolor colorlog tabula
 # GUM
 repo_gum() {
     sudo mkdir -p /etc/apt/keyrings
-    curl -fsSL https://repo.charm.sh/apt/gpg.key | sudo gpg --dearmor -o /etc/apt/keyrings/charm.gpg > /dev/null 2>&1
-    echo "deb [signed-by=/etc/apt/keyrings/charm.gpg] https://repo.charm.sh/apt/ /" | sudo tee /etc/apt/sources.list.d/charm.list > /dev/null 2>&1
-    sudo apt -qq update -y > /dev/null 2>&1 && sudo apt install -qq gum -y > /dev/null 2>&1
+    curl -fsSL https://repo.charm.sh/apt/gpg.key | sudo gpg --dearmor -o /etc/apt/keyrings/charm.gpg > /dev/null 2>> /var/log/gcert_install/erreur.log
+    echo "deb [signed-by=/etc/apt/keyrings/charm.gpg] https://repo.charm.sh/apt/ /" | sudo tee /etc/apt/sources.list.d/charm.list > /dev/null 2>> /var/log/gcert_install/erreur.log
+    sudo apt -qq update -y > /dev/null 2>> /var/log/gcert_install/erreur.log && sudo apt install -qq gum -y > /dev/null 2>> /var/log/gcert_install/erreur.log
 }
 
 # VAULT 
 
 repo_vault() {
-    sudo apt -qq update -y > /dev/null && sudo apt install -y gnupg wget lsb-release > /dev/null 2>&1
-    curl -fsSL https://apt.releases.hashicorp.com/gpg | sudo gpg --dearmor -o /usr/share/keyrings/hashicorp-archive-keyring.gpg > /dev/null 2>&1
-    echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/hashicorp-archive-keyring.gpg] https://apt.releases.hashicorp.com $(lsb_release -cs) main" | sudo tee /etc/apt/sources.list.d/hashicorp.list > /dev/null 2>&1
-    sudo apt -qq update -y > /dev/null 2>&1 && sudo apt install -qq vault -y > /dev/null 2>&1
+    sudo apt -qq update -y > /dev/null && sudo apt install -y gnupg wget lsb-release > /dev/null 2>> /var/log/gcert_install/erreur.log
+    curl -fsSL https://apt.releases.hashicorp.com/gpg | sudo gpg --dearmor -o /usr/share/keyrings/hashicorp-archive-keyring.gpg > /dev/null 2>> /var/log/gcert_install/erreur.log
+    echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/hashicorp-archive-keyring.gpg] https://apt.releases.hashicorp.com $(lsb_release -cs) main" | sudo tee /etc/apt/sources.list.d/hashicorp.list > /dev/null 2>> /var/log/gcert_install/erreur.log
+    sudo apt -qq update -y > /dev/null 2>> /var/log/gcert_install/erreur.log && sudo apt install -qq vault -y > /dev/null 2>> /var/log/gcert_install/erreur.log
 }
 
 
@@ -106,16 +106,6 @@ enter() {
     done
 }
 
-# Message Logs
-
-log() {
-    error_log_redirection="2>> /var/log/gcert_install/erreur.log"
-    
-    # Exécution de la commande avec redirection de stdout vers /dev/null et stderr vers erreur.log
-    "$@" > /dev/null $error_log_redirection
-}
-
-
 
 # === FONCTIONNEMENT SCRIPT ===
 
@@ -142,7 +132,7 @@ afficher_bienvenue
                 afficher_bienvenue
                 
                 echo -e "\n${YELLOW}=== Redirections des logs ===${NC}"
-                echo -e "\n\nCréation du dossier de logs, pour l'installation de gcert : "
+                echo -e "\n\nCréation du dossier de logs, pour l'installation de gcert : \n"
                 echo -e "   - Les erreurs sont redirigées vers ${WHITE}/var/log/gcert_install/erreur.log${NC}\n\n"
                 
 
@@ -153,7 +143,8 @@ afficher_bienvenue
                 sudo chmod 755 /var/log/gcert_install/
     
                 # Vérification de la création du répertoire /var/log/gcert_install/
-
+                clear
+                afficher_bienvenue
                     echo -e "${GREEN}OK : Le répertoire ${WHITE}/var/log/gcert_install${GREEN}créé avec succès.${NC}"
                     sleep 2
                 else
@@ -188,10 +179,10 @@ afficher_bienvenue
                 clear
                 afficher_bienvenue
 
-                echo -e "${YELLOW}=== Informations en cas de problème ===${NC}"
+                echo -e "${YELLOW}=== Informations en cas de problème ===${NC}\n\n"
                 echo -e "   - Si un problème survient lors de l'exécution du script, un message d'erreur sera affiché."
                 echo -e "   - Le script quittera immédiatement en cas d'erreur, mais les logs seront disponibles."
-                echo -e "   - Les erreurs seront enregistrées dans ${WHITE}/var/log/gcert_install/erreur.log${NC}."
+                echo -e "   - Les erreurs seront enregistrées dans ${WHITE}/var/log/gcert_install/erreur.log${NC}.\n"
                 
 
                 enter        
@@ -263,7 +254,7 @@ afficher_bienvenue
                                 echo -e "${YELLOW}============================================================${NC}\n\n"
                                 
                                 echo -e "[1/5] Installation des prérequis...\n" 
-                                echo -e "[2/5] Installation et configuration de Vault"
+                                echo -e "[2/5] Installation et configuration de Vault...\n"
                                 echo -e "[3/5] Création de l'environnement Python...\n" 
                                 echo -e "[4/5] Création de la clé GPG et du mot de passe...\n" 
                                 echo -e "[5/5] Lancement du service G_Cert...\n\n"
@@ -387,7 +378,7 @@ afficher_bienvenue
                                 echo -e "${YELLOW}============================================================${NC}\n\n"
 
                                 echo -e "${GREEN}[√] Installation des prérequis...${NC}\n" 
-                                echo -e "[2/5] Installation et configuration de Vault"
+                                echo -e "[2/5] Installation et configuration de Vault...\n"
                                 echo -e "[3/5] Création de l'environnement Python...\n" 
                                 echo -e "[4/5] Création de la clé GPG et du mot de passe...\n" 
                                 echo -e "[5/5] Lancement du service G_Cert...\n\n"
@@ -399,7 +390,7 @@ afficher_bienvenue
 
                                 # Récapitulation Installation Vault
 
-                                echo -e "${YELLOW}=== Installation et Initialisation de Vault ===${NC}\n"
+                                echo -e "${YELLOW}=== Phases d'installation et de configuration de Vault ===${NC}\n"
 
                                 echo -e "${WHITE}[1] Installation de Vault :${NC}"
                                 echo -e "   - Ajout du dépôt HashiCorp et installation du paquet Vault."
@@ -461,7 +452,7 @@ afficher_bienvenue
                                 BLA::start_loading_animation "$msg" "${BLA_passing_dots[@]}"
 
                                 # Installation
-                                repo_vault > /dev/null 2>&1
+                                repo_vault > /dev/null 2>> /var/log/gcert_install/erreur.log
 
 
                                 # Effacer la ligne du message dynamique
@@ -474,7 +465,7 @@ afficher_bienvenue
                                     sleep 2
                                 else
                                     echo -e "${RED}Problème lors de l'installation de Vault...${NC}\n"
-                                    echo -e "Veuillez consulter ${WHITE}/var/log/apt/history.log${NC} et ${WHITE}/var/log/apt/term.log${NC}, pour plus d'information\n"
+                                    echo -e "Veuillez consulter ${WHITE}/var/log/gcert_install/erreur.log${NC}, pour plus d'information\n"
                                     sleep 4
                                     
                                     clear
@@ -490,7 +481,7 @@ afficher_bienvenue
                                 clear
                                 afficher_bienvenue    
 
-                                echo -e "${YELLOW}=== Sécurisation Cryptographique Vault ===${NC}\n"
+                                echo -e "${YELLOW}=== Sécurisation Clés Vault ===${NC}\n"
 
                                 echo -e "${WHITE}[1] Génération des clés GPG :${NC}"
                                 echo -e "   - Protection de la clé privée SSL Vault"
@@ -521,11 +512,11 @@ afficher_bienvenue
                                 
                                 echo -e "${YELLOW}=== Génération des clés GPG ===${NC}\n"
 
-                                echo -e "${WHITE}[1] Clé GPG Vault :${NC}"
-                                echo -e "   - Création d'une clé GPG dédiée à Vault (unseal keys et root token).\n"
-
-                                echo -e "${WHITE}[2] Clé GPG OpenSSL :${NC}"
+                                echo -e "${WHITE}[1] Clé GPG OpenSSL :${NC}"
                                 echo -e "   - Création d'une clé GPG dédiée à la clé privée des certificats SSL.\n"
+
+                                echo -e "${WHITE}[2] Clé GPG Vault :${NC}"
+                                echo -e "   - Création d'une clé GPG dédiée à Vault (unseal keys et root token).\n"
 
                                 echo -e "   - Les clés seront enregistrées => ${WHITE}/home/$USER/.gnupg${NC}\n"
 
@@ -565,11 +556,11 @@ afficher_bienvenue
                                 clear
                                 afficher_bienvenue
                                
-                                msg="Initialisation création clés GPG, afin de protéger les unseal keys et le root token"
+                                msg="initialisation création clés GPG, afin de protéger les unseal keys et le root token"
                                 echo -e "\n"
 
                                 BLA::start_loading_animation "$msg" "${BLA_passing_dots[@]}"
-                                sleep 2
+                                sleep 3
                                 BLA::stop_loading_animation
 
                                 # Génération
@@ -638,20 +629,23 @@ afficher_bienvenue
                                     if [[ "$choix_domain_ssl" =~ ^[yY]$ ]]; then
                                         clear
                                         afficher_bienvenue
-                                        read -p "Veuillez indiquer le nom de domaine (format => FQDN)" domain_ssl
+                                        read -p "Veuillez indiquer le nom de domaine (format => FQDN) : " domain_ssl
 
                                         # test si le nom de domaine existe
-                                        if nslookup "$domain_ssl" > /dev/null 2>&1; then
+                                        if nslookup "$domain_ssl" > /dev/null 2>> /var/log/gcert_install/erreur.log; then
+                                            
+                                            clear
+                                            afficher_bienvenue
                                             echo -e "\n${GREEN}Le domaine '$domain_ssl' existe et résout correctement.${NC}"
                                             sleep 3
 
 
                                             # === 1-3) NOM serveur CN ===
-                                            clear
-                                            afficher_bienvenue
-
+                                          
                                             while true; do
                                                 
+                                                clear
+                                                afficher_bienvenue
                                                 read -p "Veuillez indiquer le Nom principal du serveur (Common Name) : " cn_vault
 
                                                 clear
@@ -661,14 +655,20 @@ afficher_bienvenue
                                                 read -p "Le CN est-il correct ? y/n : " validation_cn
 
                                                 if [[ "$validation_cn" =~ ^[yY]$ ]]; then
-                                                    echo "${GREEN}CN confirmé : $cn_vault${NC}"
+                                                    
+                                                    clear
+                                                    afficher_bienvenue
+                                                    echo "\n${GREEN}CN confirmé : '$cn_vault'${NC}"
                                                     sleep 3
                                                     break
                                                 elif [[ "$validation_cn" =~ ^[nN]$ ]]; then
-                                                    echo -e "${RED}Recommençons...${NC}"
+                                                    
+                                                    clear
+                                                    afficher_bienvenue
+                                                    echo -e "\n${RED}Recommençons...${NC}"
                                                     sleep 2
                                                 else
-                                                    echo -e "${RED}Réponse invalide. Tapez y ou n.${NC}"
+                                                    echo -e "\n${RED}Réponse invalide. Tapez y ou n.${NC}"
                                                 fi
                                             done
 
@@ -679,7 +679,8 @@ afficher_bienvenue
                                             afficher_bienvenue
 
                                             while true; do
-                                               
+                                                clear
+                                                afficher_bienvenue
                                                 read -p "Veuillez indiquer Nom DNS utilisé par les clients Vault (format => Nom + FQDN) : " dns_vault
 
                                                 clear
@@ -689,14 +690,20 @@ afficher_bienvenue
                                                 read -p "Le DNS.1 est-il correct ? y/n : " validation_dns1
 
                                                 if [[ "$validation_dns1" =~ ^[yY]$ ]]; then
-                                                    echo "${GREEN}DNS.1 confirmé : $dns_vault${NC}"
+                                                    
+                                                    clear
+                                                    afficher_bienvenue
+                                                    echo "\n${GREEN}DNS.1 confirmé : '$dns_vault'${NC}"
                                                     sleep 3
                                                     break
                                                 elif [[ "$validation_dns1" =~ ^[nN]$ ]]; then
-                                                    echo -e "${RED}Recommençons...${NC}"
+                                                    
+                                                    clear
+                                                    afficher_bienvenue
+                                                    echo -e "\n${RED}Recommençons...${NC}"
                                                     sleep 2
                                                 else
-                                                    echo -e "${RED}Réponse invalide. Tapez y ou n.${NC}"
+                                                    echo -e "\n${RED}Réponse invalide. Tapez y ou n.${NC}"
                                                 fi
                                             done
 
@@ -710,6 +717,10 @@ afficher_bienvenue
 
                                                 # test format IP
                                                 if validate_ip "$ip_vault"; then
+                                                    
+                                                    clear
+                                                    afficher_bienvenue
+                                                    
                                                     echo -e "\n${GREEN}IP valide${NC}"
                                                     sleep 1
 
@@ -722,21 +733,27 @@ afficher_bienvenue
                                                         read -p "L'adresse IP est-elle correcte ? y/n : " validation_ip
 
                                                         if [[ "$validation_ip" =~ ^[yY]$ ]]; then
-                                                            echo "${GREEN}IP confirmée : $ip_vault${NC}"
+                                                           
+                                                            clear
+                                                            afficher_bienvenue
+                                                            echo "\n${GREEN}IP confirmée : '$ip_vault'${NC}"
                                                             sleep 3
                                                             break 2
                                                         elif [[ "$validation_ip" =~ ^[nN]$ ]]; then
-                                                            echo -e "${RED}Recommençons...${NC}"
+                                                            
+                                                            clear
+                                                            afficher_bienvenue
+                                                            echo -e "\n${RED}Recommençons...${NC}"
                                                             sleep 2
                                                             break
                                                         else
-                                                            echo -e "${RED}Réponse invalide. Tapez y ou n.${NC}"
+                                                            echo -e "\n${RED}Réponse invalide. Tapez y ou n.${NC}"
                                                             sleep 2
                                                         fi
                                                     done
                                                 else
                                                     echo -e "\n${RED}IP invalide${NC}\n"
-                                                    echo -e "Recommençons..."
+                                                    echo -e "\nRecommençons..."
                                                     sleep 2
                                                     sleep 2
                                                 fi
@@ -762,7 +779,7 @@ afficher_bienvenue
                                                 sudo mkdir -p /etc/vault/ssl
 
                                                 # Edition fichier certificat vault_tls.cnf
-                                                sudo tee /etc/vault/ssl/vault_tls.cnf <<-EOF > /dev/null 2>&1
+                                                sudo tee /etc/vault/ssl/vault_tls.cnf <<-EOF > /dev/null 2>> /var/log/gcert_install/erreur.log
 [ req ]
 default_bits       = 4096
 prompt             = no
@@ -925,10 +942,10 @@ EOF
                                 clear
                                 afficher_bienvenue
                                 
-                                echo -e "Génération de la ${WHITE}clé privée TLS${NC} et ${WHITE}CSR${NC}"
-                                
+                                echo -e "Génération de la ${WHITE}clé privée TLS${NC} et ${WHITE}fichier CSR${NC}"
+                                sleep 2
                                 # Création de la clé privée
-                                sudo openssl genrsa -out /etc/vault/ssl/vault.key > /var/log/vault_tls.log 2>&1
+                                sudo openssl genrsa -out /etc/vault/ssl/vault-2.key > /dev/null 2>> /var/log/gcert_install/erreur.log
                                     
                                     clear
                                     afficher_bienvenue
@@ -939,7 +956,7 @@ EOF
                                         sleep 2
                                     else
                                         echo -e "${RED}ERREUR : vault.key manquante...${NC}"
-                                        echo -e "Pour plus d'information voir le fichier : ${WHITE}/var/log/vault_tls.log${NC}" 
+                                        echo -e "Pour plus d'information voir le fichier : ${WHITE}/var/log/gcert_install/erreur.log${NC}" 
                                         sleep 3
                                         echo -e "Le programme d'installation va quitter"
                                         sleep 1
@@ -952,7 +969,7 @@ EOF
                                 # === CREATION CSR ===
                                 
                                 # Commande de cration du CSR avec redirection des logs
-                                sudo openssl req -new -key /etc/vault/ssl/vault.key -out /etc/vault/ssl/vault.csr -config /etc/vault/ssl/vault_tls.cnf > /var/log/vault_tls.log 2>&1
+                                sudo openssl req -new -key /etc/vault/ssl/vault.key -out /etc/vault/ssl/vault.csr -config /etc/vault/ssl/vault_tls.cnf > /dev/null 2>> /var/log/gcert_install/erreur.log
 
                                     clear
                                     afficher_bienvenue
@@ -963,7 +980,7 @@ EOF
                                         sleep 2
                                     else
                                         echo -e "${RED}ERREUR : vault.csr manquante...${NC}"
-                                        echo -e "Pour plus d'information voir le fichier : ${WHITE}/var/log/vault_tls.log${NC}" 
+                                        echo -e "Pour plus d'information voir le fichier : ${WHITE}/var/log/gcert_install/erreur.log${NC}" 
                                         sleep 3
                                         echo -e "Le programme d'installation va quitter"
                                         sleep 1
@@ -1030,7 +1047,7 @@ EOF
                                             BLA::stop_loading_animation
 
                                         # Signature certificat auto-signé
-                                        openssl x509 -req -in /etc/vault/ssl/vault.csr -signkey /etc/vault/ssl/vault.key -out /etc/vault/ssl/vault.crt -days "$days_vault" -extensions req_ext -extfile /etc/vault/ssl/vault_tls.cnf >> /var/log/vault_tls.log 2>&1
+                                        openssl x509 -req -in /etc/vault/ssl/vault.csr -signkey /etc/vault/ssl/vault.key -out /etc/vault/ssl/vault.crt -days "$days_vault" -extensions req_ext -extfile /etc/vault/ssl/vault_tls.cnf > /dev/null 2>> /var/log/gcert_install/erreur.log
 
                                         clear
                                         afficher_bienvenue
@@ -1041,7 +1058,7 @@ EOF
                                             sleep 2
                                         else
                                             echo -e "${RED}ERREUR : vault.csr manquante...${NC}"
-                                            echo -e "Pour plus d'information voir le fichier : ${WHITE}/var/log/vault_tls.log${NC}" 
+                                            echo -e "Pour plus d'information voir le fichier : ${WHITE}/var/log/gcert_install/erreur.log${NC}" 
                                             sleep 3
                                             echo -e "Le programme d'installation va quitter"
                                             sleep 1
@@ -1111,7 +1128,7 @@ EOF
                                             sleep 2
                                             BLA::stop_loading_animation
 
-                                        openssl x509 -req -in "$ca_existant_crt" -signkey "$ca_private_key" -out /etc/vault/ssl/vault.crt -days "$days_vault" -extensions req_ext -extfile /etc/vault/ssl/vault_tls.cnf >> /var/log/vault_tls.log 2>&1
+                                        openssl x509 -req -in "$ca_existant_crt" -signkey "$ca_private_key" -out /etc/vault/ssl/vault.crt -days "$days_vault" -extensions req_ext -extfile /etc/vault/ssl/vault_tls.cnf > /dev/null 2>> /var/log/gcert_install/erreur.log
 
                                         clear
                                         afficher_bienvenue
@@ -1122,7 +1139,7 @@ EOF
                                             sleep 2
                                         else
                                             echo -e "${RED}ERREUR : vault.csr manquante...${NC}"
-                                            echo -e "Pour plus d'information voir le fichier : ${WHITE}/var/log/vault_tls.log${NC}" 
+                                            echo -e "Pour plus d'information voir le fichier : ${WHITE}/var/log/gcert_install/erreur.log${NC}" 
                                             sleep 3
                                             echo -e "Le programme d'installation va quitter"
                                             sleep 1
@@ -1348,7 +1365,7 @@ EOF
                                 echo -e "${YELLOW}============================================================${NC}\n\n"
                                
                                 echo -e "${GREEN}[√] Installation des prérequis...${NC}\n" 
-                                echo -e "${GREEN}[√] Installation et configuration de Vault${NC}"
+                                echo -e "${GREEN}[√] Installation et configuration de Vault...${NC}\n"
                                 echo -e "[3/5] Création de l'environnement Python...\n" 
                                 echo -e "[4/5] Création de la clé GPG et du mot de passe...\n" 
                                 echo -e "[5/5] Lancement du service G_Cert...\n\n"
@@ -1382,7 +1399,7 @@ EOF
                         msg="Veuillez patienter"
 
                         # Assurer que pipx est installé et accessible
-                        python3 -m pipx ensurepath > /dev/null 2>&1
+                        python3 -m pipx ensurepath > /dev/null 2>> /var/log/gcert_install/erreur.log
                         export PATH="$HOME/.local/bin:$PATH"
 
                             
@@ -1390,7 +1407,7 @@ EOF
                             # Supprime toute installation éventuelle passée de gcert pour éviter tout conflit de venv
                             rm -rf ~/.local/share/pipx/venvs/gcert
                             # Pipx force l'installation des prérequis
-                            pipx install . --force > /dev/null 2>&1
+                            pipx install . --force > /dev/null 2>> /var/log/gcert_install/erreur.log
                             BLA::stop_loading_animation
                         
 
@@ -1455,7 +1472,7 @@ echo -e "   - Ne partagez jamais votre mot de passe maître."
                                 echo -e "${YELLOW}============================================================${NC}\n\n"
                                 
                                 echo -e "${GREEN}[√] Installation des prérequis...${NC}\n" 
-                                echo -e "${GREEN}[√] Installation et configuration de Vault${NC}"
+                                echo -e "${GREEN}[√] Installation et configuration de Vault...${NC}\n"
                                 echo -e "${GREEN}[√] Création de l'environnement Python...${NC}\n" 
                                 echo -e "[4/5] Création de la clé GPG et du mot de passe...\n" 
                                 echo -e "[5/5] Lancement du service G_Cert...\n\n"
@@ -2115,9 +2132,9 @@ echo -e "   - Ne partagez jamais votre mot de passe maître."
                                 echo -e "${YELLOW}============================================================${NC}\n\n"
                               
                                 echo -e "${GREEN}[√] Installation des prérequis...${NC}\n" 
+                                echo -e "${GREEN}[√] Installation et configuration de Vault...${NC}\n"
                                 echo -e "${GREEN}[√] Création de l'environnement Python...${NC}\n" 
                                 echo -e "${GREEN}[√] Création de la clé GPG et du mot de passe...${NC}\n" 
-                                echo -e "${GREEN}[√] Installation et configuration de Vault${NC}\n"
                                 echo -e "[5/5] Lancement du service G_Cert...\n\n"
                             
                             while true; do
@@ -2151,6 +2168,7 @@ echo -e "   - Ne partagez jamais votre mot de passe maître."
                                 echo -e "${YELLOW}============================================================${NC}\n\n"
                                 
                                 echo -e "${GREEN}[√] Installation des prérequis...${NC}\n" 
+                                echo -e "${GREEN}[√] Installation et configuration de Vault...${NC}\n"
                                 echo -e "${GREEN}[√] Création de l'environnement Python...${NC}\n" 
                                 echo -e "${GREEN}[√] Création de la clé GPG et du mot de passe...${NC}\n" 
                                 echo -e "${GREEN}[√] Lancement du service G_Cert...${NC}\n\n"
