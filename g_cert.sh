@@ -106,6 +106,16 @@ enter() {
     done
 }
 
+# Message Logs
+
+log() {
+    normal_log_redirection="> /var/log/install_gcertnormal.log"
+    error_log_redirection="2> /var/log/install_gcert/erreur.log"
+    
+    # Exécution de la commande avec redirections
+    "$@" $normal_log_redirection $error_log_redirection
+}
+
 
 # === FONCTIONNEMENT SCRIPT ===
 
@@ -119,18 +129,72 @@ all_installed=true
 
 
 clear
-                    
+afficher_bienvenue        
+        
+        
+
         # Vérification de l'interactivité du shell et de la présence de sudo et connexion réseau
         if [ -t 0 ]; then
 
             if dpkg -s "sudo" >/dev/null 2>&1; then
 
-                # Demande le mot de passe sudo une seule fois au début du script                               
+                clear
                 afficher_bienvenue
-                sudo -v    
-            
                 
+                echo -e "\n\n${YELLOW}=== Redirections des logs ===${NC}"
+                echo -e "Création du dossier de logs, pour l'installation de gcert"
+                echo -e "   - Les informations normales sont enregistrées dans ${WHITE}/var/log/gcert_install/normal.log${NC}, avec un timestamp et un préfixe [NORMAL]."
+                echo -e "   - Les erreurs sont redirigées vers ${WHITE}/var/log/gcert_install/erreur.log${NC}, avec un préfixe [ERROR]."
+                echo -e "   - Toute sortie de commande est également redirigée vers ${WHITE}/dev/null${NC}, pour éviter l'affichage inutile.\n"
+
+                enter
+
+                sudo mkdir /var/log/gcert_install           
+                sudo chown $USER:$USER /var/log/gcert_install/
+                sudo chmod 755 /var/log/gcert_install/
+    
+                # Vérification de la création du répertoire /var/log/gcert_install/
+
+                    echo -e "${GREEN}OK : Le répertoire ${WHITE}/var/log/gcert_install${GREEN} existe.${NC}"
+                    sleep 2
+                else
+                    echo -e "${RED}ERREUR : Le répertoire ${WHITE}/var/log/gcert_install${RED} n'existe pas.${NC}"
+                    echo -e "Veuillez créer le répertoire avec la commande : sudo mkdir /var/log/gcert_install"
+                    sleep 3
+                fi
+
+                # Vérification de la propriété du répertoire
+                if [[ $(stat -c "%U:%G" /var/log/gcert_install) == "$USER:$USER" ]]; then
+                    echo -e "${GREEN}OK : Le propriétaire du répertoire ${WHITE}/var/log/gcert_install${GREEN} est correct.${NC}"
+                    sleep 2
+                else
+                    echo -e "${RED}ERREUR : Le propriétaire du répertoire ${WHITE}/var/log/gcert_install${RED} est incorrect.${NC}"
+                    echo -e "Veuillez corriger la propriété avec la commande : sudo chown $USER:$USER /var/log/gcert_install"
+                    sleep 3
+                fi
+
+                # Vérification des permissions du répertoire
+                if [[ $(stat -c "%a" /var/log/gcert_install) == "755" ]]; then
+                    echo -e "${GREEN}OK : Les permissions du répertoire ${WHITE}/var/log/gcert_install${GREEN} sont correctes.${NC}"
+                    sleep 2
+                else
+                    echo -e "${RED}ERREUR : Les permissions du répertoire ${WHITE}/var/log/gcert_install${RED} sont incorrectes.${NC}"
+                    echo -e "Veuillez corriger les permissions avec la commande : sudo chmod 755 /var/log/gcert_install"
+                    sleep 3
+                fi
+
+                clear
+                afficher_bienvenue
+
+                echo -e "${YELLOW}=== Informations en cas de problème ===${NC}"
+                echo -e "   - Si un problème survient lors de l'exécution du script, un message d'erreur sera affiché."
+                echo -e "   - Le script quittera immédiatement en cas d'erreur, mais les logs seront disponibles."
+                echo -e "   - Les erreurs seront enregistrées dans ${WHITE}/var/log/gcert_install/erreur.log${NC}."
+                echo -e "   - Pour les sorties standard, consultez ${WHITE}/var/log/gcert_install/normal.log${NC}.\n"
+
+                enter        
                 # Test WAN
+                
                 clear
                 afficher_bienvenue
                 
@@ -141,7 +205,7 @@ clear
                 sleep 3
                 
                 # Effectuer le ping
-                if ping -c 1 "1.1.1.1" > /dev/null 2>&1; then
+                if log ping -c 1 "1.1.1.1" ; then
                     BLA::stop_loading_animation
                     
                     echo -e "${GREEN}Connexion WAN OK !${NC}"
@@ -237,7 +301,7 @@ clear
 
                                 # Remplir les tableaux
                                 for pkg in "${PREREQUIS[@]}"; do
-                                    if dpkg -s "$pkg" >/dev/null 2>&1; then
+                                    if log dpkg -s "$pkg" ; then
                                         present+=("$pkg")
                                     else
                                         absent+=("$pkg")
