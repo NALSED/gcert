@@ -386,11 +386,17 @@ clear
 
                                 enter
 
+
+                                clear
+                                afficher_bienvenue
+
                                 msg="Veuillez patienter durant l'installation de Vault"
+                               
                                 BLA::start_loading_animation "$msg" "${BLA_passing_dots[@]}"
 
                                 # Installation
-                                repo_vault
+                                repo_vault > /dev/null 2>&1
+
 
                                 # Effacer la ligne du message dynamique
                                 echo -ne "\r\033[K"
@@ -457,9 +463,9 @@ clear
 
                                 echo -e "   - Les clés seront enregistrées => ${WHITE}/home/$USER/.gnupg${NC}\n"
 
-                                
+                                enter
 
-                                msg="Création clés GPG, afin de protéger la Clée privée du certificat de Vault"
+                                msg="nitialisation création clés GPG, afin de protéger la Clée privée du certificat de Vault"
                                 echo -e "\n"
 
                                 BLA::start_loading_animation "$msg" "${BLA_passing_dots[@]}"
@@ -467,6 +473,10 @@ clear
                                 BLA::stop_loading_animation
 
                                 # Génération
+                                clear
+                                afficher_bienvenue
+                                
+                                echo -e "\n${YELLOW}=== Création clé GPG pour la Clé privée OpenSSL  ===${NC}\n"
                                 gpg --full-generate-key
 
                                 while true; do
@@ -489,7 +499,7 @@ clear
                                 clear
                                 afficher_bienvenue
                                
-                                msg="Création clés GPG, afin de protéger les unseal keys et le root token"
+                                msg="Initialisation création clés GPG, afin de protéger les unseal keys et le root token"
                                 echo -e "\n"
 
                                 BLA::start_loading_animation "$msg" "${BLA_passing_dots[@]}"
@@ -497,10 +507,14 @@ clear
                                 BLA::stop_loading_animation
 
                                 # Génération
+                                clear
+                                afficher_bienvenue
+                                
+                                echo -e "\n${YELLOW}=== Création clé GPG pour les unseal keys et le root token de Vault ===${NC}\n"
                                 gpg --full-generate-key
 
                                 while true; do
-                                    echo -e "\n\nVeuillez enregistrer les informations ci-dessus\n"
+                                    echo -e "\n\n${YELLOW}Veuillez enregistrer les informations ci-dessus${NC}\n"
                                     read -p "Appuyez sur [Entrée] pour continuer : " input
 
                                     if [[ -z "$input" ]]; then
@@ -520,7 +534,7 @@ clear
                                 clear
                                 afficher_bienvenue
                                 
-                                echo -e "${YELLOW}=== Génération des Certificats OpenSSL ===${NC}\n"
+                                echo -e "${YELLOW}=== Génération du Certificat OpenSSL de Vault ===${NC}\n"
 
                                 echo -e "${WHITE}[1] Configuration OpenSSL :${NC}"
                                 echo -e "   - Création du fichier => ${WHITE}/etc/vault/ssl/vault_tls.cnf${NC}."
@@ -552,7 +566,7 @@ clear
                                 # Choix utilisation nom de domain pour certificat
                                 while true; do
                                     
-                                    read -p "Voulez-vous utiliser un nom de domaine, pour l'édition du certificat y/n" choix_domain_ssl
+                                    read -p "Voulez-vous utiliser un nom de domaine, pour l'édition du certificat y/n : " choix_domain_ssl
 
                                     # Avec nom de domaine
                                     if [[ "$choix_domain_ssl" =~ ^[yY]$ ]]; then
@@ -562,8 +576,8 @@ clear
 
                                         # test si le nom de domaine existe
                                         if nslookup "$domain_ssl" > /dev/null 2>&1; then
-                                            echo "Le domaine '$domain_ssl' existe et résout correctement."
-                                            sleep 2
+                                            echo -e "\n${GREEN}Le domaine '$domain_ssl' existe et résout correctement.${NC}"
+                                            sleep 3
 
 
                                             # === 1-3) NOM serveur CN ===
@@ -572,19 +586,21 @@ clear
 
                                             while true; do
                                                 
-                                                read -p "Veuillez indiquer le Nom principal du serveur (Common Name)\n" cn_vault
+                                                read -p "Veuillez indiquer le Nom principal du serveur (Common Name) : " cn_vault
 
                                                 clear
                                                 afficher_bienvenue
 
                                                 echo -e "CN = $cn_vault\n"
-                                                read -p "Le CN est-il correct ? y/n" validation_cn
+                                                read -p "Le CN est-il correct ? y/n : " validation_cn
 
                                                 if [[ "$validation_cn" =~ ^[yY]$ ]]; then
-                                                    echo "CN confirmé : $cn_vault"
+                                                    echo "${GREEN}CN confirmé : $cn_vault${NC}"
+                                                    sleep 3
                                                     break
                                                 elif [[ "$validation_cn" =~ ^[nN]$ ]]; then
                                                     echo -e "${RED}Recommençons...${NC}"
+                                                    sleep 2
                                                 else
                                                     echo -e "${RED}Réponse invalide. Tapez y ou n.${NC}"
                                                 fi
@@ -598,19 +614,21 @@ clear
 
                                             while true; do
                                                
-                                                read -p "Veuillez indiquer Nom DNS utilisé par les clients Vault (format => Nom + FQDN)\n" dns_vault
+                                                read -p "Veuillez indiquer Nom DNS utilisé par les clients Vault (format => Nom + FQDN) : " dns_vault
 
                                                 clear
                                                 afficher_bienvenue
 
                                                 echo -e "DNS.1 = $dns_vault\n"
-                                                read -p "Le DNS.1 est-il correct ? y/n" validation_dns1
+                                                read -p "Le DNS.1 est-il correct ? y/n : " validation_dns1
 
                                                 if [[ "$validation_dns1" =~ ^[yY]$ ]]; then
-                                                    echo "DNS.1 confirmé : $dns_vault"
+                                                    echo "${GREEN}DNS.1 confirmé : $dns_vault${NC}"
+                                                    sleep 3
                                                     break
                                                 elif [[ "$validation_dns1" =~ ^[nN]$ ]]; then
                                                     echo -e "${RED}Recommençons...${NC}"
+                                                    sleep 2
                                                 else
                                                     echo -e "${RED}Réponse invalide. Tapez y ou n.${NC}"
                                                 fi
@@ -622,11 +640,11 @@ clear
                                                 afficher_bienvenue
                                                 
                                                
-                                                read -p "Veuillez indiquer l'IP du serveur Vault \n" ip_vault
+                                                read -p "Veuillez indiquer l'IP du serveur Vault : " ip_vault
 
                                                 # test format IP
                                                 if validate_ip "$ip_vault"; then
-                                                    echo -e "${GREEN}IP valide${NC}"
+                                                    echo -e "\n${GREEN}IP valide${NC}"
                                                     sleep 1
 
                                                     while true; do
@@ -635,15 +653,15 @@ clear
 
                                                         # Confirmation utilisation adresse IP
                                                         echo -e "Adresse IP choisie pour Vault = $ip_vault\n"       
-                                                        read -p "L'adresse IP est-elle correcte ? y/n" validation_ip
+                                                        read -p "L'adresse IP est-elle correcte ? y/n : " validation_ip
 
                                                         if [[ "$validation_ip" =~ ^[yY]$ ]]; then
-                                                            echo "IP confirmée : $ip_vault"
-                                                            sleep 1
+                                                            echo "${GREEN}IP confirmée : $ip_vault${NC}"
+                                                            sleep 3
                                                             break 2
                                                         elif [[ "$validation_ip" =~ ^[nN]$ ]]; then
                                                             echo -e "${RED}Recommençons...${NC}"
-                                                            sleep 1
+                                                            sleep 2
                                                             break
                                                         else
                                                             echo -e "${RED}Réponse invalide. Tapez y ou n.${NC}"
@@ -651,16 +669,34 @@ clear
                                                         fi
                                                     done
                                                 else
-                                                    echo -e "${RED}IP invalide${NC}"
+                                                    echo -e "\n${RED}IP invalide${NC}\n"
+                                                    echo -e "Recommençons..."
+                                                    sleep 2
                                                     sleep 2
                                                 fi
                                             done
+
+
+                                                clear
+                                                afficher_bienvenue
+
+                                                msg="Création fichier de configuration"
+                                            
+                                                BLA::start_loading_animation "$msg" "${BLA_passing_dots[@]}"
+
+                                                sleep 2
+
+                                                # Effacer la ligne du message dynamique
+                                                echo -ne "\r\033[K"
+                                                BLA::stop_loading_animation
+
+
 
                                                 # création répertoire
                                                 sudo mkdir -p /etc/vault/ssl
 
                                                 # Edition fichier certificat vault_tls.cnf
-                                                sudo tee /etc/vault/ssl/vault_tls.cnf <<-EOF
+                                                sudo tee /etc/vault/ssl/vault_tls.cnf <<-EOF > /dev/null 2>&1
 [ req ]
 default_bits       = 4096
 prompt             = no
@@ -680,7 +716,7 @@ IP.1  = $ip_vault
 EOF
 
                                 
-
+                                        break
                                         # Si le domaine ne repond pas ou n'existe pas sortie de script
                                         else
                                             echo "Le domaine '$domain_ssl' n'existe pas ou ne résout pas."
