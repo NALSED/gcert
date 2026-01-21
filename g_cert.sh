@@ -36,7 +36,7 @@ source "$MAIN_BASH"
 
 # Prérequis/Dépendances python
 #BASH
-PREREQUIS=(curl gnupg gum python3 python3-pip pipx python3.13-venv  pass tmux)
+PREREQUIS=(curl cron gnupg gum python3 python3-pip pipx python3.13-venv pass tmux)
 
 #PYTHON
 dependencies=(pyfiglet psutil cryptography python-nmap termcolor colorlog tabulate rich)
@@ -92,6 +92,19 @@ validate_ip() {
                 return 1
             }
 
+# Validation Message info
+
+enter() {
+    while true; do
+        read -p "Appuyez sur [Entrée] pour continuer : " input
+
+        if [[ -z "$input" ]]; then
+            break
+        else
+            echo -e "\n${RED}Erreur : appuyez uniquement sur Entrée.${NC}\n"
+        fi
+    done
+}
 
 
 # === FONCTIONNEMENT SCRIPT ===
@@ -188,19 +201,12 @@ clear
                                 echo -e "[3/5] Création de l'environnement Python...\n" 
                                 echo -e "[4/5] Création de la clé GPG et du mot de passe...\n" 
                                 echo -e "[5/5] Lancement du service G_Cert...\n\n"
-                            while true; do
-                            read -p "Appuyez sur [Entrée] pour continuer : " input
-                        
-                            if [[ -z "$input" ]]; then
                                 
-                            break
-                            else
-                                echo -e "\n${RED}Erreur : appuyez uniquement sur Entrée.${NC}\n"
-                            fi
-                        done
+                                enter
 
                         clear
                         afficher_bienvenue
+                        
                         echo -e "${YELLOW}Vous avez choisi de lancer le programme d'installation.${NC}\n\n"
                         echo -e "${YELLOW}=== Installation des prérequis pour G.cert  ===${NC}\n"
                         echo -e "${WHITE}Avant de commencer, G.cert nécessite quelques programmes et bibliothèques :${NC}\n"
@@ -320,15 +326,7 @@ clear
                                 echo -e "[4/5] Création de la clé GPG et du mot de passe...\n" 
                                 echo -e "[5/5] Lancement du service G_Cert...\n\n"
 
-                                while true; do
-                                    read -p "Appuyez sur [Entrée] pour continuer : " input
-
-                                    if [[ -z "$input" ]]; then
-                                        break
-                                    else
-                                        echo -e "\n${RED}Erreur : appuyez uniquement sur Entrée.${NC}\n"
-                                    fi
-                                done
+                                enter
 
                                 clear
                                 afficher_bienvenue
@@ -342,8 +340,9 @@ clear
                                 echo -e "   - Vérification de la présence du binaire vault.\n"
 
                                 echo -e "${WHITE}[2] Clés GPG et Certificats TLS :${NC}"
-                                echo -e "   - Génération de la clé TLS et certificat (auto-signé ou CA existante)."
                                 echo -e "   - Création des clés GPG admin et chiffrement des unseal keys/root token."
+                                echo -e "   - Génération de la clé TLS et certificat (auto-signé ou CA existante)."
+                                
 
                                 echo -e "${WHITE}[3] Configuration de Vault :${NC}"
                                 echo -e "   - Création du fichier /etc/vault.d/vault.hcl."
@@ -366,22 +365,26 @@ clear
                                 echo -e "   - Activation des logs d'audit."
                                 echo -e "   - Traçabilité des opérations Vault.\n"
 
-                                while true; do
-                                    read -p "Appuyez sur [Entrée] pour continuer : " input
+                                enter
 
-                                    if [[ -z "$input" ]]; then
-                                        break
-                                    else
-                                        echo -e "\n${RED}Erreur : appuyez uniquement sur Entrée.${NC}\n"
-                                    fi
-                                done
-
-                                # === [1] INSTALLATION DE VAULT ===
+# =============================== [1] INSTALLATION DE VAULT ===============================
+                                
                                 clear
                                 afficher_bienvenue
 
                                 # Message [1]
-                                echo -e "${WHITE}[1] Installation de Vault :${NC}\n\n"
+                                echo -e "${YELLOW}=== Installation de Vault ===${NC}\n"
+
+                                echo -e "${WHITE}[1] Préparation du système :${NC}"
+                                echo -e "   - Mise à jour du système et installation des prérequis.\n"
+
+                                echo -e "${WHITE}[2] Ajout de Vault :${NC}"
+                                echo -e "   - Configuration du dépôt officiel HashiCorp.\n"
+
+                                echo -e "${WHITE}[3] Installation :${NC}"
+                                echo -e "   - Installation du service Vault sur le système.\n"
+
+                                enter
 
                                 msg="Veuillez patienter durant l'installation de Vault"
                                 BLA::start_loading_animation "$msg" "${BLA_passing_dots[@]}"
@@ -399,17 +402,33 @@ clear
                                     sleep 2
                                 else
                                     echo -e "${RED}Problème lors de l'installation de Vault...${NC}\n"
-                                    echo -e "Veuillez consulter ${WHITE}/var/log/apt/history.log${NC} et ${WHITE}/var/log/apt/term.log${NC}, pour plus d'information"
-                                    sleep 5
+                                    echo -e "Veuillez consulter ${WHITE}/var/log/apt/history.log${NC} et ${WHITE}/var/log/apt/term.log${NC}, pour plus d'information\n"
+                                    sleep 4
+                                    
+                                    clear
+                                    afficher_bienvenue
+                                    echo -e "Le programme d'installation va quitter"
+                                    sleep 2
                                     exit 1
                                 fi
 
-                                # === [2] CLÉS GPG ET CERTIFICATS ===    
+# =============================== [2] CLÉS GPG ET CERTIFICATS ===============================
+
+                                # ===== CLEES GPG =====    
                                 clear
                                 afficher_bienvenue    
 
-                                # Message [2]
-                                echo -e "${WHITE}[2] Clés GPG et Certificats TLS :${NC}\n"    
+                                echo -e "${YELLOW}=== Sécurisation Cryptographique Vault ===${NC}\n"
+
+                                echo -e "${WHITE}[1] Génération des clés GPG :${NC}"
+                                echo -e "   - Protection de la clé privée SSL Vault"
+                                echo -e "   - Sécurisation des unseal keys et du root token\n"
+
+                                echo -e "${WHITE}[2] Génération des certificats SSL :${NC}"
+                                echo -e "   - Configuration OpenSSL"
+                                echo -e "   - Clé privée, CSR et CA\n"
+    
+                                enter
 
                                 msg="Initialisation Clé GPG et Certificats"
                                 echo -e "\n"
@@ -421,43 +440,37 @@ clear
                                 clear
                                 afficher_bienvenue
 
+                                
+                                
                                 # === Clé GPG pour clé privée TLS ===
-                                echo -e "Création clés GPG, afin de protéger la ${WHITE}clé privée TLS${NC}"
-                                sleep 2
-
-                                # Génération
-                                gpg --full-generate-key
-
-                                while true; do
-                                    echo -e "Veuillez enregistrer les informations ci-dessus\n"
-                                    read -p "Appuyez sur [Entrée] pour continuer : " input
-
-                                    if [[ -z "$input" ]]; then
-                                        break
-                                    else
-                                        echo -e "\n${RED}Erreur : appuyez uniquement sur Entrée.${NC}\n"
-                                    fi
-                                done
-
-                                # Variable ID GPG ==========> Clé privée OpenSSL
-                                KEY_PRIVATE_TLS=$(gpg --list-keys --keyid-format long | grep -o '[0-9A-F]\{40\}' | tail -n1)
-
-                                # === Clé GPG pour unseal keys et le root token ===
+                                
                                 clear
                                 afficher_bienvenue
-                               
-                                msg="Création clés GPG, afin de protéger la Clée privée du certificat de Vault,les unseal keys et le root token"
+                                
+                                echo -e "${YELLOW}=== Génération des clés GPG ===${NC}\n"
+
+                                echo -e "${WHITE}[1] Clé GPG Vault :${NC}"
+                                echo -e "   - Création d'une clé GPG dédiée à Vault (unseal keys et root token).\n"
+
+                                echo -e "${WHITE}[2] Clé GPG OpenSSL :${NC}"
+                                echo -e "   - Création d'une clé GPG dédiée à la clé privée des certificats SSL.\n"
+
+                                echo -e "   - Les clés seront enregistrées => ${WHITE}/home/$USER/.gnupg${NC}\n"
+
+                                
+
+                                msg="Création clés GPG, afin de protéger la Clée privée du certificat de Vault"
                                 echo -e "\n"
 
                                 BLA::start_loading_animation "$msg" "${BLA_passing_dots[@]}"
-                                sleep 3
+                                sleep 2
                                 BLA::stop_loading_animation
 
                                 # Génération
                                 gpg --full-generate-key
 
                                 while true; do
-                                    echo -e "Veuillez enregistrer les informations ci-dessus\n"
+                                    echo -e "\n\nVeuillez enregistrer les informations ci-dessus\n"
                                     read -p "Appuyez sur [Entrée] pour continuer : " input
 
                                     if [[ -z "$input" ]]; then
@@ -467,21 +480,78 @@ clear
                                     fi
                                 done
 
-                                # Variable ID GPG ==========> Clées Vault
+                                # Variable ID clé GPG ==========> Clé privée OpenSSL
+                                KEY_PRIVATE_TLS=$(gpg --list-keys --keyid-format long | grep -o '[0-9A-F]\{40\}' | tail -n1)
+
+                                
+                                
+                                # === Clé GPG pour unseal keys et le root token ===
+                                clear
+                                afficher_bienvenue
+                               
+                                msg="Création clés GPG, afin de protéger les unseal keys et le root token"
+                                echo -e "\n"
+
+                                BLA::start_loading_animation "$msg" "${BLA_passing_dots[@]}"
+                                sleep 2
+                                BLA::stop_loading_animation
+
+                                # Génération
+                                gpg --full-generate-key
+
+                                while true; do
+                                    echo -e "\n\nVeuillez enregistrer les informations ci-dessus\n"
+                                    read -p "Appuyez sur [Entrée] pour continuer : " input
+
+                                    if [[ -z "$input" ]]; then
+                                        break
+                                    else
+                                        echo -e "\n${RED}Erreur : appuyez uniquement sur Entrée.${NC}\n"
+                                    fi
+                                done
+
+                                # Variable ID clé GPG ==========> Clées Vault
                                 KEY_VAULT=$(gpg --list-keys --keyid-format long | grep -o '[0-9A-F]\{40\}' | tail -n1)
 
 
-                                # === Variables Pour le certificat Openssl de Vault  ===
+                                # ===== CERTIFICAT OPENSSL POUR VAULT  =====
+                                
+                                # === FICHIER DE CONFIGURATION ===
                                 clear
                                 afficher_bienvenue
-                                echo -e "Création clé privée TLS et une demande de certificat associée"                                            
-                                sleep 2
+                                
+                                echo -e "${YELLOW}=== Génération des Certificats OpenSSL ===${NC}\n"
+
+                                echo -e "${WHITE}[1] Configuration OpenSSL :${NC}"
+                                echo -e "   - Création du fichier => ${WHITE}/etc/vault/ssl/vault_tls.cnf${NC}."
+                                echo -e "   - Définition du domaine : possibilité d'utiliser un domaine existant."
+                                echo -e "   - Configuration : CN, DNS1, et IP.\n"
+
+                                echo -e "${WHITE}[2] Clé privée :${NC}"
+                                echo -e "   - Génération de la clé privée (RSA / EC) => ${WHITE}/etc/vault/ssl/vault.key${NC}."
+                                echo -e "   - Protection par permissions strictes.\n"
+
+                                echo -e "${WHITE}[3] CSR (Certificate Signing Request) :${NC}"
+                                echo -e "   - Création du fichier CSR à partir de la clé privée => ${WHITE}/etc/vault/ssl/vault.csr${NC}."
+                                echo -e "   - Intégration des extensions (SAN, usage).\n"
+
+                                echo -e "${WHITE}[4] Autorité de Certification (CA) :${NC}"
+                                echo -e "   - Utilisation d'un certificat auto-signé ou d'une CA existante."
+                                echo -e "   - Création du certificat signé => ${WHITE}/etc/vault/ssl/vault.crt${NC}\n"
+
+                                echo -e "${WHITE}[5] Sécurisation post-CA :${NC}"
+                                echo -e "   - Restriction des droits sur clés et certificats."
+                                echo -e "   - Stockage sécurisé et sauvegarde chiffrée.\n"
+
+
+                                enter
 
                                 clear
                                 afficher_bienvenue
 
                                 # Choix utilisation nom de domain pour certificat
                                 while true; do
+                                    
                                     read -p "Voulez-vous utiliser un nom de domaine, pour l'édition du certificat y/n" choix_domain_ssl
 
                                     # Avec nom de domaine
@@ -495,11 +565,13 @@ clear
                                             echo "Le domaine '$domain_ssl' existe et résout correctement."
                                             sleep 2
 
+
+                                            # === 1-3) NOM serveur CN ===
                                             clear
                                             afficher_bienvenue
 
                                             while true; do
-                                                # NOM serveur
+                                                
                                                 read -p "Veuillez indiquer le Nom principal du serveur (Common Name)\n" cn_vault
 
                                                 clear
@@ -518,11 +590,14 @@ clear
                                                 fi
                                             done
 
+
+
+                                            # === 2-3) NOM DNS serveur ===
                                             clear
                                             afficher_bienvenue
 
                                             while true; do
-                                                # NOM DNS serveur 
+                                               
                                                 read -p "Veuillez indiquer Nom DNS utilisé par les clients Vault (format => Nom + FQDN)\n" dns_vault
 
                                                 clear
@@ -541,11 +616,12 @@ clear
                                                 fi
                                             done
 
+                                            # === 3-3) IP serveur ===
                                             while true; do
                                                 clear
                                                 afficher_bienvenue
                                                 
-                                                # Ip serveur
+                                               
                                                 read -p "Veuillez indiquer l'IP du serveur Vault \n" ip_vault
 
                                                 # test format IP
@@ -557,6 +633,7 @@ clear
                                                         clear
                                                         afficher_bienvenue
 
+                                                        # Confirmation utilisation adresse IP
                                                         echo -e "Adresse IP choisie pour Vault = $ip_vault\n"       
                                                         read -p "L'adresse IP est-elle correcte ? y/n" validation_ip
 
@@ -616,11 +693,15 @@ EOF
 
                                     # Choix 2 pas de domaine
                                     elif [[ "$choix_domain_ssl" =~ ^[nN]$ ]]; then
+                                            
+                                           
+                                            # === 1-3) NOM serveur CN ===
                                             clear
                                             afficher_bienvenue
 
+                
                                             while true; do
-                                                # NOM serveur
+                                            
                                                 read -p "Veuillez indiquer le Nom principal du serveur (Common Name)\n" cn_vault
 
                                                 clear
@@ -639,12 +720,14 @@ EOF
                                                 fi
                                             done
 
+
+                                            # === 2-3) NOM DNS serveur === 
                                             clear
                                             afficher_bienvenue
 
                                             while true; do
                                                 
-                                                # NOM DNS serveur
+                                                
                                                 read -p "Veuillez indiquer Nom DNS utilisé par les clients Vault (format => Nom)\n" dns_vault
 
                                                 clear
@@ -664,10 +747,13 @@ EOF
                                             done
 
                                             while true; do
+                                                
+                                                
+                                                # === 3-3) Ip serveur ===
                                                 clear
                                                 afficher_bienvenue
 
-                                                # Ip serveur
+                                                
                                                 read -p "Veuillez indiquer l'IP du serveur Vault \n" ip_vault
 
                                                 # Test IP
@@ -679,6 +765,7 @@ EOF
                                                         clear
                                                         afficher_bienvenue
 
+                                                        # Confirmation utilisation adresse IP
                                                         echo -e "Adresse IP choisie pour Vault = $ip_vault\n"       
                                                         read -p "L'adresse IP est-elle correcte ? y/n" validation_ip
 
@@ -732,6 +819,7 @@ EOF
                                     fi
                                 done
 
+                                # === CLEE PRIVEE CERTIFICAT === 
                                 clear
                                 afficher_bienvenue
                                 
@@ -742,6 +830,7 @@ EOF
                                     
                                     clear
                                     afficher_bienvenue
+                                    
                                     # Test presence clé privé
                                     if [ -f /etc/vault/ssl/vault.key ]; then
                                         echo -e "${GREEN}OK : vault.key créé.${NC}"
@@ -758,7 +847,9 @@ EOF
                                 # droit strict sur vault.key
                                 sudo chmod 600 /etc/vault/ssl/vault.key
                                 
-                                # création du CSR
+                                # === CREATION CSR ===
+                                
+                                # Commande de cration du CSR avec redirection des logs
                                 sudo openssl req -new -key /etc/vault/ssl/vault.key -out /etc/vault/ssl/vault.csr -config /etc/vault/ssl/vault_tls.cnf > /var/log/vault_tls.log 2>&1
 
                                     clear
@@ -780,8 +871,7 @@ EOF
                                 clear
                                 afficher_bienvenue
                                 
-                                
-
+                                # Demande pour la durée de validitée du certificat de Vault
                                 while true; do
                                      read -p "Veuillez entrer une valeur pour la durée de validité du certificat (Format => jour entre 1 et 365)" days_vault
 
@@ -792,11 +882,13 @@ EOF
                                     fi
                                 done
 
+                                # === Signature certificat ===
                                 clear
                                 afficher_bienvenue
 
                                 while true; do
 
+                                    # Avertissement
                                     echo -e "${YELLOW}=== Avertissement Sécurité – Clé privée de la CA ===${NC}\n"
 
                                     echo -e "${WHITE}[!] Signature avec une CA existante :${NC}"
@@ -810,23 +902,24 @@ EOF
                                     echo -e "   - Rechiffrer ou supprimer immédiatement toute clé déchiffrée après usage.\n"
 
 
-                                    echo -e "${YELLOW}Choix du CA, veuillez choisir entre${NC}\n"
+                                    echo -e "${YELLOW}Veuillez choisir un mode de CA : ${NC}\n"
                                     
                                     echo -e "[1] Certificat auto signé" 
-                                    echo -e "[2] CA Existant\n\n"    
+                                    echo -e "[2] CA Existante\n\n"    
                                     echo -e "[3]" Sortie Installation
 
                                     read -p "Choix CA :" choix_ca
 
                                     case "$choix_ca" in
 
+                                        # Autosigné
                                         1)
                                         
                                         clear
                                         afficher_bienvenue
                                         
                                         echo -e "${WHITE}[1] Certificat auto signé${NC}\n"
-                                        sleep 1
+                                        
                                         
                                         msg="Edition du certificat"
                                             echo -e "\n"
@@ -834,6 +927,7 @@ EOF
                                             sleep 2
                                             BLA::stop_loading_animation
 
+                                        # Signature certificat auto-signé
                                         openssl x509 -req -in /etc/vault/ssl/vault.csr -signkey /etc/vault/ssl/vault.key -out /etc/vault/ssl/vault.crt -days "$days_vault" -extensions req_ext -extfile /etc/vault/ssl/vault_tls.cnf >> /var/log/vault_tls.log 2>&1
 
                                         clear
@@ -855,6 +949,7 @@ EOF
 
                                         ;;
 
+                                        # CA existante
                                         2)
 
                                         clear
@@ -862,13 +957,14 @@ EOF
                                         
                                         echo -e "${WHITE}[2] CA Existant${NC}"
 
+                                        # Chemin fichier .crt + test
                                         read -p "Veuillez indiquer le chemin vers le CA existant (chemin absolue vers le fichier .crt)" ca_existant_crt
 
                                         if [ -f "$ca_existant_crt" ]; then
                                             echo -e "${GREEN}OK : le fichier existe.${NC}"
                                             sleep 2
                                         else
-                                            echo -e "${RED}ERREUR : dans la récupératio du fichier .crt...${NC}"
+                                            echo -e "${RED}ERREUR : dans la récupération du fichier .crt...${NC}"
                                             sleep 2
                                             echo -e "Le programme d'installation va quitter"
                                             sleep 1
@@ -878,19 +974,21 @@ EOF
                                         clear
                                         afficher_bienvenue
                                         
-                                        read -p "Veuillez indiquer le chemin vers la clé privé" ca_private_key
+                                        # Chemin fichier .key + test
+                                        read -p "Veuillez indiquer le chemin vers la clé privé (chemin absolue vers le fichier .key)" ca_private_key
 
                                         if [ -f "$ca_private_key" ]; then
                                             echo -e "${GREEN}OK : le fichier existe.${NC}"
                                             sleep 2
                                         else
-                                            echo -e "${RED}ERREUR : dans la récupératio du fichier .crt...${NC}"
+                                            echo -e "${RED}ERREUR : dans la récupération de la clés privée...${NC}"
                                             sleep 2
                                             echo -e "Le programme d'installation va quitter"
                                             sleep 1
                                             exit 1
                                         fi
                                         
+                                        # Demande pour durée de validité du certificat
                                         while true; do
                                             read -p "Veuillez entrer une valeur pour la durée de validité du certificat (Format => jour entre 1 et 365)" days_vault
 
@@ -901,6 +999,7 @@ EOF
                                             fi
                                         done
                                         
+                                        # Edition certificat + test de réussite
                                         clear
                                         afficher_bienvenue
                                         
@@ -957,70 +1056,183 @@ EOF
 
 
 
-                                
-                                # === [3] CONFIGURATION DE VAULT === 
+                                # === Sécurisation clé et certificat Vault ===
                                 clear
                                 afficher_bienvenue
+                                
+                                # Avertissement
+                                echo -e "${YELLOW}=== Sécurisation des fichiers SSL ===${NC}\n"
 
-                                echo -e "${WHITE}[3] Configuration de Vault :${NC}\n\n"
+                                echo -e "${WHITE}Attention : les fichiers clés et certificats sont très sensibles.${NC}"
+                                read -p "Voulez-vous chiffrer et sécuriser tous les fichiers maintenant ou plus tard y/n ?" secu_ssl
 
-                                while true; do
-                                    echo -e "${WHITE}Choix de l'IP sur laquelle Vault sera accessible${NC}\n\n"
+                                    
+                                    while true; do
+                                        if [[ "$secu_ssl" =~ ^[yY]$ ]]; then
 
-                                    echo -e "[1] ${YELLOW}Local Host${NC}\n"
-                                    echo -e "Vault sera accessible uniquement depuis le réseau local.\n"
+                                            clear
+                                            afficher_bienvenue
+                                            echo -e "${YELLOW}=== Sécurisation des certificats SSL ===${NC}\n"
 
-                                    echo -e "[2] ${YELLOW}Adresse IP personnalisée${NC}\n"
-                                    echo -e "    Vault sera accessible depuis un autre réseau."
-                                    echo -e "    Des règles de pare-feu (notamment sur le port 8200) seront nécessaires.\n"
+                                            echo -e "${WHITE}[1] Suppression du CSR :${NC}"
+                                            echo -e "   - Le fichier => ${WHITE}/etc/vault/ssl/vault.csr${NC} est supprimé pour sécurité.\n"
 
-                                    echo -e "[3] ${YELLOW}Sortir${NC}\n"
+                                            echo -e "${WHITE}[2] Chiffrement de la clé privée :${NC}"
+                                            echo -e "   - La clé privée => ${WHITE}/etc/vault/ssl/vault.key${NC} est chiffrée avec une clé GPG.\n"
+                                            echo -e "   - Permissions restreintes pour éviter un accès non autorisé.\n"
 
-                                    read -p "Choisissez une option: " choix_menu_vault
+                                            echo -e "${WHITE}[3] Rappel du certificat :${NC}"
+                                            echo -e "   - Le certificat signé reste accessible => ${WHITE}/etc/vault/ssl/vault.crt${NC}\n"
 
-                                    case "$choix_menu_vault" in
+                                            echo -e "${WHITE}[4] Fichier de configuration OpenSSL :${NC}"
+                                            echo -e "   - Le fichier => ${WHITE}/etc/vault/ssl/vault_tls.cnf${NC} reste en place."
+                                            echo -e "   - Permissions restreintes pour éviter un accès non autorisé.\n"
 
-                                        1)
-                                            # === Configuration via Local Host ===
+                                            echo -e "${WHITE}[5] Tache Cron pour renouvelemnt du certificat SSL de Vault :${NC}"
+                                                                                    
+                                            enter
+
+                                            # Suppression .csr
                                             clear
                                             afficher_bienvenue
 
-                                            echo -e " === I)  ${YELLOW}Configuration de Vault avec IP Local Host...${NC} ===\n\n" 
-                                            sleep 3
+                                            echo -e "${WHITE}[1] Suppression du CSR :${NC}"
+                                            
+                                            sudo rm /etc/vault/ssl/vault.csr
 
-                                            msg="Configuration du fichier /etc/vault.d/vault.hcl"
-                                            echo -e "\n"
-                                            BLA::start_loading_animation "$msg" "${BLA_passing_dots[@]}"
-                                            sleep 4
-                                            BLA::stop_loading_animation
-                                        ;;
+                                            if [ -f /etc/vault/ssl/vault.csr ]; then
+                                                echo -e "${RED}ERREUR : Lors de la suppression du fichier =>${NC} ${WHITE}/etc/vault/ssl/vault.csr...${NC}"
+                                                echo -e "Suite à l'installation de Gcert, veuillez supprimer ce fichier." 
+                                                sleep 3
+                                            else
+                                                echo -e "${GREEN}OK : Suppression réussie.${NC}"
+                                                sleep 2
+                                            fi
 
-                                        2)
-                                            :
-                                        ;;
-
-                                        3)
+                                            # Chiffrement .key
                                             clear
                                             afficher_bienvenue
-                                            echo -e "${RED}Le programme d'installation va quitter...${NC}" 
-                                                                                                        
-                                            msg="Veuillez patienter"
-                                            echo -e "\n"
-                                            BLA::start_loading_animation "$msg" "${BLA_passing_dots[@]}"
-                                            sleep 4
-                                            BLA::stop_loading_animation
-                                                                                
-                                            exit 1         
-                                        ;;
+                                            echo -e "${WHITE}[2] Chiffrement et permissions de la clé privée : /etc/vault/ssl/vault.key${NC}\n"
 
-                                        *)
-                                            echo -e "${RED}Erreur, Réponse invalide.${NC}"
-                                        ;;
+                                            echo -e "Utilisation de la GPG créée précédemment."
 
-                                    esac
+                                            # Chiffrement de la clé TLS avec GPG
+                                            gpg -e -r $KEY_PRIVATE_TLS /etc/vault/ssl/vault.key
 
-                                done
+                                                # Vérification que le chiffrement a réussi et le fichier existe au bon endroit.
+                                                if [ $? -eq 0 ] && [ -f /etc/vault/ssl/vault.key.gpg ]; then
+                                                    
+                                                    echo -e "${GREEN}OK : le fichier: ${WHITE}/etc/vault/ssl/vault.key${NC} a bien été chiffré.${NC}"
+                                                    echo -e "Le fichier vault.key va être supprimé"
+                                                    sleep 2
+                                                    
+                                                    # Suppression
+                                                    sudo rm /etc/vault/ssl/vault.key
 
+                                                    # Vérification de la suppression
+                                                    if [ -f /etc/vault/ssl/vault.key ]; then
+                                                        echo -e "${RED}ERREUR : Lors de la suppression du fichier =>${NC} ${WHITE}/etc/vault/ssl/vault.key...${NC}"
+                                                        echo -e "Suite à l'installation de Gcert, veuillez supprimer ce fichier."
+                                                        sleep 3
+                                                    else
+                                                        echo -e "${GREEN}OK : Suppression réussie.${NC}"
+                                                        sleep 2
+                                                    fi
+
+                                                else
+                                                    echo -e "${RED}ERREUR : Le chiffrement GPG a échoué =>${NC} ${WHITE}/etc/vault/ssl/vault.key${NC}"
+                                                    echo -e "La clé privée n'a PAS été supprimée par sécurité."
+                                                    sleep 3
+                                                fi
+
+                                            clear
+                                            afficher_bienvenue
+
+                                            echo -e "   - Droits restreints sur la clé chiffrée : chmod 600 ${WHITE}/etc/vault/ssl/vault.key.gpg${NC}."
+                                            echo -e "   - Propriétaire et groupe sécurisés : chown vault:vault ${WHITE}/etc/vault/ssl/vault.key.gpg${NC}.\n"
+
+                                        
+                                                chmod 600 /etc/vault/ssl/vault.key.gpg
+                                                chown vault:vault /etc/vault/ssl/vault.key.gpg
+
+                                                    if [[ $(stat -c "%a" /etc/vault/ssl/vault.key.gpg) == "600" && $(stat -c "%U:%G" /etc/vault/ssl/vault.key.gpg) == "vault:vault" ]]; then
+                                                            echo -e "${GREEN}OK : le fichier ${WHITE}/etc/vault/ssl/vault.key.gpg${GREEN} est bien sécurisé.${NC}"
+
+                                                    else
+                                                        echo -e "${RED}ERREUR : permissions ou propriétaire incorrects pour ${WHITE}$FILE${NC}"
+                                                        echo -e "Suite à l'installation de Gcert, veuillez résoudre ce probléme."
+                                                    fi
+
+                                            clear
+                                            afficher_bienvenue
+
+                                            echo -e "   - Droits restreints sur le fichier de configuration : chmod 640 ${WHITE}/etc/vault/ssl/vault_tls.cnf${NC}."
+                                            echo -e "   - Propriétaire et groupe sécurisés : chown root:vault ${WHITE}/etc/vault/ssl/vault_tls.cnf${NC}.\n"
+
+                                            # Appliquer les droits
+                                            chmod 640 /etc/vault/ssl/vault_tls.cnf
+                                            chown root:vault /etc/vault/ssl/vault_tls.cnf
+
+                                            # Vérification droit et proprietaire
+                                            if [[ $(stat -c "%a" /etc/vault/ssl/vault_tls.cnf) == "640" && $(stat -c "%U:%G" /etc/vault/ssl/vault_tls.cnf) == "root:vault" ]]; then
+                                                echo -e "${GREEN}OK : le fichier ${WHITE}/etc/vault/ssl/vault_tls.cnf${GREEN} est bien sécurisé.${NC}"
+                                                sleep 2
+                                            else
+                                                echo -e "${RED}ERREUR : permissions ou propriétaire incorrects pour ${WHITE}/etc/vault/ssl/vault_tls.cnf${NC}"
+                                                echo -e "Veuillez vérifier et corriger les droits du fichier."
+                                            fi
+
+
+                                            # === Tache Cron ===
+                                            clear
+                                            afficher_bienvenue
+
+                                            while true; do
+                                                read -p "Voulez-vous créer une tâche cron afin de renouveler automatiquement le certificat de Vault ? (y/n) : " choix_cron
+                                                
+                                                if [[ "$choix_cron" =~ ^[yY]$ ]]; then
+                                                    echo -e "   - Création d'un script de renouvellement automatique du certificat Vault."
+                                                    echo -e "   - Met à jour les permissions et redémarre le service Vault.\n"
+                                                    
+                                                    # Script de renouvellement
+                                                    cat > /usr/local/bin/renew_vault_ssl.sh << EOF
+#!/bin/bash
+openssl req -new -x509 -days $days_vault -key /etc/vault/ssl/vault.key -out /etc/vault/ssl/vault.crt -config /etc/vault/ssl/vault_tls.cnf
+chmod 640 /etc/vault/ssl/vault.crt
+chown root:vault /etc/vault/ssl/vault.crt
+systemctl restart vault
+EOF
+        
+                                                    chmod +x /usr/local/bin/renew_vault_ssl.sh
+                                                    
+                                                    # Ajouter au cron (renouvellement automatique avant expiration)
+                                                    (crontab -l 2>/dev/null | grep -v "renew_vault_ssl.sh"; echo "0 0 */$(($days_vault - 1)) * * /usr/local/bin/renew_vault_ssl.sh") | crontab -
+                                                    
+                                                    echo -e "${GREEN} Tâche cron configurée avec succès${NC}"
+                                                    break
+                                                    
+                                                elif [[ "$choix_cron" =~ ^[nN]$ ]]; then
+                                                    break
+                                                    
+                                                else
+                                                    clear
+                                                    afficher_bienvenue
+                                                    echo -e "${RED}Réponse invalide. Tapez y ou n.${NC}"
+                                                fi
+                                            done
+
+
+
+                                        elif [[ "$secu_ssl" =~ ^[nN]$ ]]; then
+                                            break
+
+
+                                        else
+                                            clear
+                                            afficher_bienvenue
+                                            echo -e "${RED}Réponse invalide. Tapez y ou n.${NC}"
+                                        fi
+                                    done
 
 # =============================== DEPENDENCES via PIPX ===============================
                         
