@@ -109,12 +109,12 @@ enter() {
 # Message Logs
 
 log() {
-    normal_log_redirection="> /var/log/gcert_install/normal.log"
-    error_log_redirection="2> /var/log/gcert_install/erreur.log"
+    error_log_redirection="2>> /var/log/gcert_install/erreur.log"
     
-    # Exécution de la commande avec redirections
-    "$@" $normal_log_redirection $error_log_redirection
+    # Exécution de la commande avec redirection de stdout vers /dev/null et stderr vers erreur.log
+    "$@" > /dev/null $error_log_redirection
 }
+
 
 
 # === FONCTIONNEMENT SCRIPT ===
@@ -143,9 +143,8 @@ afficher_bienvenue
                 
                 echo -e "\n\n${YELLOW}=== Redirections des logs ===${NC}"
                 echo -e "Création du dossier de logs, pour l'installation de gcert"
-                echo -e "   - Les informations normales sont enregistrées dans ${WHITE}/var/log/gcert_install/normal.log${NC}, avec un timestamp et un préfixe [NORMAL]."
                 echo -e "   - Les erreurs sont redirigées vers ${WHITE}/var/log/gcert_install/erreur.log${NC}, avec un préfixe [ERROR]."
-                echo -e "   - Toute sortie de commande est également redirigée vers ${WHITE}/dev/null${NC}, pour éviter l'affichage inutile.\n"
+                
 
                 enter
 
@@ -155,10 +154,10 @@ afficher_bienvenue
     
                 # Vérification de la création du répertoire /var/log/gcert_install/
 
-                    echo -e "${GREEN}OK : Le répertoire ${WHITE}/var/log/gcert_install${GREEN} existe.${NC}"
+                    echo -e "${GREEN}OK : Le répertoire ${WHITE}/var/log/gcert_install${GREEN}créé avec succès.${NC}"
                     sleep 2
                 else
-                    echo -e "${RED}ERREUR : Le répertoire ${WHITE}/var/log/gcert_install${RED} créé avec succès.${NC}"
+                    echo -e "${RED}ERREUR : Probléme lor de la création du répertoire ${WHITE}/var/log/gcert_install${RED}.${NC}"
                     echo -e "Veuillez créer le répertoire avec la commande : sudo mkdir /var/log/gcert_install"
                     sleep 3
                 fi
@@ -301,7 +300,7 @@ afficher_bienvenue
 
                                 # Remplir les tableaux
                                 for pkg in "${PREREQUIS[@]}"; do
-                                    if log dpkg -s "$pkg" ; then
+                                    if log dpkg -s "$pkg"; then
                                         present+=("$pkg")
                                     else
                                         absent+=("$pkg")
