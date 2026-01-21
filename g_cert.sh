@@ -132,7 +132,7 @@ afficher_bienvenue
                 afficher_bienvenue
                 
                 echo -e "\n${YELLOW}=== Redirections des logs ===${NC}"
-                echo -e "\n\nCréation du dossier de logs, pour l'installation de gcert : \n"
+                echo -e "\n\nCréation du dossier de logs, pour l'installation de gcert : "
                 echo -e "   - Les erreurs sont redirigées vers ${WHITE}/var/log/gcert_install/erreur.log${NC}\n\n"
                 
 
@@ -198,7 +198,7 @@ afficher_bienvenue
                 sleep 3
                 
                 # Effectuer le ping
-                if log ping -c 1 "1.1.1.1" > /dev/null 2>> /var/log/gcert_install/erreur.log; then
+                if ping -c 1 "1.1.1.1" > /dev/null 2>> /var/log/gcert_install/erreur.log; then
                     BLA::stop_loading_animation
                     
                     echo -e "${GREEN}Connexion WAN OK !${NC}"
@@ -497,7 +497,7 @@ afficher_bienvenue
                                 echo -e "\n"
 
                                 BLA::start_loading_animation "$msg" "${BLA_passing_dots[@]}"
-                                sleep 2
+                                sleep 3
                                 BLA::stop_loading_animation
 
                                 clear
@@ -522,7 +522,7 @@ afficher_bienvenue
 
                                 enter
 
-                                msg="nitialisation création clés GPG, afin de protéger la Clée privée du certificat de Vault"
+                                msg="Initialisation création clés GPG, afin de protéger la Clée privée du certificat de Vault"
                                 echo -e "\n"
 
                                 BLA::start_loading_animation "$msg" "${BLA_passing_dots[@]}"
@@ -537,7 +537,7 @@ afficher_bienvenue
                                 gpg --full-generate-key
 
                                 while true; do
-                                    echo -e "\n\nVeuillez enregistrer les informations ci-dessus\n"
+                                    echo -e "\n\n${YELLOW}Veuillez enregistrer les informations ci-dessus${NC}\n"
                                     read -p "Appuyez sur [Entrée] pour continuer : " input
 
                                     if [[ -z "$input" ]]; then
@@ -658,7 +658,7 @@ afficher_bienvenue
                                                     
                                                     clear
                                                     afficher_bienvenue
-                                                    echo "\n${GREEN}CN confirmé : '$cn_vault'${NC}"
+                                                    echo "\n${GREEN}CN confirmé : '$cn_vault'...${NC}"
                                                     sleep 3
                                                     break
                                                 elif [[ "$validation_cn" =~ ^[nN]$ ]]; then
@@ -693,7 +693,7 @@ afficher_bienvenue
                                                     
                                                     clear
                                                     afficher_bienvenue
-                                                    echo "\n${GREEN}DNS.1 confirmé : '$dns_vault'${NC}"
+                                                    echo "\n${GREEN}DNS.1 confirmé : '$dns_vault'...${NC}"
                                                     sleep 3
                                                     break
                                                 elif [[ "$validation_dns1" =~ ^[nN]$ ]]; then
@@ -736,7 +736,7 @@ afficher_bienvenue
                                                            
                                                             clear
                                                             afficher_bienvenue
-                                                            echo "\n${GREEN}IP confirmée : '$ip_vault'${NC}"
+                                                            echo "\n${GREEN}IP confirmée : '$ip_vault'...${NC}"
                                                             sleep 3
                                                             break 2
                                                         elif [[ "$validation_ip" =~ ^[nN]$ ]]; then
@@ -945,7 +945,7 @@ EOF
                                 echo -e "Génération de la ${WHITE}clé privée TLS${NC} et ${WHITE}fichier CSR${NC}"
                                 sleep 2
                                 # Création de la clé privée
-                                sudo openssl genrsa -out /etc/vault/ssl/vault-2.key > /dev/null 2>> /var/log/gcert_install/erreur.log
+                                sudo openssl genrsa -out /etc/vault/ssl/vault.key > /dev/null 2>> /var/log/gcert_install/erreur.log
                                     
                                     clear
                                     afficher_bienvenue
@@ -968,7 +968,7 @@ EOF
                                 
                                 # === CREATION CSR ===
                                 
-                                # Commande de cration du CSR avec redirection des logs
+                                # Commande de création du CSR avec redirection des logs
                                 sudo openssl req -new -key /etc/vault/ssl/vault.key -out /etc/vault/ssl/vault.csr -config /etc/vault/ssl/vault_tls.cnf > /dev/null 2>> /var/log/gcert_install/erreur.log
 
                                     clear
