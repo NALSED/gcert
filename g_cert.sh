@@ -109,8 +109,8 @@ enter() {
 # Message Logs
 
 log() {
-    normal_log_redirection="> /var/log/install_gcertnormal.log"
-    error_log_redirection="2> /var/log/install_gcert/erreur.log"
+    normal_log_redirection="> /var/log/gcert_install/normal.log"
+    error_log_redirection="2> /var/log/gcert_install/erreur.log"
     
     # Exécution de la commande avec redirections
     "$@" $normal_log_redirection $error_log_redirection
@@ -158,14 +158,14 @@ afficher_bienvenue
                     echo -e "${GREEN}OK : Le répertoire ${WHITE}/var/log/gcert_install${GREEN} existe.${NC}"
                     sleep 2
                 else
-                    echo -e "${RED}ERREUR : Le répertoire ${WHITE}/var/log/gcert_install${RED} n'existe pas.${NC}"
+                    echo -e "${RED}ERREUR : Le répertoire ${WHITE}/var/log/gcert_install${RED} créé avec succès.${NC}"
                     echo -e "Veuillez créer le répertoire avec la commande : sudo mkdir /var/log/gcert_install"
                     sleep 3
                 fi
 
                 # Vérification de la propriété du répertoire
                 if [[ $(stat -c "%U:%G" /var/log/gcert_install) == "$USER:$USER" ]]; then
-                    echo -e "${GREEN}OK : Le propriétaire du répertoire ${WHITE}/var/log/gcert_install${GREEN} est correct.${NC}"
+                    echo -e "${GREEN}OK : Le propriétaire du répertoire ${WHITE}/var/log/gcert_install${GREEN} est correct : $USER.${NC}"
                     sleep 2
                 else
                     echo -e "${RED}ERREUR : Le propriétaire du répertoire ${WHITE}/var/log/gcert_install${RED} est incorrect.${NC}"
@@ -175,7 +175,7 @@ afficher_bienvenue
 
                 # Vérification des permissions du répertoire
                 if [[ $(stat -c "%a" /var/log/gcert_install) == "755" ]]; then
-                    echo -e "${GREEN}OK : Les permissions du répertoire ${WHITE}/var/log/gcert_install${GREEN} sont correctes.${NC}"
+                    echo -e "${GREEN}OK : Les permissions du répertoire ${WHITE}/var/log/gcert_install${GREEN} sont correctes :${NC} ${WHITE}755 ${NC}"
                     sleep 2
                 else
                     echo -e "${RED}ERREUR : Les permissions du répertoire ${WHITE}/var/log/gcert_install${RED} sont incorrectes.${NC}"
