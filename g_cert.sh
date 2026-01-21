@@ -182,7 +182,7 @@ afficher_bienvenue
                     echo -e "${RED}ERREUR : Les permissions du répertoire ${WHITE}/var/log/gcert_install${RED} sont incorrectes.${NC}"
                     echo -e "Veuillez corriger les permissions avec la commande : sudo chmod 755 /var/log/gcert_install"
                     sleep 3
-                    exit 1
+                    exit
                 fi
 
                 clear
@@ -302,8 +302,8 @@ afficher_bienvenue
                                 absent=()
 
                                 # Remplir les tableaux
-                                for pkg in "${PREREQUIS[@]}"> /dev/null 2>> /var/log/gcert_install/erreur.log; do
-                                    if dpkg -s "$pkg"; then
+                                for pkg in "${PREREQUIS[@]}" ; do
+                                    if dpkg -s "$pkg" > /dev/null 2>&1; then
                                         present+=("$pkg")
                                     else
                                         absent+=("$pkg")
@@ -345,7 +345,7 @@ afficher_bienvenue
                                         if [[ ${pkg} == "gum" ]]; then        
                                             repo_gum    
                                         else       
-                                            sudo apt install -qq ${pkg} -y > /dev/null 2>&1
+                                            sudo apt install -qq ${pkg} -y > /dev/null 2>> /var/log/gcert_install/erreur.log
                                         fi
                                         
                                         # Effacer la ligne du message dynamique
