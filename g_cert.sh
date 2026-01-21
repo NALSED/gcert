@@ -141,9 +141,9 @@ afficher_bienvenue
                 clear
                 afficher_bienvenue
                 
-                echo -e "\n\n${YELLOW}=== Redirections des logs ===${NC}"
-                echo -e "Création du dossier de logs, pour l'installation de gcert"
-                echo -e "   - Les erreurs sont redirigées vers ${WHITE}/var/log/gcert_install/erreur.log${NC}, avec un préfixe [ERROR]."
+                echo -e "\n${YELLOW}=== Redirections des logs ===${NC}"
+                echo -e "\n\nCréation du dossier de logs, pour l'installation de gcert : "
+                echo -e "   - Les erreurs sont redirigées vers ${WHITE}/var/log/gcert_install/erreur.log${NC}\n\n"
                 
 
                 enter
@@ -157,9 +157,10 @@ afficher_bienvenue
                     echo -e "${GREEN}OK : Le répertoire ${WHITE}/var/log/gcert_install${GREEN}créé avec succès.${NC}"
                     sleep 2
                 else
-                    echo -e "${RED}ERREUR : Probléme lor de la création du répertoire ${WHITE}/var/log/gcert_install${RED}.${NC}"
+                    echo -e "${RED}ERREUR : Probléme lors de la création du répertoire ${WHITE}/var/log/gcert_install${RED}.${NC}"
                     echo -e "Veuillez créer le répertoire avec la commande : sudo mkdir /var/log/gcert_install"
                     sleep 3
+                    exit 1
                 fi
 
                 # Vérification de la propriété du répertoire
@@ -170,6 +171,7 @@ afficher_bienvenue
                     echo -e "${RED}ERREUR : Le propriétaire du répertoire ${WHITE}/var/log/gcert_install${RED} est incorrect.${NC}"
                     echo -e "Veuillez corriger la propriété avec la commande : sudo chown $USER:$USER /var/log/gcert_install"
                     sleep 3
+                    exit 1
                 fi
 
                 # Vérification des permissions du répertoire
@@ -180,6 +182,7 @@ afficher_bienvenue
                     echo -e "${RED}ERREUR : Les permissions du répertoire ${WHITE}/var/log/gcert_install${RED} sont incorrectes.${NC}"
                     echo -e "Veuillez corriger les permissions avec la commande : sudo chmod 755 /var/log/gcert_install"
                     sleep 3
+                    exit 1
                 fi
 
                 clear
@@ -189,7 +192,7 @@ afficher_bienvenue
                 echo -e "   - Si un problème survient lors de l'exécution du script, un message d'erreur sera affiché."
                 echo -e "   - Le script quittera immédiatement en cas d'erreur, mais les logs seront disponibles."
                 echo -e "   - Les erreurs seront enregistrées dans ${WHITE}/var/log/gcert_install/erreur.log${NC}."
-                echo -e "   - Pour les sorties standard, consultez ${WHITE}/var/log/gcert_install/normal.log${NC}.\n"
+                
 
                 enter        
                 # Test WAN
@@ -204,7 +207,7 @@ afficher_bienvenue
                 sleep 3
                 
                 # Effectuer le ping
-                if log ping -c 1 "1.1.1.1" ; then
+                if log ping -c 1 "1.1.1.1" > /dev/null 2>> /var/log/gcert_install/erreur.log; then
                     BLA::stop_loading_animation
                     
                     echo -e "${GREEN}Connexion WAN OK !${NC}"
@@ -299,8 +302,8 @@ afficher_bienvenue
                                 absent=()
 
                                 # Remplir les tableaux
-                                for pkg in "${PREREQUIS[@]}"; do
-                                    if log dpkg -s "$pkg"; then
+                                for pkg in "${PREREQUIS[@]}"> /dev/null 2>> /var/log/gcert_install/erreur.log; do
+                                    if dpkg -s "$pkg"; then
                                         present+=("$pkg")
                                     else
                                         absent+=("$pkg")
