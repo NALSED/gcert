@@ -1697,13 +1697,8 @@ EOF
                                                         clear
                                                         afficher_bienvenue
 
-                                                        while true; do
-                                                            read -p "Voulez-vous créer une tâche cron afin de renouveler automatiquement le certificat de Vault ? (y/n) : " choix_cron
-                                                            
-                                                            if [[ "$choix_cron" =~ ^[yY]$ ]]; then
-                                                                clear
-                                                                afficher_bienvenue
-
+                                                        
+                                                                
                                                                 echo -e "${CYAN_BRIGHT}=== Renouvellement du certificat via Cron ===${NC}\n"
                                                                 echo -e "   - Création d'un script pour le renouvellement automatique du certificat Vault et Mise à jour des permissions."
                                                                 echo -e "   - Enregistrement de l'exécution du script dans systemd."
@@ -1718,12 +1713,12 @@ EOF
                                                                 sudo chown root:root /usr/local/bin/renew_vault_ssl.sh
                                                                 
                                                                 sudo bash -c 'cat > /usr/local/bin/renew_vault_ssl.sh << EOF
-                                            #!/bin/bash
-                                            openssl req -new -x509 -days "$days_vault" -key /etc/vault/ssl/vault.key -out /etc/vault/ssl/vault.crt -config /etc/vault/ssl/vault_tls.cnf
-                                            chmod 640 /etc/vault/ssl/vault.crt
-                                            chown root:vault /etc/vault/ssl/vault.crt
-                                            systemctl restart vault
-                                            EOF'
+#!/bin/bash
+openssl req -new -x509 -days "$days_vault" -key /etc/vault/ssl/vault.key -out /etc/vault/ssl/vault.crt -config /etc/vault/ssl/vault_tls.cnf
+chmod 640 /etc/vault/ssl/vault.crt
+chown root:vault /etc/vault/ssl/vault.crt
+systemctl restart vault
+EOF'
                                                     
                                                                 sudo chmod 700 /usr/local/bin/renew_vault_ssl.sh
                                                                 
@@ -1737,19 +1732,19 @@ EOF
                                                                 echo -e "Inscription à systemd ..."
 
                                                                 sudo bash -c 'cat > /etc/systemd/system/renew_vault_ssl.service << EOF
-                                            [Unit]
-                                            Description=Renew Vault SSL Certificates
-                                            After=network.target
+[Unit]
+Description=Renew Vault SSL Certificates
+After=network.target
 
-                                            [Service]
-                                            Type=simple
-                                            ExecStart=/usr/local/bin/renew_vault_ssl.sh
-                                            User=root
-                                            Group=root
+[Service]
+Type=simple
+ExecStart=/usr/local/bin/renew_vault_ssl.sh
+User=root
+Group=root
 
-                                            [Install]
-                                            WantedBy=multi-user.target
-                                            EOF'
+[Install]
+WantedBy=multi-user.target
+EOF'
 
                                                                 sudo systemctl daemon-reload
                                                                 sudo systemctl enable renew_vault_ssl.service
@@ -1783,7 +1778,10 @@ EOF
                                                                     echo -e "    └── ${GREEN}[√]${NC}${YELLOW}Tâche Cron pour renouvellement + Systemd${NC}\n"
 
                                                                     sleep 4
+                                                                    
                                                                     break
+                                                            
+                    
 
                                                             ;;
 
