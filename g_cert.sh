@@ -2360,6 +2360,7 @@ echo -e "   - Ne partagez jamais votre mot de passe maître."
                         echo
 
                         if [[ -n "$Gestion" && "$Gestion" == "$GestionConfirm" ]]; then
+                            
                             clear
                             afficher_bienvenue
                             
