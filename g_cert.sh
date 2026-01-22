@@ -667,7 +667,7 @@ afficher_bienvenue
                                 done
 
                                 # Variable ID clé GPG ==========> Clé privée OpenSSL
-                                KEY_PRIVATE_TLS=$(gpg --list-keys --keyid-format long | grep -o '[0-9A-F]\{40\}' | tail -n1)
+                                KEY_PRIVATE_TLS=$(sudo gpg --list-keys --keyid-format long | grep -o '[0-9A-F]\{40\}' | tail -n1)
 
                                 
                                 
@@ -701,7 +701,7 @@ afficher_bienvenue
                                 done
 
                                 # Variable ID clé GPG ==========> Clées Vault
-                                KEY_VAULT=$(gpg --list-keys --keyid-format long | grep -o '[0-9A-F]\{40\}' | tail -n1)
+                                KEY_VAULT=$(sudo gpg --list-keys --keyid-format long | grep -o '[0-9A-F]\{40\}' | tail -n1)
 
 
                                 # ===== CERTIFICAT OPENSSL POUR VAULT  =====
@@ -1200,9 +1200,9 @@ EOF
 
                                     echo -e "${WHITE}[!] Signature avec une CA existante :${NC}"
                                     echo -e "   - La signature d’un certificat nécessite que la clé privée de la CA soit"
-                                    echo -e "     accessible en clair de manière TEMPORAIRE."
+                                    echo -e "     accessible en clair de manière TEMPORAIRE.\n"
 
-                                    echo -e "Bonnes pratiques:\n"
+                                    echo -e "Bonnes pratiques:"
                                     echo -e "   - La clé doit être déverrouillée uniquement pour la durée de la signature."
                                     echo -e "   - Ne jamais stocker la clé de la CA en clair de façon permanente."
                                     echo -e "   - Privilégier une CA hors ligne ou une CA intermédiaire dédiée."
@@ -1381,6 +1381,7 @@ EOF
 
                                         clear
                                         afficher_bienvenue
+                                        
                                         # Test présence du certificat
                                         if openssl x509 -in /etc/vault/ssl/vault.crt -noout >/dev/null 2>&1; then
                                             
@@ -1556,8 +1557,7 @@ EOF
                                                         
                                                         echo -e "${WHITE}Chiffrement et permissions de la clé privée : /etc/vault/ssl/vault.key${NC}\n"
 
-                                                        echo -e "Utilisation de la GPG créée précédemment."
-                                                        sleep 3
+                                                        sleep 2
 
                                                         # Chiffrement de la clé TLS avec GPG
                                                         sudo gpg -e -r "$KEY_PRIVATE_TLS" /etc/vault/ssl/vault.key
@@ -1651,7 +1651,7 @@ EOF
                                                         
                                                         sleep 3
 
-                                                        break
+                                                        break 2
 
                                                     ;;
 
@@ -1820,7 +1820,7 @@ EOF'
 
                                                         sleep 4
                                                         
-                                                        break
+                                                        break 2
                                                         ;;
                                                         
                                                         3)
@@ -1859,6 +1859,7 @@ EOF'
                                             afficher_bienvenue
                                             echo -e "${RED}Réponse invalide. Tapez y ou n.${NC}"
                                         fi
+                                        break
                                     done
 
 # =============================== DEPENDENCES via PIPX ===============================
