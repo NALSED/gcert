@@ -1698,40 +1698,39 @@ EOF
                                                         afficher_bienvenue
 
                                                         
-                                                                
-                                                                echo -e "${CYAN_BRIGHT}=== Renouvellement du certificat via Cron ===${NC}\n"
-                                                                echo -e "   - Création d'un script pour le renouvellement automatique du certificat Vault et Mise à jour des permissions."
-                                                                echo -e "   - Enregistrement de l'exécution du script dans systemd."
+                                                        echo -e "${CYAN_BRIGHT}=== Renouvellement du certificat via Cron ===${NC}\n"
+                                                        echo -e "   - Création d'un script pour le renouvellement automatique du certificat Vault et Mise à jour des permissions."
+                                                        echo -e "   - Enregistrement de l'exécution du script dans systemd."
 
-                                                                # Script de renouvellement
-                                                                clear
-                                                                afficher_bienvenue
-                                                                
-                                                                echo -e "Création script et tâche cron ..."
-                                                                
-                                                                sudo touch /usr/local/bin/renew_vault_ssl.sh
-                                                                sudo chown root:root /usr/local/bin/renew_vault_ssl.sh
-                                                                
-                                                                sudo bash -c 'cat > /usr/local/bin/renew_vault_ssl.sh << EOF
+                                                        # Script de renouvellement
+                                                        clear
+                                                        afficher_bienvenue
+                                                        
+                                                        echo -e "Création script et tâche cron ..."
+                                                        
+                                                        sudo touch /usr/local/bin/renew_vault_ssl.sh
+                                                        sudo chown root:root /usr/local/bin/renew_vault_ssl.sh
+                                                        
+                                                        sudo bash -c 'cat > /usr/local/bin/renew_vault_ssl.sh << EOF
 #!/bin/bash
 openssl req -new -x509 -days "$days_vault" -key /etc/vault/ssl/vault.key -out /etc/vault/ssl/vault.crt -config /etc/vault/ssl/vault_tls.cnf
 chmod 640 /etc/vault/ssl/vault.crt
 chown root:vault /etc/vault/ssl/vault.crt
 systemctl restart vault
 EOF'
-                                                    
-                                                                sudo chmod 700 /usr/local/bin/renew_vault_ssl.sh
-                                                                
-                                                                # Ajouter au cron (renouvellement automatique avant expiration)
-                                                                sudo bash -c "(crontab -l 2>/dev/null | grep -v 'renew_vault_ssl.sh'; echo '0 0 */$(($days_vault - 1)) * * /usr/local/bin/renew_vault_ssl.sh') | crontab -"
-                                                                
-                                                                echo -e "${GREEN} Tâche cron configurée avec succès${NC}"
-                                                                sleep 2
+                                            
+                                                        sudo chmod 700 /usr/local/bin/renew_vault_ssl.sh
+                                                        
+                                                        # Ajouter au cron (renouvellement automatique avant expiration)
+                                                        sudo bash -c "(crontab -l 2>/dev/null | grep -v 'renew_vault_ssl.sh'; echo '0 0 */$(($days_vault - 1)) * * /usr/local/bin/renew_vault_ssl.sh') | crontab -"
+                                                        
+                                                        echo -e "${GREEN} Tâche cron configurée avec succès${NC}"
+                                                        sleep 2
 
 
-                                                                echo -e "Inscription à systemd ..."
+                                                        echo -e "Inscription à systemd ..."
 
-                                                                sudo bash -c 'cat > /etc/systemd/system/renew_vault_ssl.service << EOF
+                                                        sudo bash -c 'cat > /etc/systemd/system/renew_vault_ssl.service << EOF
 [Unit]
 Description=Renew Vault SSL Certificates
 After=network.target
@@ -1746,46 +1745,41 @@ Group=root
 WantedBy=multi-user.target
 EOF'
 
-                                                                sudo systemctl daemon-reload
-                                                                sudo systemctl enable renew_vault_ssl.service
-                                                                sudo systemctl start renew_vault_ssl.service
-                                                                
-                                                                echo -e "${GREEN} Inscription à systemd réalisée avec succès${NC}"
-                                                                sleep 3
-
-
-                                                                clear
-                                                                afficher_bienvenue
-
-                                                                    echo -e "${BLUE_BRIGHT}=== Installation et Configuration de Vault ===${NC}\n"
-                                                                    echo -e "${WHITE}=== Certificat Vault ===${NC}\n\n"
-
-                                                                    echo -e " ${GREEN}[√]${NC}${WHITE}Ajout du Dépôt HashiCorp${NC}"
-                                                                    echo -e "    └── ${GREEN}[√]${NC}${YELLOW}Installation du Paquet Vault${NC}"
-                                                                    echo -e "        └── ${GREEN}[√]${NC}${CYAN}Vérification de la présence de Vault${NC}\n"
-
-                                                                    echo -e " ${GREEN}[√]${NC}${WHITE}Création des clés GPG${NC}"
-                                                                    echo -e "    └── ${GREEN}[√]${NC}${YELLOW}Certificat SSL${NC}"
-                                                                    echo -e "        └── ${GREEN}[√]${NC}${CYAN}Fichier de configuration${NC}"
-                                                                    echo -e "        └── ${GREEN}[√]${NC}${CYAN}Clé Privée${NC}"
-                                                                    echo -e "        └── ${GREEN}[√]${NC}${CYAN}Fichier CSR${NC}"
-                                                                    echo -e "        └── ${GREEN}[√]${NC}${CYAN}Certificat Vault${NC}"
-                                                                    echo -e "        └── ${GREEN}[√]${NC}${CYAN}Signature du Certificat${NC}\n"
-
-                                                                    echo -e " ${GREEN}[√]${NC}${WHITE}Sécurisation du fichier Certificat${NC}\n"
-                        
-                                                                    echo -e " ${GREEN}[√]${NC}${WHITE}Clé Privée Certificat => Restrictions des droits${NC}"
-                                                                    echo -e "    └── ${GREEN}[√]${NC}${YELLOW}Tâche Cron pour renouvellement + Systemd${NC}\n"
-
-                                                                    sleep 4
-                                                                    
-                                                                    break
-                                                            
-                    
-
-                                                            ;;
-
+                                                        sudo systemctl daemon-reload
+                                                        sudo systemctl enable renew_vault_ssl.service
+                                                        sudo systemctl start renew_vault_ssl.service
                                                         
+                                                        echo -e "${GREEN} Inscription à systemd réalisée avec succès${NC}"
+                                                        sleep 3
+
+
+                                                        clear
+                                                        afficher_bienvenue
+
+                                                        echo -e "${BLUE_BRIGHT}=== Installation et Configuration de Vault ===${NC}\n"
+                                                        echo -e "${WHITE}=== Certificat Vault ===${NC}\n\n"
+
+                                                        echo -e " ${GREEN}[√]${NC}${WHITE}Ajout du Dépôt HashiCorp${NC}"
+                                                        echo -e "    └── ${GREEN}[√]${NC}${YELLOW}Installation du Paquet Vault${NC}"
+                                                        echo -e "        └── ${GREEN}[√]${NC}${CYAN}Vérification de la présence de Vault${NC}\n"
+
+                                                        echo -e " ${GREEN}[√]${NC}${WHITE}Création des clés GPG${NC}"
+                                                        echo -e "    └── ${GREEN}[√]${NC}${YELLOW}Certificat SSL${NC}"
+                                                        echo -e "        └── ${GREEN}[√]${NC}${CYAN}Fichier de configuration${NC}"
+                                                        echo -e "        └── ${GREEN}[√]${NC}${CYAN}Clé Privée${NC}"
+                                                        echo -e "        └── ${GREEN}[√]${NC}${CYAN}Fichier CSR${NC}"
+                                                        echo -e "        └── ${GREEN}[√]${NC}${CYAN}Certificat Vault${NC}"
+                                                        echo -e "        └── ${GREEN}[√]${NC}${CYAN}Signature du Certificat${NC}\n"
+
+                                                        echo -e " ${GREEN}[√]${NC}${WHITE}Sécurisation du fichier Certificat${NC}\n"
+            
+                                                        echo -e " ${GREEN}[√]${NC}${WHITE}Clé Privée Certificat => Restrictions des droits${NC}"
+                                                        echo -e "    └── ${GREEN}[√]${NC}${YELLOW}Tâche Cron pour renouvellement + Systemd${NC}\n"
+
+                                                        sleep 4
+                                                        
+                                                        break
+                                                        ;;
                                                         
                                                         3)
                                                         
