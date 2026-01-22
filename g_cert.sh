@@ -744,7 +744,7 @@ afficher_bienvenue
                                                     
                                                     clear
                                                     afficher_bienvenue
-                                                    echo "\n${GREEN}CN confirmé : '$cn_vault'...${NC}"
+                                                    echo "\n${GREEN}CN confirmé : '$cn_vault' ...${NC}"
                                                     sleep 3
                                                     break
                                                 elif [[ "$validation_cn" =~ ^[nN]$ ]]; then
@@ -779,7 +779,7 @@ afficher_bienvenue
                                                     
                                                     clear
                                                     afficher_bienvenue
-                                                    echo "\n${GREEN}DNS.1 confirmé : '$dns_vault'...${NC}"
+                                                    echo "\n${GREEN}DNS.1 confirmé : '$dns_vault' ...${NC}"
                                                     sleep 3
                                                     break
                                                 elif [[ "$validation_dns1" =~ ^[nN]$ ]]; then
@@ -808,7 +808,7 @@ afficher_bienvenue
                                                     afficher_bienvenue
                                                     
                                                     echo -e "\n${GREEN}IP valide${NC}"
-                                                    sleep 1
+                                                    sleep 2
 
                                                     while true; do
                                                         clear
@@ -822,7 +822,7 @@ afficher_bienvenue
                                                            
                                                             clear
                                                             afficher_bienvenue
-                                                            echo "\n${GREEN}IP confirmée : '$ip_vault'...${NC}"
+                                                            echo "\n${GREEN}IP confirmée : '$ip_vault' ...${NC}"
                                                             sleep 3
                                                             break 2
                                                         elif [[ "$validation_ip" =~ ^[nN]$ ]]; then
@@ -1039,7 +1039,7 @@ EOF
                                     # Test presence clé privé
                                     if [ -f /etc/vault/ssl/vault.key ]; then
                                         echo -e "${GREEN}OK : vault.key créé.${NC}"
-                                        sleep 2
+                                        sleep 3
                                     else
                                         echo -e "${RED}ERREUR : vault.key manquante...${NC}"
                                         echo -e "Pour plus d'information voir le fichier : ${WHITE}/var/log/gcert_install/erreur.log${NC}" 
@@ -1063,7 +1063,7 @@ EOF
                                     # Test présence CSR
                                     if [ -f /etc/vault/ssl/vault.csr ]; then
                                         echo -e "${GREEN}OK : vault.csr créé.${NC}"
-                                        sleep 2
+                                        sleep 3
                                     else
                                         echo -e "${RED}ERREUR : vault.csr manquante...${NC}"
                                         echo -e "Pour plus d'information voir le fichier : ${WHITE}/var/log/gcert_install/erreur.log${NC}" 
@@ -1078,7 +1078,7 @@ EOF
                                 
                                 # Demande pour la durée de validitée du certificat de Vault
                                 while true; do
-                                     read -p "Veuillez entrer une valeur pour la durée de validité du certificat (Format => jour entre 1 et 365)" days_vault
+                                     read -p "Veuillez entrer une valeur pour la durée de validité du certificat (Format => jour entre 1 et 365) : " days_vault
 
                                     if [[ "$days_vault" =~ ^[0-9]+$ ]] && (( days_vault >= 1 && days_vault <= 365 )); then
                                         break
@@ -1111,9 +1111,9 @@ EOF
                                     
                                     echo -e "-${INVERSE}[1]${NC}- ${WHITE}Certificat auto signé${NC}" 
                                     echo -e "-${INVERSE}[2]${NC}- ${WHITE}CA Existante${NC}"    
-                                    echo -e "-${INVERSE}[3]${NC}- ${WHITE}Sortie Installation${NC}"
+                                    echo -e "-${INVERSE}[3]${NC}- ${WHITE}Sortie Installation${NC}\n"
 
-                                    read -p "Choix CA :" choix_ca
+                                    read -p "Choix CA : " choix_ca
 
                                     case "$choix_ca" in
 
@@ -1133,7 +1133,7 @@ EOF
                                             BLA::stop_loading_animation
 
                                         # Signature certificat auto-signé
-                                        openssl x509 -req -in /etc/vault/ssl/vault.csr -signkey /etc/vault/ssl/vault.key -out /etc/vault/ssl/vault.crt -days "$days_vault" -extensions req_ext -extfile /etc/vault/ssl/vault_tls.cnf > /dev/null 2>> /var/log/gcert_install/erreur.log
+                                        sudo openssl x509 -req -in /etc/vault/ssl/vault.csr -signkey /etc/vault/ssl/vault.key -out /etc/vault/ssl/vault.crt -days "$days_vault" -extensions req_ext -extfile /etc/vault/ssl/vault_tls.cnf > /dev/null 2>> /var/log/gcert_install/erreur.log
 
                                         clear
                                         afficher_bienvenue
