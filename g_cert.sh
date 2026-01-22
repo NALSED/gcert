@@ -432,10 +432,10 @@ afficher_bienvenue
 
                                 echo -e "${WHITE}[1] Installation de Vault :${NC}"
                                 echo -e "   - Ajout du dépôt HashiCorp et installation du paquet Vault."
-                                echo -e "   - Vérification de la présence du binaire vault.\n"
+                                echo -e "   - Vérification de la présence de vault.\n"
 
                                 echo -e "${WHITE}[2] Clés GPG et Certificats TLS :${NC}"
-                                echo -e "   - Création des clés GPG admin et chiffrement des unseal keys/root token."
+                                echo -e "   - Création des clés GPG pour la clé privé du certificat et des unseal keys/root token."
                                 echo -e "   - Génération de la clé TLS et certificat (auto-signé ou CA existante)."
                                 
 
@@ -505,19 +505,12 @@ afficher_bienvenue
                                     echo -e "${RED}Problème lors de l'installation de Vault...${NC}\n"
                                     echo -e "Veuillez consulter ${WHITE}/var/log/gcert_install/erreur.log${NC}, pour plus d'information\n"
                                     sleep 4
-                                    
                                     clear
                                     afficher_bienvenue
-
-                                    msg="Veuillez patienter, l'installation va être réinitialisée et tous les changements seront annulés."
-                                                                
-                                    BLA::start_loading_animation "$msg" "${BLA_passing_dots[@]}"
-
-                                    clean_up
-
-                                    # Effacer la ligne du message dynamique
-                                    echo -ne "\r\033[K"
-                                    BLA::stop_loading_animation
+                                    echo -e "Le programme d'installation va quitter..."
+                                    sleep 2 
+                                    exit 1 
+                                
                                 fi
 
 # =============================== [2] CLÉS GPG ET CERTIFICATS ===============================
@@ -1415,26 +1408,7 @@ EOF
                                 echo -e "[4/5] Création de la clé GPG et du mot de passe...\n" 
                                 echo -e "[5/5] Lancement du service G_Cert...\n\n"
                                 
-                                while true; do
-                                    read -p "Appuyez sur [Entrée] pour continuer : " input
-
-                                    if [[ -z "$input" ]]; then
-                                        break
-                                    else
-                                        echo -e "\n${RED}Erreur : appuyez uniquement sur Entrée.${NC}\n"
-                                    fi
-                                done
-                        
-                        while true; do
-                            read -p "Appuyez sur [Entrée] pour continuer : " input
-                        
-                            if [[ -z "$input" ]]; then
-                                
-                            break
-                            else
-                                echo -e "\n${RED}Erreur : appuyez uniquement sur Entrée.${NC}\n"
-                            fi
-                        done
+                               enter
                         
                         clear
                         afficher_bienvenue
