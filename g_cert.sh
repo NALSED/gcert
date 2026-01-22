@@ -169,31 +169,53 @@ afficher_bienvenue
                 afficher_bienvenue
                 
                 echo -e "\n${WHITE}=== Redirections des logs ===${NC}"
-                echo -e "\n\n-${INVERSE}[1]${NC}- Création du dossier de logs, pour l'installation de gcert : "
-                echo -e "   - Les erreurs sont redirigées vers ${WHITE}/var/log/gcert_install/erreur.log${NC}\n\n"
-                
+                echo -e "\n\n-${INVERSE}[1]${NC}- Création d'un fichier de logs pour les sorties d'erreur :"
+                echo -e "   - Les erreurs sont redirigées vers ${WHITE}/var/log/gcert_install/erreur.log${NC}\n"
+                echo -e "\n\n-${INVERSE}[2]${NC}- Création d'un fichier de logs pour lister les installations/actions du programme."
+                echo -e "   - Elles seront redirigées vers ${WHITE}/tmp/install.log${NC}. En cas de crash, le programme d'installation effacera les actions réalisées pour une installation future propre.\n"
 
                 enter
 
                 sudo mkdir /var/log/gcert_install           
                 sudo chown $USER:$USER /var/log/gcert_install/
                 sudo chmod 755 /var/log/gcert_install/
-    
-                # Vérification de la création du répertoire /var/log/gcert_install/
+                sudo touch /tmp/install.log
+                sudo chown $USER:$USER /tmp/install.log
+                sudo chmod 644 /tmp/install.log
+
+               
                 clear
                 afficher_bienvenue
-                    echo -e "${GREEN}OK : Le répertoire ${WHITE}/var/log/gcert_install${GREEN}créé avec succès.${NC}"
+
+                # === REPERTOIRE ===
+
+                # Vérifier si le répertoire /var/log/gcert_install existe
+                if [ -d "/var/log/gcert_install" ]; then
+                    echo -e "${GREEN}OK : Le répertoire ${WHITE}/var/log/gcert_install${GREEN} créé avec succès.${NC}\n"
                     sleep 2
                 else
-                    echo -e "${RED}ERREUR : Probléme lors de la création du répertoire ${WHITE}/var/log/gcert_install${RED}.${NC}"
+                    echo -e "${RED}ERREUR : Problème lors de la création du répertoire ${WHITE}/var/log/gcert_install${RED}.${NC}"
                     echo -e "Veuillez créer le répertoire avec la commande : sudo mkdir /var/log/gcert_install"
                     sleep 3
                     exit 1
                 fi
 
-                # Vérification de la propriété du répertoire
+                # Vérifier si le fichier /tmp/install.log existe
+                if [ -f "/tmp/install.log" ]; then
+                    echo -e "${GREEN}OK : Le fichier ${WHITE}/tmp/install.log${GREEN} existe.${NC}\n"
+                    sleep 1
+                else
+                    echo -e "${RED}ERREUR : Le fichier ${WHITE}/tmp/install.log${RED} n'existe pas.${NC}"
+                    echo -e "Veuillez créer le fichier avec la commande : sudo touch /tmp/install.log"
+                    sleep 3
+                    exit 1
+                fi
+
+                # === PROPRIETE ===
+
+                # Vérification de la propriété du répertoire /var/log/gcert_install
                 if [[ $(stat -c "%U:%G" /var/log/gcert_install) == "$USER:$USER" ]]; then
-                    echo -e "${GREEN}OK : Le propriétaire du répertoire ${WHITE}/var/log/gcert_install${GREEN} est correct : $USER.${NC}"
+                    echo -e "${GREEN}OK : Le propriétaire du répertoire ${WHITE}/var/log/gcert_install${GREEN} est correct : $USER.${NC}\n"
                     sleep 2
                 else
                     echo -e "${RED}ERREUR : Le propriétaire du répertoire ${WHITE}/var/log/gcert_install${RED} est incorrect.${NC}"
@@ -202,9 +224,24 @@ afficher_bienvenue
                     exit 1
                 fi
 
-                # Vérification des permissions du répertoire
+                # Vérification du propriétaire du fichier /tmp/install.log
+                if [[ $(stat -c "%U:%G" /tmp/install.log) == "$USER:$USER" ]]; then
+                    echo -e "${GREEN}OK : Le propriétaire du fichier ${WHITE}/tmp/install.log${GREEN} est correct : $USER.${NC}\n"
+                    sleep 2
+                else
+                    echo -e "${RED}ERREUR : Le propriétaire du fichier ${WHITE}/tmp/install.log${RED} est incorrect.${NC}"
+                    echo -e "Veuillez corriger la propriété avec la commande : sudo chown $USER:$USER /tmp/install.log"
+                    sleep 3
+                    exit 1
+                fi
+                
+                
+                
+                # === DROITS ===
+                
+                # Vérification des permissions du répertoire /var/log/gcert_install
                 if [[ $(stat -c "%a" /var/log/gcert_install) == "755" ]]; then
-                    echo -e "${GREEN}OK : Les permissions du répertoire ${WHITE}/var/log/gcert_install${GREEN} sont correctes :${NC} ${WHITE}755 ${NC}"
+                    echo -e "${GREEN}OK : Les permissions du répertoire ${WHITE}/var/log/gcert_install${GREEN} sont correctes :${NC} ${WHITE}755 ${NC}\n"
                     sleep 2
                 else
                     echo -e "${RED}ERREUR : Les permissions du répertoire ${WHITE}/var/log/gcert_install${RED} sont incorrectes.${NC}"
@@ -213,13 +250,24 @@ afficher_bienvenue
                     exit
                 fi
 
+                # Vérification des permissions du fichier /tmp/install.log
+                if [[ $(stat -c "%a" /tmp/install.log) == "644" ]]; then
+                    echo -e "${GREEN}OK : Les permissions du fichier ${WHITE}/tmp/install.log${GREEN} sont correctes :${NC} ${WHITE}644.${NC}\n"
+                    sleep 2
+                else
+                    echo -e "${RED}ERREUR : Les permissions du fichier ${WHITE}/tmp/install.log${RED} sont incorrectes.${NC}"
+                    echo -e "Veuillez corriger les permissions avec la commande : sudo chmod 644 /tmp/install.log"
+                    sleep 3
+                    exit 1
+                fi
+                
                 clear
                 afficher_bienvenue
 
-                echo -e "${WHITE}=== Informations en cas de problème ===${NC}\n\n"
-                echo -e "   - Si un problème survient lors de l'exécution du script, un message d'erreur sera affiché."
-                echo -e "   - Le script quittera immédiatement en cas d'erreur, mais les logs seront disponibles."
+                echo -e "${WHITE}=== Informations en cas de problème ===${NC}\n"
+                echo -e "   - En cas d'erreur, le script s'arrêtera immédiatement et effacera les installations effectuées."
                 echo -e "   - Les erreurs seront enregistrées dans ${WHITE}/var/log/gcert_install/erreur.log${NC}.\n"
+
                 
 
                 enter        
@@ -267,11 +315,11 @@ afficher_bienvenue
 
                     #  Boucle por faire  revenir le menu
                     while true; do
-                    echo -e "${WHITE}Bienvenue dans le programme d'installation de G.Cert${NC}\n\n"
+                    echo -e "${YELLOW}Bienvenue dans le programme d'installation de G.Cert${NC}\n\n"
 
-                    echo -e "[1] ${YELLOW}Installation${NC}\n"
-                    echo -e "[2] ${YELLOW}Documentation${NC}\n"
-                    echo -e "[3] ${YELLOW}Sortir${NC}\n"
+                    echo -e "-${INVERSE}[1]${NC}- ${WHITE}Installation${NC}\n"
+                    echo -e "-${INVERSE}[2]${NC}- ${WHITE}Documentation${NC}\n"
+                    echo -e "-${INVERSE}[3]${NC}- ${WHITE}Sortir${NC}\n"
 
                     
                     read -p "Choisissez une option: " choix_menu_install
@@ -290,11 +338,11 @@ afficher_bienvenue
                                 echo -e "${WHITE}             Récapitulatif des étapes d'installation${NC}"
                                 echo -e "${YELLOW}============================================================${NC}\n\n"
                                 
-                                echo -e "[1/5] Installation des prérequis...\n" 
-                                echo -e "[2/5] Installation et configuration de Vault...\n"
-                                echo -e "[3/5] Création de l'environnement Python...\n" 
-                                echo -e "[4/5] Création de la clé GPG et du mot de passe...\n" 
-                                echo -e "[5/5] Lancement du service G_Cert...\n\n"
+                                echo -e "-${INVERSE}[1/5]${NC}- Installation des prérequis...\n" 
+                                echo -e "-${INVERSE}[2/5]${NC}- Installation et configuration de Vault...\n"
+                                echo -e "-${INVERSE}[3/5]${NC}- Création de l'environnement Python...\n" 
+                                echo -e "-${INVERSE}[4/5]${NC}- Création de la clé GPG et du mot de passe...\n" 
+                                echo -e "-${INVERSE}[5/5]${NC}- Lancement du service G_Cert...\n\n"
                                 
                                 enter
 
@@ -302,7 +350,7 @@ afficher_bienvenue
                         afficher_bienvenue
                         
                         
-                        echo -e "${YELLOW}=== Installation des prérequis pour G.cert  ===${NC}\n"
+                        echo -e "${BLUE_BRIGHT}=== Installation des prérequis pour G.cert  ===${NC}\n"
                         
                         echo -e "${WHITE}Avant de commencer, G.cert nécessite quelques programmes et bibliothèques :${NC}\n"
 
@@ -416,10 +464,10 @@ afficher_bienvenue
                                 echo -e "${YELLOW}============================================================${NC}\n\n"
 
                                 echo -e "${GREEN}[√] Installation des prérequis...${NC}\n" 
-                                echo -e "[2/5] Installation et configuration de Vault...\n"
-                                echo -e "[3/5] Création de l'environnement Python...\n" 
-                                echo -e "[4/5] Création de la clé GPG et du mot de passe...\n" 
-                                echo -e "[5/5] Lancement du service G_Cert...\n\n"
+                                echo -e "-${INVERSE}[2/5]${NC}- Installation et configuration de Vault...\n"
+                                echo -e "-${INVERSE}[3/5]${NC}- Création de l'environnement Python...\n" 
+                                echo -e "-${INVERSE}[4/5]${NC}- Création de la clé GPG et du mot de passe...\n" 
+                                echo -e "-${INVERSE}[5/5]${NC}- Lancement du service G_Cert...\n\n"
 
                                 enter
 
@@ -428,7 +476,7 @@ afficher_bienvenue
 
                                 # Récapitulation Installation Vault
 
-                                echo -e "${YELLOW}=== Phases d'installation et de configuration de Vault ===${NC}\n"
+                                echo -e "${BLUE_BRIGHT}=== Phases d'installation et de configuration de Vault ===${NC}\n"
 
                                 echo -e "${WHITE}[1] Installation de Vault :${NC}"
                                 echo -e "   - Ajout du dépôt HashiCorp et installation du paquet Vault."
@@ -468,7 +516,7 @@ afficher_bienvenue
                                 afficher_bienvenue
 
                                 # Message [1]
-                                echo -e "${YELLOW}=== Installation de Vault ===${NC}\n"
+                                echo -e "${CYAN_BRIGHT}=== Installation de Vault ===${NC}\n"
 
                                 echo -e "${WHITE}[1] Préparation du système :${NC}"
                                 echo -e "   - Mise à jour du système et installation des prérequis.\n"
@@ -519,7 +567,7 @@ afficher_bienvenue
                                 clear
                                 afficher_bienvenue    
 
-                                echo -e "${YELLOW}=== Sécurisation Clés Vault ===${NC}\n"
+                                echo -e "${CYAN_BRIGHT}=== Sécurisation Clés Vault ===${NC}\n"
 
                                 echo -e "${WHITE}[1] Génération des clés GPG :${NC}"
                                 echo -e "   - Protection de la clé privée SSL Vault"
@@ -548,7 +596,7 @@ afficher_bienvenue
                                 clear
                                 afficher_bienvenue
                                 
-                                echo -e "${YELLOW}=== Génération des clés GPG ===${NC}\n"
+                                echo -e "${CYAN_BRIGHT}=== Génération des clés GPG ===${NC}\n"
 
                                 echo -e "${WHITE}[1] Clé GPG OpenSSL :${NC}"
                                 echo -e "   - Création d'une clé GPG dédiée à la clé privée des certificats SSL.\n"
@@ -629,7 +677,7 @@ afficher_bienvenue
                                 clear
                                 afficher_bienvenue
                                 
-                                echo -e "${YELLOW}=== Génération du Certificat OpenSSL de Vault ===${NC}\n"
+                                echo -e "${CYAN_BRIGHT}=== Génération du Certificat OpenSSL de Vault ===${NC}\n"
 
                                 echo -e "${WHITE}[1] Configuration OpenSSL :${NC}"
                                 echo -e "   - Création du fichier => ${WHITE}/etc/vault/ssl/vault_tls.cnf${NC}."
@@ -1046,7 +1094,7 @@ EOF
                                 while true; do
 
                                     # Avertissement
-                                    echo -e "${YELLOW}=== Avertissement Sécurité – Clé privée de la CA ===${NC}\n"
+                                    echo -e "${RED}=== Avertissement Sécurité – Clé privée de la CA ===${NC}\n"
 
                                     echo -e "${WHITE}[!] Signature avec une CA existante :${NC}"
                                     echo -e "   - La signature d’un certificat nécessite que la clé privée de la CA soit"
@@ -1061,9 +1109,9 @@ EOF
 
                                     echo -e "${YELLOW}Veuillez choisir un mode de CA : ${NC}\n"
                                     
-                                    echo -e "[1] Certificat auto signé" 
-                                    echo -e "[2] CA Existante\n\n"    
-                                    echo -e "[3]" Sortie Installation
+                                    echo -e "-${INVERSE}[1]${NC}- ${WHITE}Certificat auto signé${NC}" 
+                                    echo -e "-${INVERSE}[2]${NC}- ${WHITE}CA Existante${NC}"    
+                                    echo -e "-${INVERSE}[3]${NC}- ${WHITE}Sortie Installation${NC}"
 
                                     read -p "Choix CA :" choix_ca
 
@@ -1229,7 +1277,7 @@ EOF
 
                                             clear
                                             afficher_bienvenue
-                                            echo -e "${YELLOW}=== Sécurisation des certificats SSL ===${NC}\n"
+                                            echo -e "${CYAN_BRIGHT}=== Sécurisation des certificats SSL ===${NC}\n"
 
                                             echo -e "${WHITE}[1] Suppression du CSR :${NC}"
                                             echo -e "   - Le fichier => ${WHITE}/etc/vault/ssl/vault.csr${NC} est supprimé pour sécurité.\n"
@@ -1404,9 +1452,9 @@ EOF
                                
                                 echo -e "${GREEN}[√] Installation des prérequis...${NC}\n" 
                                 echo -e "${GREEN}[√] Installation et configuration de Vault...${NC}\n"
-                                echo -e "[3/5] Création de l'environnement Python...\n" 
-                                echo -e "[4/5] Création de la clé GPG et du mot de passe...\n" 
-                                echo -e "[5/5] Lancement du service G_Cert...\n\n"
+                                echo -e "-${INVERSE}[3/5]${NC}- Création de l'environnement Python...\n" 
+                                echo -e "-${INVERSE}[4/5]${NC}- Création de la clé GPG et du mot de passe...\n" 
+                                echo -e "-${INVERSE}[5/5]${NC}- Lancement du service G_Cert...\n\n"
                                 
                                enter
                         
@@ -1453,7 +1501,7 @@ EOF
 clear
 afficher_bienvenue
 
-echo -e "${YELLOW}=== Création Clé GPG et Mots de Passe des Différents Services de G.cert  ===${NC}\n"
+echo -e "${BLUE_BRIGHT}=== Création Clé GPG et Mots de Passe des Différents Services de G.cert  ===${NC}\n"
 echo -e "${WHITE}Les Mots de passe et Clé GPG sont gérés via GnuPG et Pass, il est donc possible par la suite d'administrer via ces programmes... ${NC}\n\n"
 
 echo -e "${WHITE}[1] Génération de la clé GPG :${NC}"
@@ -1493,8 +1541,8 @@ echo -e "   - Ne partagez jamais votre mot de passe maître."
                                 echo -e "${GREEN}[√] Installation des prérequis...${NC}\n" 
                                 echo -e "${GREEN}[√] Installation et configuration de Vault...${NC}\n"
                                 echo -e "${GREEN}[√] Création de l'environnement Python...${NC}\n" 
-                                echo -e "[4/5] Création de la clé GPG et du mot de passe...\n" 
-                                echo -e "[5/5] Lancement du service G_Cert...\n\n"
+                                echo -e "-${INVERSE}[4/5]${NC}- Création de la clé GPG et du mot de passe...\n" 
+                                echo -e "-${INVERSE}[5/5]${NC}- Lancement du service G_Cert...\n\n"
                         
                         while true; do
                             read -p "Appuyez sur [Entrée] pour continuer : " input
@@ -1542,9 +1590,9 @@ echo -e "   - Ne partagez jamais votre mot de passe maître."
                 clear
                 afficher_bienvenue
                 echo -e "${YELLOW}=== Clé GPG ===${NC}\n\n"
-                echo -e "${YELLOW}[1] Créer un nouvelle Clé${NC}\n"
-                echo -e "${YELLOW}[2] Entrer un clé existente${NC}\n"
-                echo -e "${YELLOW}[3] Sortir...${NC}\n"
+                echo -e "-${INVERSE}[1]${NC}- ${WHITE}Créer un nouvelle Clé${NC}\n"
+                echo -e "-${INVERSE}[2]${NC}- ${WHITE}Entrer un clé existente${NC}\n"
+                echo -e "-${INVERSE}[3]${NC}-] ${WHITE}Sortir...${NC}\n"
                                                         
                 read -p "Choisissez une option: " choix_gpg_1
 
@@ -1554,8 +1602,8 @@ echo -e "   - Ne partagez jamais votre mot de passe maître."
                     # =============================== CREATION NOUVELLE CLE GPG ==============================
                     clear
                     afficher_bienvenue
-                    echo -e "${YELLOW}=== Création d'une nouvelle clé GPG ===${NC}\n"
-                    echo -e "${YELLOW}Génération interactive de la clé avec${NC} ${WHITE}GnuPG${NC}${YELLOW}...${NC}\n\n\n"
+                    echo -e "${BLUE_BRIGHT}=== Création d'une nouvelle clé GPG ===${NC}\n"
+                    echo -e "${WHITE}Génération interactive de la clé avec GnuPG...${NC}\n\n\n"
                     echo -e " ${RED}=> !!! RAPPEL: !!!${NC}  (1) ${GREEN}RSA and RSA${NC}  => compatible avec pass"
                     
                     echo
@@ -1592,18 +1640,18 @@ echo -e "   - Ne partagez jamais votre mot de passe maître."
                     while true; do
                         clear
                         afficher_bienvenue
-                        echo -e "${YELLOW}=== Création d'une nouvelle clé GPG ===${NC}\n"
+                        echo -e "${BLUE_BRIGHT}=== Création d'une nouvelle clé GPG ===${NC}\n"
                         echo -e " ${RED}=> !!! RAPPEL: !!!${NC}  ${WHITE}Vous devez être en possession de la Pass Phrase de la clé...${NC}"
                         echo
                         
                         # MENU
-                        echo -e "${YELLOW}[4] Entrer un Clé...${NC}"
-                        echo -e "${YELLOW}[5] Sortir...${NC}\n"
+                        echo -e "-${INVERSE}[1]${NC}- ${WHITE}Entrer un Clé...${NC}"
+                        echo -e "-${INVERSE}[2]${NC}- ${WHITE}Sortir...${NC}\n"
                                                         
                         read -p "Choisissez une option: " choix_gpg_2
 
                         case "$choix_gpg_2" in
-                        4)
+                        1)
                             clear
                             afficher_bienvenue
                             echo -e "${RED}Vous devez être en possession de la passphrase de la clé...${NC}\n\n"
@@ -1636,7 +1684,7 @@ echo -e "   - Ne partagez jamais votre mot de passe maître."
                                 fi
                         ;;
                 
-                        5)
+                        2)
                             clear
                             afficher_bienvenue
                             # SORTIE
@@ -1700,9 +1748,8 @@ echo -e "   - Ne partagez jamais votre mot de passe maître."
                 clear
                 afficher_bienvenue
                 # Confirmation utilisation clé GPG choisi :
-                echo -e "${YELLOW}Clé GPG:${NC} ${GREEN}${LAST_CLE}${NC}\n"
-                echo -e "${YELLOW}Êtes-vous sûr de vouloir utiliser cette clé ? [y/n] : ${NC}"
-                read Choix_Valide_Cle
+                echo -e "${WHITE}Clé GPG:${NC} ${GREEN}${LAST_CLE}${NC}\n"
+                read -p "Êtes-vous sûr de vouloir utiliser cette clé ? [y/n] : " Choix_Valide_Cle
 
                 # Si oui, pass init avec la clé choisie et le script continue
                 if [[ "$Choix_Valide_Cle" =~ ^[yY]$ ]]; then
@@ -1712,15 +1759,14 @@ echo -e "   - Ne partagez jamais votre mot de passe maître."
                         if [[ -d "$HOME/.password-store" ]]; then
                             clear
                             afficher_bienvenue
-                            echo -e "${YELLOW}=== Structure du Password Store G.cert ===${NC}\n"
+                            echo -e "${BLUE_BRIGHT}=== Structure du Password Store G.cert ===${NC}\n"
 
                             echo -e "${GREEN}[√]${NC}${WHITE}Password Store${NC}   - Répertoire local où pass stocke tous les mots de passe"
                             echo -e "└── ${WHITE}[2]${NC}${YELLOW}gcert${NC}       - Dossier contenant les Mots de passe"
                             echo -e "    └── ${WHITE}[3]wan${NC}      - Mot de passe pour le service WAN"
                             echo -e "    └── ${WHITE}[4]lan${NC}      - Mot de passe pour le service LAN"
                             echo -e "    └── ${WHITE}[5]gestion${NC}  - Mot de passe pour le service Gestion"
-                            echo -e "    └── ${WHITE}[6]certif${NC}   - Mot de passe pour le service Certificats"
-                            echo -e "    └── ${WHITE}[7]logs${NC}     - Mot de passe pour le service Logs\n\n"
+                            echo -e "    └── ${WHITE}[6]logs${NC}     - Mot de passe pour le service Logs\n\n"
                             echo -e "\n\n${GREEN}Password Store créé avec succès !${NC}"
                             sleep 3
                             break
@@ -1763,16 +1809,16 @@ echo -e "   - Ne partagez jamais votre mot de passe maître."
                     # === Création de du Wan ===
                     clear
                     afficher_bienvenue
-                    echo -e "${YELLOW}=== Création du Mots de passe Wan ===${NC}\n\n"
-                    echo -e "${YELLOW}=== Structure du Password Store G.cert ===${NC}\n"
+                    
+                    echo -e "${BLUE_BRIGHT}=== Structure du Password Store G.cert ===${NC}\n"
+                    echo -e "${CYAN_BRIGHT}=== Création du Mots de passe Wan ===${NC}\n\n"
 
                     echo -e "${GREEN}[√]${NC}${WHITE}Password Store${NC}   - Répertoire local où pass stocke tous les mots de passe"
                     echo -e "└── ${WHITE}[2]${NC}${YELLOW}gcert${NC}       - Dossier contenant les Mots de passe"
                     echo -e "    └── ${WHITE}[3]wan${NC}      - Mot de passe pour le service WAN"
                     echo -e "    └── ${WHITE}[4]lan${NC}      - Mot de passe pour le service LAN"
                     echo -e "    └── ${WHITE}[5]gestion${NC}  - Mot de passe pour le service Gestion"
-                    echo -e "    └── ${WHITE}[6]certif${NC}   - Mot de passe pour le service Certificats"
-                    echo -e "    └── ${WHITE}[7]logs${NC}     - Mot de passe pour le service Logs\n\n"
+                    echo -e "    └── ${WHITE}[6]logs${NC}     - Mot de passe pour le service Logs\n\n"
 
                     # Boucle  du mot de passe
                     while true; do
@@ -1795,8 +1841,7 @@ echo -e "   - Ne partagez jamais votre mot de passe maître."
                             echo -e "    └── ${WHITE}[3]wan${NC}      - Mot de passe pour le service WAN"
                             echo -e "    └── ${WHITE}[4]lan${NC}      - Mot de passe pour le service LAN"
                             echo -e "    └── ${WHITE}[5]gestion${NC}  - Mot de passe pour le service Gestion"
-                            echo -e "    └── ${WHITE}[6]certif${NC}   - Mot de passe pour le service Certificats"
-                            echo -e "    └── ${WHITE}[7]logs${NC}     - Mot de passe pour le service Logs\n\n"
+                            echo -e "    └── ${WHITE}[6]logs${NC}     - Mot de passe pour le service Logs\n\n"
                             echo -e "${GREEN}Mots de passe identiques.${NC}"
                             sleep 2
                             
@@ -1815,8 +1860,7 @@ echo -e "   - Ne partagez jamais votre mot de passe maître."
                                 echo -e "    └── ${WHITE}[3]wan${NC}      - Mot de passe pour le service WAN"
                                 echo -e "    └── ${WHITE}[4]lan${NC}      - Mot de passe pour le service LAN"
                                 echo -e "    └── ${WHITE}[5]gestion${NC}  - Mot de passe pour le service Gestion"
-                                echo -e "    └── ${WHITE}[6]certif${NC}   - Mot de passe pour le service Certificats"
-                                echo -e "    └── ${WHITE}[7]logs${NC}     - Mot de passe pour le service Logs\n\n"
+                                echo -e "    └── ${WHITE}[6]logs${NC}     - Mot de passe pour le service Logs\n\n"
                                 echo -e "${GREEN}Dossier gcert ET Mot de passe Wan créé avec succès${NC}"
                                 sleep 3
                             else
@@ -1836,16 +1880,15 @@ echo -e "   - Ne partagez jamais votre mot de passe maître."
                     clear
                     afficher_bienvenue
 
-                    echo -e "${YELLOW}=== Création du Mots de passe Lan ===${NC}\n\n"
-                    echo -e "${YELLOW}=== Structure du Password Store G.cert ===${NC}\n"
+                    echo -e "${BLUE_BRIGHT}=== Structure du Password Store G.cert ===${NC}\n"
+                    echo -e "${CYAN_BRIGHT}=== Création du Mots de passe Lan ===${NC}\n\n"
 
                     echo -e "${GREEN}[√]${NC}${WHITE}Password Store${NC}   - Répertoire local où pass stocke tous les mots de passe"
                     echo -e "└── ${GREEN}[√]${NC}${YELLOW}gcert${NC}       - Dossier contenant les Mots de passe"
                     echo -e "    └── ${GREEN}[√]${NC}${WHITE}wan${NC}      - Mot de passe pour le service WAN"
                     echo -e "    └── ${WHITE}[4]lan${NC}      - Mot de passe pour le service LAN"
                     echo -e "    └── ${WHITE}[5]gestion${NC}  - Mot de passe pour le service Gestion"
-                    echo -e "    └── ${WHITE}[6]certif${NC}   - Mot de passe pour le service Certificats"
-                    echo -e "    └── ${WHITE}[7]logs${NC}     - Mot de passe pour le service Logs\n\n" 
+                    echo -e "    └── ${WHITE}[6]logs${NC}     - Mot de passe pour le service Logs\n\n" 
 
                     # Boucle  du mot de passe
                     while true; do
@@ -1861,16 +1904,15 @@ echo -e "   - Ne partagez jamais votre mot de passe maître."
                             clear
                             afficher_bienvenue
 
-                            echo -e "${YELLOW}=== Création du Mots de passe Lan ===${NC}\n\n"
-                            echo -e "${YELLOW}=== Structure du Password Store G.cert ===${NC}\n"
+                            echo -e "${BLUE_BRIGHT}=== Structure du Password Store G.cert ===${NC}\n"
+                            echo -e "${CYAN_BRIGHT}=== Création du Mots de passe Lan ===${NC}\n\n"
 
                             echo -e "${GREEN}[√]${NC}${WHITE}Password Store${NC}   - Répertoire local où pass stocke tous les mots de passe"
                             echo -e "└── ${GREEN}[√]${NC}${YELLOW}gcert${NC}       - Dossier contenant les Mots de passe"
                             echo -e "    └── ${GREEN}[√]${NC}${WHITE}wan${NC}      - Mot de passe pour le service WAN"
                             echo -e "    └── ${WHITE}[4]lan${NC}      - Mot de passe pour le service LAN"
                             echo -e "    └── ${WHITE}[5]gestion${NC}  - Mot de passe pour le service Gestion"
-                            echo -e "    └── ${WHITE}[6]certif${NC}   - Mot de passe pour le service Certificats"
-                            echo -e "    └── ${WHITE}[7]logs${NC}     - Mot de passe pour le service Logs\n\n" 
+                            echo -e "    └── ${WHITE}[6]logs${NC}     - Mot de passe pour le service Logs\n\n" 
                             echo -e "${GREEN}Mots de passe identiques.${NC}"
                             sleep 2
                             # Création du mot de passe 
@@ -1883,16 +1925,15 @@ echo -e "   - Ne partagez jamais votre mot de passe maître."
                                 clear
                                 afficher_bienvenue
 
-                                echo -e "${YELLOW}=== Création du Mots de passe Lan ===${NC}\n\n"
-                                echo -e "${YELLOW}=== Structure du Password Store G.cert ===${NC}\n"
+                                echo -e "${BLUE_BRIGHT}=== Structure du Password Store G.cert ===${NC}\n"
+                                echo -e "${CYAN_BRIGHT}=== Création du Mots de passe Lan ===${NC}\n\n"
 
                                 echo -e "${GREEN}[√]${NC}${WHITE}Password Store${NC}   - Répertoire local où pass stocke tous les mots de passe"
                                 echo -e "└── ${GREEN}[√]${NC}${YELLOW}gcert${NC}       - Dossier contenant les Mots de passe"
                                 echo -e "    └── ${GREEN}[√]${NC}${WHITE}wan${NC}      - Mot de passe pour le service WAN"
                                 echo -e "    └── ${WHITE}[4]lan${NC}      - Mot de passe pour le service LAN"
                                 echo -e "    └── ${WHITE}[5]gestion${NC}  - Mot de passe pour le service Gestion"
-                                echo -e "    └── ${WHITE}[6]certif${NC}   - Mot de passe pour le service Certificats"
-                                echo -e "    └── ${WHITE}[7]logs${NC}     - Mot de passe pour le service Logs\n\n" 
+                                echo -e "    └── ${WHITE}[6]logs${NC}     - Mot de passe pour le service Logs\n\n" 
                                 
                                 echo -e "${GREEN}Mot de passe Lan créé avec succès${NC}"
                                 sleep 2
@@ -1912,16 +1953,16 @@ echo -e "   - Ne partagez jamais votre mot de passe maître."
                     # === Création de du Password Gestion ===
                     clear
                     afficher_bienvenue
-                    echo -e "${YELLOW}=== Création du Mots de passe Gestion ===${NC}\n\n"
-                    echo -e "${YELLOW}=== Structure du Password Store G.cert ===${NC}\n"
+                    
+                    echo -e "${BLUE_BRIGHT}=== Structure du Password Store G.cert ===${NC}\n"
+                    echo -e "${CYAN_BRIGHT}=== Création du Mots de passe Gestion ===${NC}\n\n"
 
                     echo -e "${GREEN}[√]${NC}${WHITE}Password Store${NC}   - Répertoire local où pass stocke tous les mots de passe"
                     echo -e "└── ${GREEN}[√]${NC}${YELLOW}gcert${NC}       - Dossier contenant les Mots de passe"
                     echo -e "    └── ${GREEN}[√]${NC}${WHITE}wan${NC}      - Mot de passe pour le service WAN"
                     echo -e "    └── ${GREEN}[√]${NC}${WHITE}lan${NC}      - Mot de passe pour le service LAN"
                     echo -e "    └── ${WHITE}[5]gestion${NC}  - Mot de passe pour le service Gestion"
-                    echo -e "    └── ${WHITE}[6]certif${NC}   - Mot de passe pour le service Certificats"
-                    echo -e "    └── ${WHITE}[7]logs${NC}     - Mot de passe pour le service Logs\n\n"
+                    echo -e "    └── ${WHITE}[6]logs${NC}     - Mot de passe pour le service Logs\n\n"
 
                     while true; do
                         echo -n "Veuillez entrer un Mot de passe Gestion : "
@@ -1934,16 +1975,16 @@ echo -e "   - Ne partagez jamais votre mot de passe maître."
                         if [[ -n "$Gestion" && "$Gestion" == "$GestionConfirm" ]]; then
                             clear
                             afficher_bienvenue
-                            echo -e "${YELLOW}=== Création du Mots de passe Gestion ===${NC}\n\n"
-                            echo -e "${YELLOW}=== Structure du Password Store G.cert ===${NC}\n"
+                            
+                            echo -e "${BLUE_BRIGHT}=== Structure du Password Store G.cert ===${NC}\n"
+                            echo -e "${CYAN_BRIGHT}=== Création du Mots de passe Gestion ===${NC}\n\n"
 
                             echo -e "${GREEN}[√]${NC}${WHITE}Password Store${NC}   - Répertoire local où pass stocke tous les mots de passe"
                             echo -e "└── ${GREEN}[√]${NC}${YELLOW}gcert${NC}       - Dossier contenant les Mots de passe"
                             echo -e "    └── ${GREEN}[√]${NC}${WHITE}wan${NC}      - Mot de passe pour le service WAN"
                             echo -e "    └── ${GREEN}[√]${NC}${WHITE}lan${NC}      - Mot de passe pour le service LAN"
                             echo -e "    └── ${WHITE}[5]gestion${NC}  - Mot de passe pour le service Gestion"
-                            echo -e "    └── ${WHITE}[6]certif${NC}   - Mot de passe pour le service Certificats"
-                            echo -e "    └── ${WHITE}[7]logs${NC}     - Mot de passe pour le service Logs\n\n"
+                            echo -e "    └── ${WHITE}[6]logs${NC}     - Mot de passe pour le service Logs\n\n"
                             echo -e "${GREEN}Mots de passe identiques.${NC}"
                             sleep 2
                             # Création du mot de passe 
@@ -1955,16 +1996,16 @@ echo -e "   - Ne partagez jamais votre mot de passe maître."
                             if [[ -f "$HOME/.password-store/gcert/gestion.gpg" ]]; then
                                 clear
                                 afficher_bienvenue
-                                echo -e "${YELLOW}=== Création du Mots de passe Gestion ===${NC}\n\n"
-                                echo -e "${YELLOW}=== Structure du Password Store G.cert ===${NC}\n"
+                                
+                                echo -e "${BLUE_BRIGHT}=== Structure du Password Store G.cert ===${NC}\n"
+                                echo -e "${CYAN_BRIGHT}=== Création du Mots de passe Gestion ===${NC}\n\n"
 
                                 echo -e "${GREEN}[√]${NC}${WHITE}Password Store${NC}   - Répertoire local où pass stocke tous les mots de passe"
                                 echo -e "└── ${GREEN}[√]${NC}${YELLOW}gcert${NC}       - Dossier contenant les Mots de passe"
                                 echo -e "    └── ${GREEN}[√]${NC}${WHITE}wan${NC}      - Mot de passe pour le service WAN"
                                 echo -e "    └── ${GREEN}[√]${NC}${WHITE}lan${NC}      - Mot de passe pour le service LAN"
                                 echo -e "    └── ${WHITE}[5]gestion${NC}  - Mot de passe pour le service Gestion"
-                                echo -e "    └── ${WHITE}[6]certif${NC}   - Mot de passe pour le service Certificats"
-                                echo -e "    └── ${WHITE}[7]logs${NC}     - Mot de passe pour le service Logs\n\n"
+                                echo -e "    └── ${WHITE}[6]logs${NC}     - Mot de passe pour le service Logs\n\n"
                                 echo -e "${GREEN}Mot de passe Gestion créé avec succès${NC}"
                                 sleep 2
                             else
@@ -1980,77 +2021,6 @@ echo -e "   - Ne partagez jamais votre mot de passe maître."
                         fi
                     done
 
-                    # === Création de du Password Certif ===
-                    clear
-                    afficher_bienvenue
-                    echo -e "${YELLOW}=== Création du Mots de passe Certif ===${NC}\n\n"
-                    echo -e "${YELLOW}=== Structure du Password Store G.cert ===${NC}\n"
-
-                    echo -e "${GREEN}[√]${NC}${WHITE}Password Store${NC}   - Répertoire local où pass stocke tous les mots de passe"
-                    echo -e "└── ${GREEN}[√]${NC}${YELLOW}gcert${NC}       - Dossier contenant les Mots de passe"
-                    echo -e "    └── ${GREEN}[√]${NC}${WHITE}wan${NC}      - Mot de passe pour le service WAN"
-                    echo -e "    └── ${GREEN}[√]${NC}${WHITE}lan${NC}      - Mot de passe pour le service LAN"
-                    echo -e "    └── ${GREEN}[√]${NC}${WHITE}gestion${NC}  - Mot de passe pour le service Gestion"
-                    echo -e "    └── ${WHITE}[6]certif${NC}   - Mot de passe pour le service Certificats"
-                    echo -e "    └── ${WHITE}[7]logs${NC}     - Mot de passe pour le service Logs\n\n"
-
-                    while true; do
-                        echo -n "Veuillez entrer un Mot de passe Certif : "
-                        read -s Certif
-                        echo
-                        echo -n "Confirmez le Mot de passe Certif : "
-                        read -s CertifConfirm
-                        echo
-                        
-                        # Teste le mot de passe et sa confirmation
-                        if [[ -n "$Certif" && "$Certif" == "$CertifConfirm" ]]; then
-                            clear
-                            afficher_bienvenue
-                            echo -e "${YELLOW}=== Création du Mots de passe Certif ===${NC}\n\n"
-                            echo -e "${YELLOW}=== Structure du Password Store G.cert ===${NC}\n"
-
-                            echo -e "${GREEN}[√]${NC}${WHITE}Password Store${NC}   - Répertoire local où pass stocke tous les mots de passe"
-                            echo -e "└── ${GREEN}[√]${NC}${YELLOW}gcert${NC}       - Dossier contenant les Mots de passe"
-                            echo -e "    └── ${GREEN}[√]${NC}${WHITE}wan${NC}      - Mot de passe pour le service WAN"
-                            echo -e "    └── ${GREEN}[√]${NC}${WHITE}lan${NC}      - Mot de passe pour le service LAN"
-                            echo -e "    └── ${GREEN}[√]${NC}${WHITE}gestion${NC}  - Mot de passe pour le service Gestion"
-                            echo -e "    └── ${WHITE}[6]certif${NC}   - Mot de passe pour le service Certificats"
-                            echo -e "    └── ${WHITE}[7]logs${NC}     - Mot de passe pour le service Logs\n\n"
-                            echo -e "${GREEN}Mots de passe identiques.${NC}"
-                            sleep 2
-                            # Création du mot de passe 
-                            
-
-                            printf '%s\n' "$Certif" | pass insert -f --multiline gcert/certif >/dev/null 2>&1
-
-                            # Vérification
-                            if [[ -f "$HOME/.password-store/gcert/certif.gpg" ]]; then
-                                clear
-                                afficher_bienvenue
-                                echo -e "${YELLOW}=== Création du Mots de passe Certif ===${NC}\n\n"
-                                echo -e "${YELLOW}=== Structure du Password Store G.cert ===${NC}\n"
-
-                                echo -e "${GREEN}[√]${NC}${WHITE}Password Store${NC}   - Répertoire local où pass stocke tous les mots de passe"
-                                echo -e "└── ${GREEN}[√]${NC}${YELLOW}gcert${NC}       - Dossier contenant les Mots de passe"
-                                echo -e "    └── ${GREEN}[√]${NC}${WHITE}wan${NC}      - Mot de passe pour le service WAN"
-                                echo -e "    └── ${GREEN}[√]${NC}${WHITE}lan${NC}      - Mot de passe pour le service LAN"
-                                echo -e "    └── ${GREEN}[√]${NC}${WHITE}gestion${NC}  - Mot de passe pour le service Gestion"
-                                echo -e "    └── ${WHITE}[6]certif${NC}   - Mot de passe pour le service Certificats"
-                                echo -e "    └── ${WHITE}[7]logs${NC}     - Mot de passe pour le service Logs\n\n"
-                                echo -e "${GREEN}Mot de passe Certif créé avec succès${NC}"
-                                sleep 2
-                            else
-                                echo -e "${RED}Problème lors de la création du Mot de passe Certif${NC}"
-                                sleep 2
-                                exit 1
-                            fi 
-
-                            break  # Sort de la boucle de saisie
-                        else
-                            echo -e "${RED}Erreur : les deux mots de passe ne correspondent pas.${NC}"
-                            echo "Veuillez réessayer."
-                        fi
-                    done
 
                     # === Création de du Password Logs ===
                     clear
@@ -2063,8 +2033,7 @@ echo -e "   - Ne partagez jamais votre mot de passe maître."
                     echo -e "    └── ${GREEN}[√]${NC}${WHITE}wan${NC}      - Mot de passe pour le service WAN"
                     echo -e "    └── ${GREEN}[√]${NC}${WHITE}lan${NC}      - Mot de passe pour le service LAN"
                     echo -e "    └── ${GREEN}[√]${NC}${WHITE}gestion${NC}  - Mot de passe pour le service Gestion"
-                    echo -e "    └── ${GREEN}[√]${NC}${WHITE}certif${NC}   - Mot de passe pour le service Certificats"
-                    echo -e "    └── ${WHITE}[7]logs${NC}     - Mot de passe pour le service Logs\n\n"
+                    echo -e "    └── ${WHITE}[6]logs${NC}     - Mot de passe pour le service Logs\n\n"
 
                     while true; do
                         echo -n "Veuillez entrer un Mot de passe Logs : "
@@ -2086,8 +2055,7 @@ echo -e "   - Ne partagez jamais votre mot de passe maître."
                             echo -e "    └── ${GREEN}[√]${NC}${WHITE}wan${NC}      - Mot de passe pour le service WAN"
                             echo -e "    └── ${GREEN}[√]${NC}${WHITE}lan${NC}      - Mot de passe pour le service LAN"
                             echo -e "    └── ${GREEN}[√]${NC}${WHITE}gestion${NC}  - Mot de passe pour le service Gestion"
-                            echo -e "    └── ${GREEN}[√]${NC}${WHITE}certif${NC}   - Mot de passe pour le service Certificats"
-                            echo -e "    └── ${WHITE}[7]logs${NC}     - Mot de passe pour le service Logs\n\n"
+                            echo -e "    └── ${WHITE}[6]logs${NC}     - Mot de passe pour le service Logs\n\n"
                             
                             echo -e "${GREEN}Mots de passe identiques.${NC}"
                             sleep 2
@@ -2108,8 +2076,7 @@ echo -e "   - Ne partagez jamais votre mot de passe maître."
                                 echo -e "    └── ${GREEN}[√]${NC}${WHITE}wan${NC}      - Mot de passe pour le service WAN"
                                 echo -e "    └── ${GREEN}[√]${NC}${WHITE}lan${NC}      - Mot de passe pour le service LAN"
                                 echo -e "    └── ${GREEN}[√]${NC}${WHITE}gestion${NC}  - Mot de passe pour le service Gestion"
-                                echo -e "    └── ${GREEN}[√]${NC}${WHITE}certif${NC}   - Mot de passe pour le service Certificats"
-                                echo -e "    └── ${WHITE}[7]logs${NC}     - Mot de passe pour le service Logs\n\n"
+                                echo -e "    └── ${WHITE}[6]logs${NC}     - Mot de passe pour le service Logs\n\n"
                                 echo -e "${GREEN}Mot de passe Logs créé avec succès${NC}"
                                 sleep 2
                                 
@@ -2121,7 +2088,6 @@ echo -e "   - Ne partagez jamais votre mot de passe maître."
                                 echo -e "    └── ${GREEN}[√]${NC}${WHITE}wan${NC}      - Mot de passe pour le service WAN"
                                 echo -e "    └── ${GREEN}[√]${NC}${WHITE}lan${NC}      - Mot de passe pour le service LAN"
                                 echo -e "    └── ${GREEN}[√]${NC}${WHITE}gestion${NC}  - Mot de passe pour le service Gestion"
-                                echo -e "    └── ${GREEN}[√]${NC}${WHITE}certif${NC}   - Mot de passe pour le service Certificats"
                                 echo -e "    └── ${GREEN}[√]${NC}${WHITE}logs${NC}     - Mot de passe pour le service Logs\n\n"
                                 sleep 3
                             
@@ -2154,7 +2120,7 @@ echo -e "   - Ne partagez jamais votre mot de passe maître."
                                 echo -e "${GREEN}[√] Installation et configuration de Vault...${NC}\n"
                                 echo -e "${GREEN}[√] Création de l'environnement Python...${NC}\n" 
                                 echo -e "${GREEN}[√] Création de la clé GPG et du mot de passe...${NC}\n" 
-                                echo -e "[5/5] Lancement du service G_Cert...\n\n"
+                                echo -e "-${INVERSE}[5/5]${NC}- Lancement du service G_Cert...\n\n"
                             
                             while true; do
                             read -p "Appuyez sur [Entrée] pour continuer : " input
