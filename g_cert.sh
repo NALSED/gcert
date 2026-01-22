@@ -1805,14 +1805,7 @@ EOF'
                                             
                                             done
                                             
-                                            
-                                                else
-                                                    clear
-                                                    afficher_bienvenue
-                                                    echo -e "${RED}Réponse invalide. Tapez y ou n.${NC}"
-                                                fi
-                                            done
-
+                                         
 
 
                                         elif [[ "$secu_ssl" =~ ^[nN]$ ]]; then
