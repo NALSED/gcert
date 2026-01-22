@@ -92,7 +92,7 @@ afficher_doc() {
 
 # Message de Bienvenue
 afficher_bienvenue() {
-    local message="${WHITE}${UNDERLINE}Bienvenue dans le programme d'installation de G.Cert${NC}\n\n"
+    local message="${YELLOW_BRIGHT}${UNDERLINE}Bienvenue dans le programme d'installation de G.Cert${NC}\n\n"
     echo -e "$message"
 }
 
@@ -170,8 +170,8 @@ afficher_bienvenue
                 
                 echo -e "\n${WHITE}=== Redirections des logs ===${NC}"
                 echo -e "\n\n-${INVERSE}[1]${NC}- Création d'un fichier de logs pour les sorties d'erreur :"
-                echo -e "   - Les erreurs sont redirigées vers ${WHITE}/var/log/gcert_install/erreur.log${NC}\n"
-                echo -e "\n\n-${INVERSE}[2]${NC}- Création d'un fichier de logs pour lister les installations/actions du programme."
+                echo -e "   - Les erreurs sont redirigées vers ${WHITE}/var/log/gcert_install/erreur.log${NC}"
+                echo -e "\n-${INVERSE}[2]${NC}- Création d'un fichier de logs pour lister les installations/actions du programme."
                 echo -e "   - Elles seront redirigées vers ${WHITE}/tmp/install.log${NC}. En cas de crash, le programme d'installation effacera les actions réalisées pour une installation future propre.\n"
 
                 enter
@@ -202,7 +202,7 @@ afficher_bienvenue
 
                 # Vérifier si le fichier /tmp/install.log existe
                 if [ -f "/tmp/install.log" ]; then
-                    echo -e "${GREEN}OK : Le fichier ${WHITE}/tmp/install.log${GREEN} existe.${NC}\n"
+                    echo -e "${GREEN}OK : Le fichier ${WHITE}/tmp/install.log${GREEN} créé avec succès.${NC}\n"
                     sleep 1
                 else
                     echo -e "${RED}ERREUR : Le fichier ${WHITE}/tmp/install.log${RED} n'existe pas.${NC}"
