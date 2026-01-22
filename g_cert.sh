@@ -599,7 +599,7 @@ afficher_bienvenue
                                 echo -e "${CYAN_BRIGHT}=== Génération des clés GPG ===${NC}\n"
 
                                 echo -e "${WHITE}[1] Clé GPG OpenSSL :${NC}"
-                                echo -e "   - Création d'une clé GPG dédiée à la clé privée des certificats SSL.\n"
+                                echo -e "   - Création d'une clé GPG dédiée à la clé privée du certificat SSL de Vault.\n"
 
                                 echo -e "${WHITE}[2] Clé GPG Vault :${NC}"
                                 echo -e "   - Création d'une clé GPG dédiée à Vault (unseal keys et root token).\n"
@@ -608,7 +608,10 @@ afficher_bienvenue
 
                                 enter
 
-                                msg="Initialisation création clés GPG, afin de protéger la Clée privée du certificat de Vault"
+                                clear
+                                afficher_bienvenue
+
+                                msg=" Initialisation création clés GPG, afin de protéger la Clée privée du certificat de Vault"
                                 echo -e "\n"
 
                                 BLA::start_loading_animation "$msg" "${BLA_passing_dots[@]}"
@@ -642,7 +645,7 @@ afficher_bienvenue
                                 clear
                                 afficher_bienvenue
                                
-                                msg="initialisation création clés GPG, afin de protéger les unseal keys et le root token"
+                                msg=" Initialisation création clés GPG, afin de protéger les unseal keys et le root token"
                                 echo -e "\n"
 
                                 BLA::start_loading_animation "$msg" "${BLA_passing_dots[@]}"
@@ -744,7 +747,7 @@ afficher_bienvenue
                                                     
                                                     clear
                                                     afficher_bienvenue
-                                                    echo "\n${GREEN}CN confirmé : '$cn_vault' ...${NC}"
+                                                    echo -e "\n${GREEN}CN confirmé : '$cn_vault'...${NC}"
                                                     sleep 3
                                                     break
                                                 elif [[ "$validation_cn" =~ ^[nN]$ ]]; then
@@ -779,7 +782,7 @@ afficher_bienvenue
                                                     
                                                     clear
                                                     afficher_bienvenue
-                                                    echo "\n${GREEN}DNS.1 confirmé : '$dns_vault' ...${NC}"
+                                                    echo -e "\n${GREEN}DNS.1 confirmé : '$dns_vault'...${NC}"
                                                     sleep 3
                                                     break
                                                 elif [[ "$validation_dns1" =~ ^[nN]$ ]]; then
@@ -822,7 +825,7 @@ afficher_bienvenue
                                                            
                                                             clear
                                                             afficher_bienvenue
-                                                            echo "\n${GREEN}IP confirmée : '$ip_vault' ...${NC}"
+                                                            echo -e "\n${GREEN}IP confirmée : '$ip_vault'...${NC}"
                                                             sleep 3
                                                             break 2
                                                         elif [[ "$validation_ip" =~ ^[nN]$ ]]; then
@@ -1142,6 +1145,7 @@ EOF
                                             
                                             echo -e "${GREEN}OK : vault.crt créé avec succès et valide.${NC}"
                                             sleep 2
+                                            break
                                         else
                                             echo -e "${RED}ERREUR : vault.csr manquante...${NC}"
                                             echo -e "Pour plus d'information voir le fichier : ${WHITE}/var/log/gcert_install/erreur.log${NC}" 
@@ -1223,6 +1227,8 @@ EOF
                                             
                                             echo -e "${GREEN}OK : vault.crt créé avec succès et valide.${NC}"
                                             sleep 2
+                                            break
+
                                         else
                                             echo -e "${RED}ERREUR : vault.csr manquante...${NC}"
                                             echo -e "Pour plus d'information voir le fichier : ${WHITE}/var/log/gcert_install/erreur.log${NC}" 
@@ -1266,9 +1272,9 @@ EOF
                                 afficher_bienvenue
                                 
                                 # Avertissement
-                                echo -e "${YELLOW}=== Sécurisation des fichiers SSL ===${NC}\n"
+                                echo -e "${WHITE}=== Sécurisation des fichiers SSL ===${NC}\n"
 
-                                echo -e "${WHITE}Attention : les fichiers clés et certificats sont très sensibles.${NC}"
+                                echo -e "${RED}Attention : les fichiers clés et certificats sont très sensibles.${NC}\n"
                                 read -p "Voulez-vous chiffrer et sécuriser tous les fichiers maintenant ou plus tard y/n ?" secu_ssl
 
                                     
@@ -1293,7 +1299,7 @@ EOF
                                             echo -e "   - Le fichier => ${WHITE}/etc/vault/ssl/vault_tls.cnf${NC} reste en place."
                                             echo -e "   - Permissions restreintes pour éviter un accès non autorisé.\n"
 
-                                            echo -e "${WHITE}[5] Tache Cron pour renouvelemnt du certificat SSL de Vault :${NC}"
+                                            echo -e "${WHITE}[5] Tache Cron pour renouvelement du certificat SSL de Vault :${NC}"
                                                                                     
                                             enter
 
@@ -1307,7 +1313,7 @@ EOF
 
                                             if [ -f /etc/vault/ssl/vault.csr ]; then
                                                 echo -e "${RED}ERREUR : Lors de la suppression du fichier =>${NC} ${WHITE}/etc/vault/ssl/vault.csr...${NC}"
-                                                echo -e "Suite à l'installation de Gcert, veuillez supprimer ce fichier." 
+                                                echo -e "Suite à l'installation de G.cert, veuillez supprimer ce fichier." 
                                                 sleep 3
                                             else
                                                 echo -e "${GREEN}OK : Suppression réussie.${NC}"
@@ -1322,14 +1328,14 @@ EOF
                                             echo -e "Utilisation de la GPG créée précédemment."
 
                                             # Chiffrement de la clé TLS avec GPG
-                                            gpg -e -r $KEY_PRIVATE_TLS /etc/vault/ssl/vault.key
+                                            gpg -e -r "$KEY_PRIVATE_TLS" /etc/vault/ssl/vault.key
 
                                                 # Vérification que le chiffrement a réussi et le fichier existe au bon endroit.
                                                 if [ $? -eq 0 ] && [ -f /etc/vault/ssl/vault.key.gpg ]; then
                                                     
                                                     echo -e "${GREEN}OK : le fichier: ${WHITE}/etc/vault/ssl/vault.key${NC} a bien été chiffré.${NC}"
-                                                    echo -e "Le fichier vault.key va être supprimé"
-                                                    sleep 2
+                                                    echo -e "Le fichier vault.key va être supprimé\n"
+                                                    sleep 4
                                                     
                                                     # Suppression
                                                     sudo rm /etc/vault/ssl/vault.key
@@ -1353,6 +1359,9 @@ EOF
                                             clear
                                             afficher_bienvenue
 
+
+                                            echo -e "${CYAN_BRIGHT}=== Droit et Propriété ===${NC}\n"
+
                                             echo -e "   - Droits restreints sur la clé chiffrée : chmod 600 ${WHITE}/etc/vault/ssl/vault.key.gpg${NC}."
                                             echo -e "   - Propriétaire et groupe sécurisés : chown vault:vault ${WHITE}/etc/vault/ssl/vault.key.gpg${NC}.\n"
 
@@ -1362,10 +1371,11 @@ EOF
 
                                                     if [[ $(stat -c "%a" /etc/vault/ssl/vault.key.gpg) == "600" && $(stat -c "%U:%G" /etc/vault/ssl/vault.key.gpg) == "vault:vault" ]]; then
                                                             echo -e "${GREEN}OK : le fichier ${WHITE}/etc/vault/ssl/vault.key.gpg${GREEN} est bien sécurisé.${NC}"
-
+                                                            sleep 3
                                                     else
                                                         echo -e "${RED}ERREUR : permissions ou propriétaire incorrects pour ${WHITE}$FILE${NC}"
                                                         echo -e "Suite à l'installation de Gcert, veuillez résoudre ce probléme."
+                                                        sleep 3
                                                     fi
 
                                             clear
@@ -1381,10 +1391,11 @@ EOF
                                             # Vérification droit et proprietaire
                                             if [[ $(stat -c "%a" /etc/vault/ssl/vault_tls.cnf) == "640" && $(stat -c "%U:%G" /etc/vault/ssl/vault_tls.cnf) == "root:vault" ]]; then
                                                 echo -e "${GREEN}OK : le fichier ${WHITE}/etc/vault/ssl/vault_tls.cnf${GREEN} est bien sécurisé.${NC}"
-                                                sleep 2
+                                                sleep 3
                                             else
                                                 echo -e "${RED}ERREUR : permissions ou propriétaire incorrects pour ${WHITE}/etc/vault/ssl/vault_tls.cnf${NC}"
                                                 echo -e "Veuillez vérifier et corriger les droits du fichier."
+                                                sleep 3
                                             fi
 
 
@@ -1396,13 +1407,23 @@ EOF
                                                 read -p "Voulez-vous créer une tâche cron afin de renouveler automatiquement le certificat de Vault ? (y/n) : " choix_cron
                                                 
                                                 if [[ "$choix_cron" =~ ^[yY]$ ]]; then
-                                                    echo -e "   - Création d'un script de renouvellement automatique du certificat Vault."
-                                                    echo -e "   - Met à jour les permissions et redémarre le service Vault.\n"
+                                                    clear
+                                                    afficher_bienvenue
+
+                                                    echo -e "${CYAN_BRIGHT}=== Renouvellement du certificat via Cron ===${NC}\n"
+                                                    echo -e "   - Création d'un script pour le renouvellement automatique du certificat Vault et Mise à jour des permissions."
+                                                    echo -e "   - Enregistrement de l'exécution du script dans systemd."
+
                                                     
                                                     # Script de renouvellement
+                                                    clear
+                                                    afficher_bienvenue
+                                                    
+                                                    echo -e "Création script et tache cron ..."
+                                                    
                                                     cat > /usr/local/bin/renew_vault_ssl.sh << EOF
 #!/bin/bash
-openssl req -new -x509 -days $days_vault -key /etc/vault/ssl/vault.key -out /etc/vault/ssl/vault.crt -config /etc/vault/ssl/vault_tls.cnf
+openssl req -new -x509 -days "$days_vault" -key /etc/vault/ssl/vault.key -out /etc/vault/ssl/vault.crt -config /etc/vault/ssl/vault_tls.cnf
 chmod 640 /etc/vault/ssl/vault.crt
 chown root:vault /etc/vault/ssl/vault.crt
 systemctl restart vault
@@ -1414,6 +1435,33 @@ EOF
                                                     (crontab -l 2>/dev/null | grep -v "renew_vault_ssl.sh"; echo "0 0 */$(($days_vault - 1)) * * /usr/local/bin/renew_vault_ssl.sh") | crontab -
                                                     
                                                     echo -e "${GREEN} Tâche cron configurée avec succès${NC}"
+                                                    sleep 2
+
+
+                                                    echo -e "Inscription à systemd ..."
+
+                                                    cat > /etc/systemd/system/renew_vault_ssl.service << EOF
+[Unit]
+Description=Renew Vault SSL Certificates
+After=network.target
+
+[Service]
+Type=simple
+ExecStart=/usr/local/bin/renew_vault_ssl.sh
+User=root
+Group=root
+
+[Install]
+WantedBy=multi-user.target
+EOF
+
+                                                    sudo systemctl daemon-reload
+                                                    systemctl enable renew_vault_ssl.service
+                                                    systemctl start renew_vault_ssl.service
+                                                    
+                                                    echo -e "${GREEN} Inscription à systemd réalisé avec succès${NC}"
+                                                    sleep 3
+                                                    
                                                     break
                                                     
                                                 elif [[ "$choix_cron" =~ ^[nN]$ ]]; then
