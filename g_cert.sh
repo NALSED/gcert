@@ -2449,8 +2449,8 @@ echo -e "   - Ne partagez jamais votre mot de passe maître."
                     # === Création de du Password Logs ===
                     clear
                     afficher_bienvenue
-                    echo -e "${YELLOW}=== Création du Mots de passe logs ===${NC}\n\n"
-                    echo -e "${YELLOW}=== Structure du Password Store G.cert ===${NC}\n"
+                    echo -e "${BLUE_BRIGHT}=== Structure du Password Store G.cert ===${NC}\n"
+                    echo -e "${CYAN_BRIGHT}=== Création du Mots de passe Logs ===${NC}\n\n"
 
                     echo -e "${GREEN}[√]${NC}${WHITE}Password Store${NC}   - Répertoire local où pass stocke tous les mots de passe"
                     echo -e "└── ${GREEN}[√]${NC}${YELLOW}gcert${NC}       - Dossier contenant les Mots de passe"
@@ -2471,8 +2471,8 @@ echo -e "   - Ne partagez jamais votre mot de passe maître."
                         if [[ -n "$Logs" && "$Logs" == "$LogsConfirm" ]]; then
                             clear
                             afficher_bienvenue
-                            echo -e "${YELLOW}=== Création du Mots de passe logs ===${NC}\n\n"
-                            echo -e "${YELLOW}=== Structure du Password Store G.cert ===${NC}\n"
+                            echo -e "${BLUE_BRIGHT}=== Structure du Password Store G.cert ===${NC}\n"
+                            echo -e "${CYAN_BRIGHT}=== Création du Mots de passe Logs ===${NC}\n\n"
 
                             echo -e "${GREEN}[√]${NC}${WHITE}Password Store${NC}   - Répertoire local où pass stocke tous les mots de passe"
                             echo -e "└── ${GREEN}[√]${NC}${YELLOW}gcert${NC}       - Dossier contenant les Mots de passe"
@@ -2492,8 +2492,8 @@ echo -e "   - Ne partagez jamais votre mot de passe maître."
                             if [[ -f "$HOME/.password-store/gcert/logs.gpg" ]]; then
                                 clear
                                 afficher_bienvenue
-                                echo -e "${YELLOW}=== Création du Mots de passe logs ===${NC}\n\n"
-                                echo -e "${YELLOW}=== Structure du Password Store G.cert ===${NC}\n"
+                                echo -e "${BLUE_BRIGHT}=== Structure du Password Store G.cert ===${NC}\n"
+                                echo -e "${CYAN_BRIGHT}=== Création du Mots de passe Logs ===${NC}\n\n"
 
                                 echo -e "${GREEN}[√]${NC}${WHITE}Password Store${NC}   - Répertoire local où pass stocke tous les mots de passe"
                                 echo -e "└── ${GREEN}[√]${NC}${YELLOW}gcert${NC}       - Dossier contenant les Mots de passe"
