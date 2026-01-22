@@ -1468,306 +1468,299 @@ EOF
                                                 echo -e "-${INVERSE}[2]${NC}- ${WHITE}Clé privée en clair / Renouvellement via cron${NC}"
                                                 echo -e "-${INVERSE}[3]${NC}- ${WHITE}Sortie Installation${NC}\n"
 
+                                                read -p "Veuillez sélectionner une option pour gérer le certificat : " choix_cle_priv
 
-                                                    read -p "Veuillez sélectionner une option pour gérer le certificat : " choix_cle_priv
+                                                case $choix_cle_priv in
+                                                    
+                                                    1)
 
-                                                    case $choix_cle_priv in
+                                                        # Suppression .csr
+                                                        clear
+                                                        afficher_bienvenue
+
+                                                        echo -e "${BLUE_BRIGHT}=== Installation et Configuration de Vault ===${NC}\n"
+                                                        echo -e "${WHITE}=== Certificat Vault ===${NC}\n\n"
+
+                                                        echo -e " ${GREEN}[√]${NC}${WHITE}Ajout du Dépôt HashiCorp${NC}"
+                                                        echo -e "    └── ${GREEN}[√]${NC}${YELLOW}Installation du Paquet Vault${NC}"
+                                                        echo -e "        └── ${GREEN}[√]${NC}${CYAN}Vérification de la présence de Vault${NC}\n"
+
+                                                        echo -e " ${GREEN}[√]${NC}${WHITE}Création des clés GPG${NC}"
+                                                        echo -e "    └── ${GREEN}[√]${NC}${YELLOW}Certificat SSL${NC}"
+                                                        echo -e "        └── ${GREEN}[√]${NC}${CYAN}Fichier de configuration${NC}"
+                                                        echo -e "        └── ${GREEN}[√]${NC}${CYAN}Clé Privée${NC}"
+                                                        echo -e "        └── ${GREEN}[√]${NC}${CYAN}Fichier CSR${NC}"
+                                                        echo -e "        └── ${GREEN}[√]${NC}${CYAN}Certificat Vault${NC}"
+                                                        echo -e "        └── ${GREEN}[√]${NC}${CYAN}Signature du Certificat${NC}\n"
+
+                                                        echo -e " ${WHITE}[11]${NC}${WHITE}Sécurisation du fichier Certificat${NC}\n"
+                                                        echo -e "    └── ${WHITE}[12]${NC}${WHITE}Clé Privée Chiffrée${NC}"
+                                                        echo -e "    └── ${WHITE}[13]${NC}${YELLOW}Aucune tâche cron${NC}"
                                                         
-                                                        1)
+                                                        sleep 3
 
-                                                            # Suppression .csr
-                                                            clear
-                                                            afficher_bienvenue
-
-                                                            echo -e "${BLUE_BRIGHT}=== Installation et Configuration de Vault ===${NC}\n"
-                                                            echo -e "${WHITE}=== Certificat Vault ===${NC}\n\n"
-
-                                                            echo -e " ${GREEN}[√]${NC}${WHITE}Ajout du Dépôt HashiCorp${NC}"
-                                                            echo -e "    └── ${GREEN}[√]${NC}${YELLOW}Installation du Paquet Vault${NC}"
-                                                            echo -e "        └── ${GREEN}[√]${NC}${CYAN}Vérification de la présence de Vault${NC}\n"
-
-                                                            echo -e " ${GREEN}[√]${NC}${WHITE}Création des clés GPG${NC}"
-                                                            echo -e "    └── ${GREEN}[√]${NC}${YELLOW}Certificat SSL${NC}"
-                                                            echo -e "        └── ${GREEN}[√]${NC}${CYAN}Fichier de configuration${NC}"
-                                                            echo -e "        └── ${GREEN}[√]${NC}${CYAN}Clé Privée${NC}"
-                                                            echo -e "        └── ${GREEN}[√]${NC}${CYAN}Fichier CSR${NC}"
-                                                            echo -e "        └── ${GREEN}[√]${NC}${CYAN}Certificat Vault${NC}"
-                                                            echo -e "        └── ${GREEN}[√]${NC}${CYAN}Signature du Certificat${NC}\n"
-
-                                                            echo -e " ${WHITE}[11]${NC}${WHITE}Sécurisation du fichier Certificat${NC}\n"
-                                                            echo -e "    └── ${WHITE}[12]${NC}${WHITE}Clé Privée Chiffrée${NC}"
-                                                            echo -e "    └── ${WHITE}[13]${NC}${YELLOW}Aucune tâche cron${NC}"
+                                                        echo -e "${WHITE}[1] Suppression du CSR :${NC}"
                                                         
+                                                        sudo rm /etc/vault/ssl/vault.csr
+
+                                                        if [ -f /etc/vault/ssl/vault.csr ]; then
+                                                            echo -e "${RED}ERREUR : Lors de la suppression du fichier =>${NC} ${WHITE}/etc/vault/ssl/vault.csr...${NC}"
+                                                            echo -e "Suite à l'installation de G.cert, veuillez supprimer ce fichier." 
                                                             sleep 3
+                                                        else
+                                                            echo -e "${GREEN}OK : Suppression réussie.${NC}"
+                                                            sleep 2
+                                                        fi
 
-                                                            echo -e "${WHITE}[1] Suppression du CSR :${NC}"
+                                                        # Chiffrement .key
+                                                        clear
+                                                        afficher_bienvenue
+                                                        echo -e "${WHITE}[2] Chiffrement et permissions de la clé privée : /etc/vault/ssl/vault.key${NC}\n"
+
+                                                        echo -e "Utilisation de la GPG créée précédemment."
+
+                                                        # Chiffrement de la clé TLS avec GPG
+                                                        sudo gpg -e -r "$KEY_PRIVATE_TLS" /etc/vault/ssl/vault.key
+
+                                                        # Vérification que le chiffrement a réussi et le fichier existe au bon endroit.
+                                                        if [ $? -eq 0 ] && [ -f /etc/vault/ssl/vault.key.gpg ]; then
                                                             
-                                                            sudo rm /etc/vault/ssl/vault.csr
+                                                            echo -e "${GREEN}OK : le fichier: ${WHITE}/etc/vault/ssl/vault.key${NC} a bien été chiffré.${NC}"
+                                                            echo -e "Le fichier vault.key va être supprimé\n"
+                                                            sleep 4
+                                                            
+                                                            # Suppression
+                                                            sudo rm /etc/vault/ssl/vault.key
 
-                                                            if [ -f /etc/vault/ssl/vault.csr ]; then
-                                                                echo -e "${RED}ERREUR : Lors de la suppression du fichier =>${NC} ${WHITE}/etc/vault/ssl/vault.csr...${NC}"
-                                                                echo -e "Suite à l'installation de G.cert, veuillez supprimer ce fichier." 
+                                                            # Vérification de la suppression
+                                                            if [ -f /etc/vault/ssl/vault.key ]; then
+                                                                echo -e "${RED}ERREUR : Lors de la suppression du fichier =>${NC} ${WHITE}/etc/vault/ssl/vault.key...${NC}"
+                                                                echo -e "Suite à l'installation de Gcert, veuillez supprimer ce fichier."
                                                                 sleep 3
                                                             else
                                                                 echo -e "${GREEN}OK : Suppression réussie.${NC}"
                                                                 sleep 2
                                                             fi
 
-                                                            # Chiffrement .key
-                                                            clear
-                                                            afficher_bienvenue
-                                                            echo -e "${WHITE}[2] Chiffrement et permissions de la clé privée : /etc/vault/ssl/vault.key${NC}\n"
-
-                                                            echo -e "Utilisation de la GPG créée précédemment."
-
-                                                            # Chiffrement de la clé TLS avec GPG
-                                                            sudo gpg -e -r "$KEY_PRIVATE_TLS" /etc/vault/ssl/vault.key
-
-                                                                # Vérification que le chiffrement a réussi et le fichier existe au bon endroit.
-                                                                if [ $? -eq 0 ] && [ -f /etc/vault/ssl/vault.key.gpg ]; then
-                                                                    
-                                                                    echo -e "${GREEN}OK : le fichier: ${WHITE}/etc/vault/ssl/vault.key${NC} a bien été chiffré.${NC}"
-                                                                    echo -e "Le fichier vault.key va être supprimé\n"
-                                                                    sleep 4
-                                                                    
-                                                                    # Suppression
-                                                                    sudo rm /etc/vault/ssl/vault.key
-
-                                                                    # Vérification de la suppression
-                                                                    if [ -f /etc/vault/ssl/vault.key ]; then
-                                                                        echo -e "${RED}ERREUR : Lors de la suppression du fichier =>${NC} ${WHITE}/etc/vault/ssl/vault.key...${NC}"
-                                                                        echo -e "Suite à l'installation de Gcert, veuillez supprimer ce fichier."
-                                                                        sleep 3
-                                                                    else
-                                                                        echo -e "${GREEN}OK : Suppression réussie.${NC}"
-                                                                        sleep 2
-                                                                    fi
-
-                                                                else
-                                                                    echo -e "${RED}ERREUR : Le chiffrement GPG a échoué =>${NC} ${WHITE}/etc/vault/ssl/vault.key${NC}"
-                                                                    echo -e "La clé privée n'a PAS été supprimée par sécurité."
-                                                                    sleep 3
-                                                                fi
-
-                                                            clear
-                                                            afficher_bienvenue
-
-
-                                                            echo -e "${CYAN_BRIGHT}=== Droit et Propriété ===${NC}\n"
-
-                                                            echo -e "   - Droits restreints sur la clé chiffrée : chmod 600 ${WHITE}/etc/vault/ssl/vault.key.gpg${NC}."
-                                                            echo -e "   - Propriétaire et groupe sécurisés : chown vault:vault ${WHITE}/etc/vault/ssl/vault.key.gpg${NC}.\n"
-
-                                                        
-                                                                sudo chmod 600 /etc/vault/ssl/vault.key.gpg
-                                                                sudo chown vault:vault /etc/vault/ssl/vault.key.gpg
-
-                                                                    if [[ $(stat -c "%a" /etc/vault/ssl/vault.key.gpg) == "600" && $(stat -c "%U:%G" /etc/vault/ssl/vault.key.gpg) == "vault:vault" ]]; then
-                                                                            echo -e "${GREEN}OK : le fichier ${WHITE}/etc/vault/ssl/vault.key.gpg${GREEN} est bien sécurisé.${NC}"
-                                                                            sleep 3
-                                                                    else
-                                                                        echo -e "${RED}ERREUR : permissions ou propriétaire incorrects pour ${WHITE}$FILE${NC}"
-                                                                        echo -e "Suite à l'installation de Gcert, veuillez résoudre ce probléme."
-                                                                        sleep 3
-                                                                    fi
-
-                                                            clear
-                                                            afficher_bienvenue
-
-                                                            echo -e "   - Droits restreints sur le fichier de configuration : chmod 640 ${WHITE}/etc/vault/ssl/vault_tls.cnf${NC}."
-                                                            echo -e "   - Propriétaire et groupe sécurisés : chown root:vault ${WHITE}/etc/vault/ssl/vault_tls.cnf${NC}.\n"
-
-                                                            # Appliquer les droits
-                                                            sudo chmod 640 /etc/vault/ssl/vault_tls.cnf
-                                                            sudo chown root:vault /etc/vault/ssl/vault_tls.cnf
-
-                                                            # Vérification droit et proprietaire
-                                                            if [[ $(stat -c "%a" /etc/vault/ssl/vault_tls.cnf) == "640" && $(stat -c "%U:%G" /etc/vault/ssl/vault_tls.cnf) == "root:vault" ]]; then
-                                                                echo -e "${GREEN}OK : le fichier ${WHITE}/etc/vault/ssl/vault_tls.cnf${GREEN} est bien sécurisé.${NC}"
-                                                                sleep 3
-                                                            else
-                                                                echo -e "${RED}ERREUR : permissions ou propriétaire incorrects pour ${WHITE}/etc/vault/ssl/vault_tls.cnf${NC}"
-                                                                echo -e "Veuillez vérifier et corriger les droits du fichier."
-                                                                sleep 3
-                                                            fi
-
-                                                            echo -e "${BLUE_BRIGHT}=== Installation et Configuration de Vault ===${NC}\n"
-                                                            echo -e "${WHITE}=== Certificat Vault ===${NC}\n\n"
-
-                                                            echo -e " ${GREEN}[√]${NC}${WHITE}Ajout du Dépôt HashiCorp${NC}"
-                                                            echo -e "    └── ${GREEN}[√]${NC}${YELLOW}Installation du Paquet Vault${NC}"
-                                                            echo -e "        └── ${GREEN}[√]${NC}${CYAN}Vérification de la présence de Vault${NC}\n"
-
-                                                            echo -e " ${GREEN}[√]${NC}${WHITE}Création des clés GPG${NC}"
-                                                            echo -e "    └── ${GREEN}[√]${NC}${YELLOW}Certificat SSL${NC}"
-                                                            echo -e "        └── ${GREEN}[√]${NC}${CYAN}Fichier de configuration${NC}"
-                                                            echo -e "        └── ${GREEN}[√]${NC}${CYAN}Clé Privée${NC}"
-                                                            echo -e "        └── ${GREEN}[√]${NC}${CYAN}Fichier CSR${NC}"
-                                                            echo -e "        └── ${GREEN}[√]${NC}${CYAN}Certificat Vault${NC}"
-                                                            echo -e "        └── ${GREEN}[√]${NC}${CYAN}Signature du Certificat${NC}\n"
-
-                                                            echo -e " ${GREEN}[√]${NC}${WHITE}Sécurisation du fichier Certificat${NC}\n"
-                                                            echo -e "    └── ${GREEN}[√]${NC}${WHITE}Clé Privée Chiffrée${NC}"
-                                                            echo -e "    └── ${GREEN}[√]${NC}${YELLOW}Aucune tâche cron${NC}"
-                                                        
+                                                        else
+                                                            echo -e "${RED}ERREUR : Le chiffrement GPG a échoué =>${NC} ${WHITE}/etc/vault/ssl/vault.key${NC}"
+                                                            echo -e "La clé privée n'a PAS été supprimée par sécurité."
                                                             sleep 3
+                                                        fi
 
-                            
-                                                                    
-                                                                    break
+                                                        clear
+                                                        afficher_bienvenue
 
-                                                            ;;
+                                                        echo -e "${CYAN_BRIGHT}=== Droit et Propriété ===${NC}\n"
 
-                                                        2)
-                                                                                        
+                                                        echo -e "   - Droits restreints sur la clé chiffrée : chmod 600 ${WHITE}/etc/vault/ssl/vault.key.gpg${NC}."
+                                                        echo -e "   - Propriétaire et groupe sécurisés : chown vault:vault ${WHITE}/etc/vault/ssl/vault.key.gpg${NC}.\n"
 
-                                                            # Suppression .csr
-                                                            clear
-                                                            afficher_bienvenue
+                                                        sudo chmod 600 /etc/vault/ssl/vault.key.gpg
+                                                        sudo chown vault:vault /etc/vault/ssl/vault.key.gpg
 
-                                                            echo -e "${BLUE_BRIGHT}=== Installation et Configuration de Vault ===${NC}\n"
-                                                            echo -e "${WHITE}=== Certificat Vault ===${NC}\n\n"
-
-                                                            echo -e " ${GREEN}[√]${NC}${WHITE}Ajout du Dépôt HashiCorp${NC}"
-                                                            echo -e "    └── ${GREEN}[√]${NC}${YELLOW}Installation du Paquet Vault${NC}"
-                                                            echo -e "        └── ${GREEN}[√]${NC}${CYAN}Vérification de la présence de Vault${NC}\n"
-
-                                                            echo -e " ${GREEN}[√]${NC}${WHITE}Création des clés GPG${NC}"
-                                                            echo -e "    └── ${GREEN}[√]${NC}${YELLOW}Certificat SSL${NC}"
-                                                            echo -e "        └── ${GREEN}[√]${NC}${CYAN}Fichier de configuration${NC}"
-                                                            echo -e "        └── ${GREEN}[√]${NC}${CYAN}Clé Privée${NC}"
-                                                            echo -e "        └── ${GREEN}[√]${NC}${CYAN}Fichier CSR${NC}"
-                                                            echo -e "        └── ${GREEN}[√]${NC}${CYAN}Certificat Vault${NC}"
-                                                            echo -e "        └── ${GREEN}[√]${NC}${CYAN}Signature du Certificat${NC}\n"
-
-                                                            echo -e " ${WHITE}[11]${NC}${WHITE}Sécurisation du fichier Certificat${NC}\n"
-                
-                                                            echo -e " ${WHITE}[12]${NC}${WHITE}Clé Privée Certificat => Restrictions des droits${NC}"
-                                                            echo -e "    └── ${WHITE}[13]${NC}${YELLOW}Tâche Cron pour renouvellement + Systemd${NC}\n"
-
+                                                        if [[ $(stat -c "%a" /etc/vault/ssl/vault.key.gpg) == "600" && $(stat -c "%U:%G" /etc/vault/ssl/vault.key.gpg) == "vault:vault" ]]; then
+                                                            echo -e "${GREEN}OK : le fichier ${WHITE}/etc/vault/ssl/vault.key.gpg${GREEN} est bien sécurisé.${NC}"
                                                             sleep 3
+                                                        else
+                                                            echo -e "${RED}ERREUR : permissions ou propriétaire incorrects pour ${WHITE}$FILE${NC}"
+                                                            echo -e "Suite à l'installation de Gcert, veuillez résoudre ce problème."
+                                                            sleep 3
+                                                        fi
+
+                                                        clear
+                                                        afficher_bienvenue
+
+                                                        echo -e "   - Droits restreints sur le fichier de configuration : chmod 640 ${WHITE}/etc/vault/ssl/vault_tls.cnf${NC}."
+                                                        echo -e "   - Propriétaire et groupe sécurisés : chown root:vault ${WHITE}/etc/vault/ssl/vault_tls.cnf${NC}.\n"
+
+                                                        # Appliquer les droits
+                                                        sudo chmod 640 /etc/vault/ssl/vault_tls.cnf
+                                                        sudo chown root:vault /etc/vault/ssl/vault_tls.cnf
+
+                                                        # Vérification droit et propriétaire
+                                                        if [[ $(stat -c "%a" /etc/vault/ssl/vault_tls.cnf) == "640" && $(stat -c "%U:%G" /etc/vault/ssl/vault_tls.cnf) == "root:vault" ]]; then
+                                                            echo -e "${GREEN}OK : le fichier ${WHITE}/etc/vault/ssl/vault_tls.cnf${GREEN} est bien sécurisé.${NC}"
+                                                            sleep 3
+                                                        else
+                                                            echo -e "${RED}ERREUR : permissions ou propriétaire incorrects pour ${WHITE}/etc/vault/ssl/vault_tls.cnf${NC}"
+                                                            echo -e "Veuillez vérifier et corriger les droits du fichier."
+                                                            sleep 3
+                                                        fi
+
+                                                        echo -e "${BLUE_BRIGHT}=== Installation et Configuration de Vault ===${NC}\n"
+                                                        echo -e "${WHITE}=== Certificat Vault ===${NC}\n\n"
+
+                                                        echo -e " ${GREEN}[√]${NC}${WHITE}Ajout du Dépôt HashiCorp${NC}"
+                                                        echo -e "    └── ${GREEN}[√]${NC}${YELLOW}Installation du Paquet Vault${NC}"
+                                                        echo -e "        └── ${GREEN}[√]${NC}${CYAN}Vérification de la présence de Vault${NC}\n"
+
+                                                        echo -e " ${GREEN}[√]${NC}${WHITE}Création des clés GPG${NC}"
+                                                        echo -e "    └── ${GREEN}[√]${NC}${YELLOW}Certificat SSL${NC}"
+                                                        echo -e "        └── ${GREEN}[√]${NC}${CYAN}Fichier de configuration${NC}"
+                                                        echo -e "        └── ${GREEN}[√]${NC}${CYAN}Clé Privée${NC}"
+                                                        echo -e "        └── ${GREEN}[√]${NC}${CYAN}Fichier CSR${NC}"
+                                                        echo -e "        └── ${GREEN}[√]${NC}${CYAN}Certificat Vault${NC}"
+                                                        echo -e "        └── ${GREEN}[√]${NC}${CYAN}Signature du Certificat${NC}\n"
+
+                                                        echo -e " ${GREEN}[√]${NC}${WHITE}Sécurisation du fichier Certificat${NC}\n"
+                                                        echo -e "    └── ${GREEN}[√]${NC}${WHITE}Clé Privée Chiffrée${NC}"
+                                                        echo -e "    └── ${GREEN}[√]${NC}${YELLOW}Aucune tâche cron${NC}"
+                                                        
+                                                        sleep 3
+
+                                                        break
+
+                                                    ;;
+
+                                                    2)
+
+                                                        # Suppression .csr
+                                                        clear
+                                                        afficher_bienvenue
+
+                                                        echo -e "${BLUE_BRIGHT}=== Installation et Configuration de Vault ===${NC}\n"
+                                                        echo -e "${WHITE}=== Certificat Vault ===${NC}\n\n"
+
+                                                        echo -e " ${GREEN}[√]${NC}${WHITE}Ajout du Dépôt HashiCorp${NC}"
+                                                        echo -e "    └── ${GREEN}[√]${NC}${YELLOW}Installation du Paquet Vault${NC}"
+                                                        echo -e "        └── ${GREEN}[√]${NC}${CYAN}Vérification de la présence de Vault${NC}\n"
+
+                                                        echo -e " ${GREEN}[√]${NC}${WHITE}Création des clés GPG${NC}"
+                                                        echo -e "    └── ${GREEN}[√]${NC}${YELLOW}Certificat SSL${NC}"
+                                                        echo -e "        └── ${GREEN}[√]${NC}${CYAN}Fichier de configuration${NC}"
+                                                        echo -e "        └── ${GREEN}[√]${NC}${CYAN}Clé Privée${NC}"
+                                                        echo -e "        └── ${GREEN}[√]${NC}${CYAN}Fichier CSR${NC}"
+                                                        echo -e "        └── ${GREEN}[√]${NC}${CYAN}Certificat Vault${NC}"
+                                                        echo -e "        └── ${GREEN}[√]${NC}${CYAN}Signature du Certificat${NC}\n"
+
+                                                        echo -e " ${WHITE}[11]${NC}${WHITE}Sécurisation du fichier Certificat${NC}\n"
+
+                                                        echo -e " ${WHITE}[12]${NC}${WHITE}Clé Privée Certificat => Restrictions des droits${NC}"
+                                                        echo -e "    └── ${WHITE}[13]${NC}${YELLOW}Tâche Cron pour renouvellement + Systemd${NC}\n"
+
+                                                        sleep 3
+
+                                                        sudo rm /etc/vault/ssl/vault.csr
+
+                                                        if [ -f /etc/vault/ssl/vault.csr ]; then
+                                                            echo -e "${RED}ERREUR : Lors de la suppression du fichier =>${NC} ${WHITE}/etc/vault/ssl/vault.csr...${NC}"
+                                                            echo -e "Suite à l'installation de G.cert, veuillez supprimer ce fichier." 
+                                                            sleep 3
+                                                        else
+                                                            echo -e "${GREEN}OK : Suppression réussie.${NC}"
+                                                            sleep 2
+                                                        fi
+
+                                                        # Droit et propriétaire vault.key 
+
+                                                        clear
+                                                        afficher_bienvenue
+
+                                                        echo -e "${WHITE}Droit et propriétaire vault.key ${NC}"
+                                                        
+                                                        sudo chown root:root /etc/vault/ssl/vault.key
+                                                        sudo chmod 400 /etc/vault/ssl/vault.key
+
+                                                        if [[ $(stat -c "%a" /etc/vault/ssl/vault.key) == "400" && $(stat -c "%U:%G" /etc/vault/ssl/vault.key) == "root:root" ]]; then
+                                                            echo -e "${GREEN}OK : le fichier ${WHITE}/etc/vault/ssl/vault.key${GREEN} est bien sécurisé.${NC}"
+                                                            sleep 3
+                                                        else
+                                                            echo -e "${RED}ERREUR : permissions ou propriétaire incorrects pour ${WHITE}/etc/vault/ssl/vault.key${NC}"
+                                                            echo -e "Veuillez vérifier et corriger les droits du fichier."
+                                                            sleep 3
+                                                        fi
+
+
+                                                        # Droit et propriétaire vault_tls.cnf 
+                                                        clear
+                                                        afficher_bienvenue
+
+                                                        echo -e "${WHITE}Droit et propriétaire vault_tls.cnf ${NC}"
+
+                                                        # Appliquer les droits
+                                                        sudo chmod 640 /etc/vault/ssl/vault_tls.cnf
+                                                        sudo chown root:vault /etc/vault/ssl/vault_tls.cnf
+
+                                                        # Vérification droit et propriétaire
+                                                        if [[ $(stat -c "%a" /etc/vault/ssl/vault_tls.cnf) == "640" && $(stat -c "%U:%G" /etc/vault/ssl/vault_tls.cnf) == "root:vault" ]]; then
+                                                            echo -e "${GREEN}OK : le fichier ${WHITE}/etc/vault/ssl/vault_tls.cnf${GREEN} est bien sécurisé.${NC}"
+                                                            sleep 3
+                                                        else
+                                                            echo -e "${RED}ERREUR : permissions ou propriétaire incorrects pour ${WHITE}/etc/vault/ssl/vault_tls.cnf${NC}"
+                                                            echo -e "Veuillez vérifier et corriger les droits du fichier."
+                                                            sleep 3
+                                                        fi
+
+
+                                                        # === Tâche Cron ===
+                                                        clear
+                                                        afficher_bienvenue
+
+                                                        while true; do
+                                                            read -p "Voulez-vous créer une tâche cron afin de renouveler automatiquement le certificat de Vault ? (y/n) : " choix_cron
                                                             
-                                                            sudo rm /etc/vault/ssl/vault.csr
+                                                            if [[ "$choix_cron" =~ ^[yY]$ ]]; then
+                                                                clear
+                                                                afficher_bienvenue
 
-                                                            if [ -f /etc/vault/ssl/vault.csr ]; then
-                                                                echo -e "${RED}ERREUR : Lors de la suppression du fichier =>${NC} ${WHITE}/etc/vault/ssl/vault.csr...${NC}"
-                                                                echo -e "Suite à l'installation de G.cert, veuillez supprimer ce fichier." 
-                                                                sleep 3
-                                                            else
-                                                                echo -e "${GREEN}OK : Suppression réussie.${NC}"
-                                                                sleep 2
-                                                            fi
+                                                                echo -e "${CYAN_BRIGHT}=== Renouvellement du certificat via Cron ===${NC}\n"
+                                                                echo -e "   - Création d'un script pour le renouvellement automatique du certificat Vault et Mise à jour des permissions."
+                                                                echo -e "   - Enregistrement de l'exécution du script dans systemd."
 
-                                                            # Droit et propriétaire vault.key 
-
-                                                            clear
-                                                            afficher_bienvenue
-
-                                                            echo -e "${WHITE}Droit et propriétaire vault.key ${NC}"
-                                                            
-                                                            sudo chown root:root /etc/vault/ssl/vault.key
-                                                            sudo chmod 400 /etc/vault/ssl/vault.key
-
-                                                            if [[ $(stat -c "%a" /etc/vault/ssl/vault.key) == "400" && $(stat -c "%U:%G" /etc/vault/ssl/vault.key) == "root:root" ]]; then
-                                                                echo -e "${GREEN}OK : le fichier ${WHITE}/etc/vault/ssl/vault.key${GREEN} est bien sécurisé.${NC}"
-                                                                sleep 3
-                                                            else
-                                                                echo -e "${RED}ERREUR : permissions ou propriétaire incorrects pour ${WHITE}/etc/vault/ssl/vault.key${NC}"
-                                                                echo -e "Veuillez vérifier et corriger les droits du fichier."
-                                                                sleep 3
-                                                            fi
-
-
-                                                            # Droit et propriétaire vault_tls.cnf 
-                                                            clear
-                                                            afficher_bienvenue
-
-                                                            echo -e "${WHITE}Droit et propriétaire vault_tls.cnf ${NC}"
-
-                                                            # Appliquer les droits
-                                                            sudo chmod 640 /etc/vault/ssl/vault_tls.cnf
-                                                            sudo chown root:vault /etc/vault/ssl/vault_tls.cnf
-
-                                                            # Vérification droit et proprietaire
-                                                            if [[ $(stat -c "%a" /etc/vault/ssl/vault_tls.cnf) == "640" && $(stat -c "%U:%G" /etc/vault/ssl/vault_tls.cnf) == "root:vault" ]]; then
-                                                                echo -e "${GREEN}OK : le fichier ${WHITE}/etc/vault/ssl/vault_tls.cnf${GREEN} est bien sécurisé.${NC}"
-                                                                sleep 3
-                                                            else
-                                                                echo -e "${RED}ERREUR : permissions ou propriétaire incorrects pour ${WHITE}/etc/vault/ssl/vault_tls.cnf${NC}"
-                                                                echo -e "Veuillez vérifier et corriger les droits du fichier."
-                                                                sleep 3
-                                                            fi
-
-
-                                                            # === Tache Cron ===
-                                                            clear
-                                                            afficher_bienvenue
-
-                                                            while true; do
-                                                                read -p "Voulez-vous créer une tâche cron afin de renouveler automatiquement le certificat de Vault ? (y/n) : " choix_cron
+                                                                # Script de renouvellement
+                                                                clear
+                                                                afficher_bienvenue
                                                                 
-                                                                if [[ "$choix_cron" =~ ^[yY]$ ]]; then
-                                                                    clear
-                                                                    afficher_bienvenue
-
-                                                                    echo -e "${CYAN_BRIGHT}=== Renouvellement du certificat via Cron ===${NC}\n"
-                                                                    echo -e "   - Création d'un script pour le renouvellement automatique du certificat Vault et Mise à jour des permissions."
-                                                                    echo -e "   - Enregistrement de l'exécution du script dans systemd."
-
-                                                                    
-                                                                    # Script de renouvellement
-                                                                    clear
-                                                                    afficher_bienvenue
-                                                                    
-                                                                    echo -e "Création script et tache cron ..."
-                                                                    
-                                                                    sudo touch /usr/local/bin/renew_vault_ssl.sh
-                                                                    sudo chown root:root /usr/local/bin/renew_vault_ssl.sh
-                                                                    
-                                                                    sudo bash -c 'cat > /usr/local/bin/renew_vault_ssl.sh << EOF
-    #!/bin/bash
-    openssl req -new -x509 -days "$days_vault" -key /etc/vault/ssl/vault.key -out /etc/vault/ssl/vault.crt -config /etc/vault/ssl/vault_tls.cnf
-    chmod 640 /etc/vault/ssl/vault.crt
-    chown root:vault /etc/vault/ssl/vault.crt
-    systemctl restart vault
-    EOF'
-            
-                                                                    sudo chmod 700 /usr/local/bin/renew_vault_ssl.sh
-                                                                    
-                                                                    # Ajouter au cron (renouvellement automatique avant expiration)
-                                                                    sudo bash -c "(crontab -l 2>/dev/null | grep -v 'renew_vault_ssl.sh'; echo '0 0 */$(($days_vault - 1)) * * /usr/local/bin/renew_vault_ssl.sh') | crontab -"
-                                                                    
-                                                                    echo -e "${GREEN} Tâche cron configurée avec succès${NC}"
-                                                                    sleep 2
+                                                                echo -e "Création script et tâche cron ..."
+                                                                
+                                                                sudo touch /usr/local/bin/renew_vault_ssl.sh
+                                                                sudo chown root:root /usr/local/bin/renew_vault_ssl.sh
+                                                                
+                                                                sudo bash -c 'cat > /usr/local/bin/renew_vault_ssl.sh << EOF
+                                            #!/bin/bash
+                                            openssl req -new -x509 -days "$days_vault" -key /etc/vault/ssl/vault.key -out /etc/vault/ssl/vault.crt -config /etc/vault/ssl/vault_tls.cnf
+                                            chmod 640 /etc/vault/ssl/vault.crt
+                                            chown root:vault /etc/vault/ssl/vault.crt
+                                            systemctl restart vault
+                                            EOF'
+                                                    
+                                                                sudo chmod 700 /usr/local/bin/renew_vault_ssl.sh
+                                                                
+                                                                # Ajouter au cron (renouvellement automatique avant expiration)
+                                                                sudo bash -c "(crontab -l 2>/dev/null | grep -v 'renew_vault_ssl.sh'; echo '0 0 */$(($days_vault - 1)) * * /usr/local/bin/renew_vault_ssl.sh') | crontab -"
+                                                                
+                                                                echo -e "${GREEN} Tâche cron configurée avec succès${NC}"
+                                                                sleep 2
 
 
-                                                                    echo -e "Inscription à systemd ..."
+                                                                echo -e "Inscription à systemd ..."
 
-                                                                    sudo bash -c 'cat > /etc/systemd/system/renew_vault_ssl.service << EOF
-    [Unit]
-    Description=Renew Vault SSL Certificates
-    After=network.target
+                                                                sudo bash -c 'cat > /etc/systemd/system/renew_vault_ssl.service << EOF
+                                            [Unit]
+                                            Description=Renew Vault SSL Certificates
+                                            After=network.target
 
-    [Service]
-    Type=simple
-    ExecStart=/usr/local/bin/renew_vault_ssl.sh
-    User=root
-    Group=root
+                                            [Service]
+                                            Type=simple
+                                            ExecStart=/usr/local/bin/renew_vault_ssl.sh
+                                            User=root
+                                            Group=root
 
-    [Install]
-    WantedBy=multi-user.target
-    EOF'
+                                            [Install]
+                                            WantedBy=multi-user.target
+                                            EOF'
 
-                                                                    sudo systemctl daemon-reload
-                                                                    sudo systemctl enable renew_vault_ssl.service
-                                                                    sudo systemctl start renew_vault_ssl.service
-                                                                    
-                                                                    echo -e "${GREEN} Inscription à systemd réalisé avec succès${NC}"
-                                                                    sleep 3
-                                                                    
+                                                                sudo systemctl daemon-reload
+                                                                sudo systemctl enable renew_vault_ssl.service
+                                                                sudo systemctl start renew_vault_ssl.service
+                                                                
+                                                                echo -e "${GREEN} Inscription à systemd réalisée avec succès${NC}"
+                                                                sleep 3
 
-                                                                    clear
-                                                                    afficher_bienvenue
+
+                                                                clear
+                                                                afficher_bienvenue
 
                                                                     echo -e "${BLUE_BRIGHT}=== Installation et Configuration de Vault ===${NC}\n"
                                                                     echo -e "${WHITE}=== Certificat Vault ===${NC}\n\n"
