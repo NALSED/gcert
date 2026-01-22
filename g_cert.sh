@@ -2,13 +2,29 @@
 
 # =============================== VARIABLES ===============================  
 
-# === COULEURS ===
+# === COULEURS NORMAL ===
 GREEN='\033[0;32m'
 RED='\033[0;31m'
 NC='\033[0m'
 WHITE='\033[1;37m'
 YELLOW='\033[0;33m'
+MAGENTA='\033[0;35m'  
+CYAN='\033[0;36m'     
+GRAY='\033[0;90m' 
 
+# === COULEUR VIVE ===
+RED_BRIGHT='\033[1;31m'     
+GREEN_BRIGHT='\033[1;32m'   
+YELLOW_BRIGHT='\033[1;33m'  
+BLUE_BRIGHT='\033[1;34m'    
+MAGENTA_BRIGHT='\033[1;35m' 
+CYAN_BRIGHT='\033[1;36m'    
+WHITE_BRIGHT='\033[1;37m'   
+
+# === AUTRE COULEUR ===
+
+INVERSE='\033[7m'           # Inversé (fond et texte inversés)
+UNDERLINE='\033[4m'         # Texte souligné
 # === INFOS SYSTÈME ===
 NOW="$(date '+%Y-%m-%d %H:%M:%S')"
 USER_NAME="$(whoami)"
@@ -76,7 +92,7 @@ afficher_doc() {
 
 # Message de Bienvenue
 afficher_bienvenue() {
-    local message="${WHITE}Bienvenue dans le programme d'installation de G.Cert${NC}\n\n"
+    local message="${WHITE}${UNDERLINE}Bienvenue dans le programme d'installation de G.Cert${NC}\n\n"
     echo -e "$message"
 }
 
@@ -101,11 +117,32 @@ enter() {
         if [[ -z "$input" ]]; then
             break
         else
-            echo -e "\n${RED}Erreur : appuyez uniquement sur Entrée.${NC}\n"
+            echo -e "\n${RED}Erreur : appuyez uniquement sur [Entrée].${NC}\n"
         fi
     done
 }
 
+# Nettoyage en cas d'echec
+
+clean_up() {
+    while read -r item; do
+        if [ -e "$item" ]; then
+            # Vérifie si c'est un paquet installé
+            if dpkg -l | grep -q "^ii.*${item}"; then
+                # Purge le paquet installé silencieusement
+                apt-get purge -y "$item" > /dev/null 2>&1
+            else
+                # Supprime le fichier ou répertoire manuellement créé
+                rm -rf "$item" > /dev/null 2>&1
+            fi
+        fi
+    done < "/tmp/install.log"
+
+    # Supprimer le fichier de log silencieusement
+    rm -f "/tmp/install.log" > /dev/null 2>&1
+
+    exit 1
+}
 
 # === FONCTIONNEMENT SCRIPT ===
 
@@ -131,8 +168,8 @@ afficher_bienvenue
                 clear
                 afficher_bienvenue
                 
-                echo -e "\n${YELLOW}=== Redirections des logs ===${NC}"
-                echo -e "\n\nCréation du dossier de logs, pour l'installation de gcert : "
+                echo -e "\n${WHITE}=== Redirections des logs ===${NC}"
+                echo -e "\n\n-${INVERSE}[1]${NC}- Création du dossier de logs, pour l'installation de gcert : "
                 echo -e "   - Les erreurs sont redirigées vers ${WHITE}/var/log/gcert_install/erreur.log${NC}\n\n"
                 
 
@@ -179,7 +216,7 @@ afficher_bienvenue
                 clear
                 afficher_bienvenue
 
-                echo -e "${YELLOW}=== Informations en cas de problème ===${NC}\n\n"
+                echo -e "${WHITE}=== Informations en cas de problème ===${NC}\n\n"
                 echo -e "   - Si un problème survient lors de l'exécution du script, un message d'erreur sera affiché."
                 echo -e "   - Le script quittera immédiatement en cas d'erreur, mais les logs seront disponibles."
                 echo -e "   - Les erreurs seront enregistrées dans ${WHITE}/var/log/gcert_install/erreur.log${NC}.\n"
@@ -264,8 +301,9 @@ afficher_bienvenue
                         clear
                         afficher_bienvenue
                         
-                        echo -e "${YELLOW}Vous avez choisi de lancer le programme d'installation.${NC}\n\n"
+                        
                         echo -e "${YELLOW}=== Installation des prérequis pour G.cert  ===${NC}\n"
+                        
                         echo -e "${WHITE}Avant de commencer, G.cert nécessite quelques programmes et bibliothèques :${NC}\n"
 
                         echo -e "${WHITE}• curl :${NC} pour récupérer des fichiers depuis Internet."
@@ -470,9 +508,16 @@ afficher_bienvenue
                                     
                                     clear
                                     afficher_bienvenue
-                                    echo -e "Le programme d'installation va quitter"
-                                    sleep 2
-                                    exit 1
+
+                                    msg="Veuillez patienter, l'installation va être réinitialisée et tous les changements seront annulés."
+                                                                
+                                    BLA::start_loading_animation "$msg" "${BLA_passing_dots[@]}"
+
+                                    clean_up
+
+                                    # Effacer la ligne du message dynamique
+                                    echo -ne "\r\033[K"
+                                    BLA::stop_loading_animation
                                 fi
 
 # =============================== [2] CLÉS GPG ET CERTIFICATS ===============================
