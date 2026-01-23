@@ -889,7 +889,7 @@ afficher_bienvenue
                                             while true; do
                                                 clear
                                                 afficher_bienvenue
-                                                read -p "Veuillez indiquer Nom DNS utilisé par les clients Vault (format => Nom + FQDN domaine) : " dns_vault
+                                                read -p "Veuillez indiquer Nom DNS utilisé par les clients pour contacter Vault (format => Nom + FQDN domaine) : " dns_vault
 
                                                 clear
                                                 afficher_bienvenue
@@ -1022,7 +1022,7 @@ EOF
                 
                                             while true; do
                                             
-                                                read -p "Veuillez indiquer le Nom principal du serveur (Common Name)\n" cn_vault
+                                                read -p "Veuillez indiquer le Nom principal du serveur (Common Name) : " cn_vault
 
                                                 clear
                                                 afficher_bienvenue
@@ -1035,6 +1035,7 @@ EOF
                                                     clear
                                                     afficher_bienvenue
                                                     echo -e "${GREEN}CN confirmé :${NC} $cn_vault"
+                                                    sleep 3
                                                     break
                                                 elif [[ "$validation_cn" =~ ^[nN]$ ]]; then
                                                     echo -e "${RED}Recommençons...${NC}"
@@ -1051,7 +1052,7 @@ EOF
                                             while true; do
                                                 
                                                 
-                                                read -p "Veuillez indiquer Nom DNS utilisé par les clients Vault (format => Nom)\n" dns_vault
+                                                read -p "Veuillez indiquer le nom DNS utilisé par les clients pour contacter Vault (format => Nom) : " dns_vault
 
                                                 clear
                                                 afficher_bienvenue
@@ -1064,6 +1065,7 @@ EOF
                                                     clear
                                                     afficher_bienvenue
                                                     echo -e "${GREEN}DNS.1 confirmé :${NC} $dns_vault"
+                                                    sleep 3
                                                     break
                                                 elif [[ "$validation_dns1" =~ ^[nN]$ ]]; then
                                                     echo -e "${RED}Recommençons...${NC}"
@@ -1080,12 +1082,12 @@ EOF
                                                 afficher_bienvenue
 
                                                 
-                                                read -p "Veuillez indiquer l'IP du serveur Vault \n" ip_vault
+                                                read -p "Veuillez indiquer l'IP du serveur Vault : " ip_vault
 
                                                 # Test IP
                                                 if validate_ip "$ip_vault"; then
                                                     echo -e "${GREEN}IP valide${NC}"
-                                                    sleep 1
+                                                    sleep 2
 
                                                     while true; do
                                                         clear
@@ -1093,14 +1095,14 @@ EOF
 
                                                         # Confirmation utilisation adresse IP
                                                         echo -e "Adresse IP choisie pour Vault = ${WHITE}$ip_vault${NC}\n"       
-                                                        read -p "L'adresse IP est-elle correcte ? y/n" validation_ip
+                                                        read -p "L'adresse IP est-elle correcte ? y/n : " validation_ip
 
                                                         if [[ "$validation_ip" =~ ^[yY]$ ]]; then
                                                             
                                                             clear
                                                             afficher_bienvenue
                                                             echo -e "${GREEN}IP confirmée :${NC} $ip_vault"
-                                                            sleep 1
+                                                            sleep 2
                                                             break 2
                                                         elif [[ "$validation_ip" =~ ^[nN]$ ]]; then
                                                             echo -e "${RED}Recommençons...${NC}"
@@ -1724,8 +1726,8 @@ EOF
                                                             echo -e "Suite à l'installation de G.cert, veuillez supprimer ce fichier." 
                                                             sleep 3
                                                         else
-                                                            echo -e "${GREEN}OK : Suppression réussie.${NC}"
-                                                            sleep 2
+                                                            echo -e "${GREEN}OK : Suppression réussie de /etc/vault/ssl/vault.csr.${NC}"
+                                                            sleep 3
                                                         fi
 
                                                         # Droit et propriétaire vault.key 
@@ -1734,13 +1736,18 @@ EOF
                                                         afficher_bienvenue
 
                                                         echo -e "${WHITE}Droit et propriétaire vault.key ${NC}"
+                                                        sleep 2
                                                         
                                                         sudo chown root:root /etc/vault/ssl/vault.key
                                                         sudo chmod 400 /etc/vault/ssl/vault.key
 
                                                         if [[ $(stat -c "%a" /etc/vault/ssl/vault.key) == "400" && $(stat -c "%U:%G" /etc/vault/ssl/vault.key) == "root:root" ]]; then
+                                                            
+                                                            clear
+                                                            afficher_bienvenue
                                                             echo -e "${GREEN}OK : le fichier ${WHITE}/etc/vault/ssl/vault.key${GREEN} est bien sécurisé.${NC}"
-                                                            sleep 3
+                                                            echo -e "Avec -r-------- 1 root root vault.key " 
+                                                            enter
                                                         else
                                                             echo -e "${RED}ERREUR : permissions ou propriétaire incorrects pour ${WHITE}/etc/vault/ssl/vault.key${NC}"
                                                             echo -e "Veuillez vérifier et corriger les droits du fichier."
@@ -1777,6 +1784,7 @@ EOF
                                                         echo -e "${CYAN_BRIGHT}=== Renouvellement du certificat via Systemd ===${NC}\n"
                                                         echo -e "   - Création d'un script pour le renouvellement automatique du certificat Vault et Mise à jour des permissions."
                                                         echo -e "   - Enregistrement de l'exécution du script dans systemd."
+                                                        sleep 4
 
                                                         # Script de renouvellement
                                                         clear
@@ -1823,7 +1831,7 @@ EOF'
                                                         days_timer=$((days_vault - 1))
                                                         sudo bash -c "cat > /etc/systemd/system/renew_vault_ssl.timer << EOF
 [Unit]
-Description=Renew Vault SSL Certificates every 122 days
+Description=Renew Vault SSL Certificates every ${days_timer} days
 Requires=renew_vault_ssl.service
 
 [Timer]
@@ -1859,7 +1867,10 @@ EOF"
                                                             echo -e "${GREEN}OK : Fichiers systemd créés, timer et service actifs.${NC}\n"
                                                             echo -e "le renouvellement du certificat de vault aura lieu automatiquement tous les ${WHITE}${days_timer}${NC} jours"
                                                             
-                                                            
+                                                            enter
+
+                                                            clear
+                                                            afficher_bienvenue
                                                             echo -e "${BLUE_BRIGHT}=== Installation et Configuration de Vault ===${NC}\n"
                                                             echo -e "${WHITE}=== Fin de Tache Certificat Vault ===${NC}\n\n"
 
@@ -1880,7 +1891,7 @@ EOF"
                                                             echo -e " ${GREEN}[√]${NC}${WHITE}Clé Privée Certificat => Restrictions des droits${NC}"
                                                             echo -e "    └── ${GREEN}[√]${NC}${YELLOW}Script pour renouvellement + inscription Systemd${NC}\n"
                                                             
-                                                            enter
+                                                            sleep 3
                                                             break 2
                                                         
                                                         else
