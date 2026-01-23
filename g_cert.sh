@@ -52,7 +52,7 @@ source "$MAIN_BASH"
 
 # Prérequis/Dépendances python
 #BASH
-PREREQUIS=(curl cron gnupg gum python3 python3-pip pipx python3.13-venv pass tmux)
+PREREQUIS=(curl gnupg gum python3 python3-pip pipx python3.13-venv pass tmux)
 
 #PYTHON
 dependencies=(pyfiglet psutil cryptography python-nmap termcolor colorlog tabulate rich)
@@ -341,7 +341,7 @@ afficher_bienvenue
                                 echo -e "-${INVERSE}[1/5]${NC}- Installation des prérequis...\n" 
                                 echo -e "-${INVERSE}[2/5]${NC}- Installation et configuration de Vault...\n"
                                 echo -e "-${INVERSE}[3/5]${NC}- Création de l'environnement Python...\n" 
-                                echo -e "-${INVERSE}[4/5]${NC}- Création de la clé GPG et du mot de passe...\n" 
+                                echo -e "-${INVERSE}[4/5]${NC}- Création de la clé GPG et des mots de passe...\n" 
                                 echo -e "-${INVERSE}[5/5]${NC}- Lancement du service G_Cert...\n\n"
                                 
                                 enter
@@ -466,7 +466,7 @@ afficher_bienvenue
                                 echo -e "${GREEN}[√] Installation des prérequis...${NC}\n" 
                                 echo -e "-${INVERSE}[2/5]${NC}- Installation et configuration de Vault...\n"
                                 echo -e "-${INVERSE}[3/5]${NC}- Création de l'environnement Python...\n" 
-                                echo -e "-${INVERSE}[4/5]${NC}- Création de la clé GPG et du mot de passe...\n" 
+                                echo -e "-${INVERSE}[4/5]${NC}- Création de la clé GPG et des mots de passe...\n" 
                                 echo -e "-${INVERSE}[5/5]${NC}- Lancement du service G_Cert...\n\n"
 
                                 enter
@@ -533,10 +533,10 @@ afficher_bienvenue
                                 echo -e " ${WHITE}[11]${NC}${WHITE}Sécurisation du fichier Certificat${NC}\n"
 
                                 echo -e " ${WHITE}[12]${NC}${WHITE}Clé Privée Certificat => Restrictions des droits${NC}"
-                                echo -e "    └── ${WHITE}[13]${NC}${YELLOW}Tâche Cron pour renouvellement + Systemd${NC}\n"
+                                echo -e "    └── ${WHITE}[13]${NC}${YELLOW}Script pour renouvellement + inscription Systemd${NC}\n"
 
-                                echo -e " ${WHITE}[14]${NC}${WHITE}Clé Privée Chiffrée${NC}"
-                                echo -e "    └── ${WHITE}[15]${NC}${YELLOW}Aucune tâche cron${NC}\n\n"
+                                echo -e " ${WHITE}[14]${NC}${WHITE}Clé Privée Certificat => Chiffrée${NC}"
+                                echo -e "    └── ${WHITE}[15]${NC}${YELLOW}Aucune tâche de renouvellement via Systemd${NC}\n\n"
 
 
                                 enter
@@ -597,10 +597,10 @@ afficher_bienvenue
                                 echo -e " ${WHITE}[11]${NC}${WHITE}Sécurisation du fichier Certificat${NC}\n"
 
                                 echo -e " ${WHITE}[12]${NC}${WHITE}Clé Privée Certificat => Restrictions des droits${NC}"
-                                echo -e "    └── ${WHITE}[13]${NC}${YELLOW}Tâche Cron pour renouvellement + Systemd${NC}\n"
+                                echo -e "    └── ${WHITE}[13]${NC}${YELLOW}Script pour renouvellement + inscription Systemd${NC}\n"
 
-                                echo -e " ${WHITE}[14]${NC}${WHITE}Clé Privée Chiffrée${NC}"
-                                echo -e "    └── ${WHITE}[15]${NC}${YELLOW}Aucune tâche cron${NC}\n\n"
+                                echo -e " ${WHITE}[14]${NC}${WHITE}Clé Privée Certificat => Chiffrée${NC}"
+                                echo -e "    └── ${WHITE}[15]${NC}${YELLOW}Script pour renouvellement + inscription Systemd${NC}\n\n"
 
     
                                 enter
@@ -728,10 +728,10 @@ afficher_bienvenue
                                 echo -e " ${WHITE}[11]${NC}${WHITE}Sécurisation du fichier Certificat${NC}\n"
 
                                 echo -e " ${WHITE}[12]${NC}${WHITE}Clé Privée Certificat => Restrictions des droits${NC}"
-                                echo -e "    └── ${WHITE}[13]${NC}${YELLOW}Tâche Cron pour renouvellement + Systemd${NC}\n"
+                                echo -e "    └── ${WHITE}[13]${NC}${YELLOW}Script pour renouvellement + inscription Systemd${NC}\n"
 
-                                echo -e " ${WHITE}[14]${NC}${WHITE}Clé Privée Chiffrée${NC}"
-                                echo -e "    └── ${WHITE}[15]${NC}${YELLOW}Aucune tâche cron${NC}\n\n"
+                                echo -e " ${WHITE}[14]${NC}${WHITE}Clé Privée Certificat => Chiffrée${NC}"
+                                echo -e "    └── ${WHITE}[15]${NC}${YELLOW}Script pour renouvellement + inscription Systemd${NC}\n\n"
 
 
                                 enter
@@ -746,18 +746,54 @@ afficher_bienvenue
 
                                     # Avec nom de domaine
                                     if [[ "$choix_domain_ssl" =~ ^[yY]$ ]]; then
-                                        clear
-                                        afficher_bienvenue
-                                        read -p "Veuillez indiquer le nom de domaine (format => FQDN) : " domain_ssl
-
-                                        # test si le nom de domaine existe
-                                        if nslookup "$domain_ssl" > /dev/null 2>> /var/log/gcert_install/erreur.log; then
-                                            
+                                        
+                                        while true; do
+                                        
                                             clear
                                             afficher_bienvenue
-                                            echo -e "\n${GREEN}Le domaine ${NC}$domain_ssl${NC} ${GREEN}existe et résout correctement.${NC}"
-                                            sleep 3
+                                        
+                                            read -p "Veuillez indiquer le nom de domaine (format => FQDN) : " domain_ssl
 
+                                            clear
+                                            afficher_bienvenue
+
+                                            echo -e "Domain = ${WHITE}$domain_ssl${NC}\n"
+                                            read -p "Le CN est-il correct ? y/n : " validation_domain
+                                        
+                                                if [[ "$validation_domain" =~ ^[yY]$ ]]; then
+                                                # test si le nom de domaine existe
+                                                    if nslookup "$domain_ssl" > /dev/null 2>> /var/log/gcert_install/erreur.log; then
+                                            
+                                                        clear
+                                                        afficher_bienvenue
+                                                        echo -e "\n${GREEN}Le domaine ${NC}$domain_ssl${NC} ${GREEN}existe et résout correctement.${NC}"
+                                                        sleep 3
+                                                        break 
+
+                                                    # Si le domaine ne repond pas ou n'existe pas sortie de script
+                                                    else
+                                                        echo -e "${RED}Le domaine '$domain_ssl' n'existe pas ou ne résout pas.${NC}"
+                                                        echo "Veuillez résoudre le problème avant de poursuivre l'installation"
+                                                        
+                                                        enter 
+
+                                                        
+                                                        
+                                                        
+                                                    fi
+                                                elif [[ "$validation_domain" =~ ^[nN]$ ]]; then
+                                                    
+                                                    clear
+                                                    afficher_bienvenue
+                                                    echo -e "\n${RED}Recommençons...${NC}"
+                                                    sleep 2
+                                                else
+                                                    echo -e "\n${RED}Réponse invalide. Tapez y ou n.${NC}"
+                                                fi
+                                        done
+                                        
+                                        
+                                        
 
                                             # === 1-3) NOM serveur CN ===
                                           
@@ -920,15 +956,7 @@ EOF
                                 
                                         break
                                         
-                                        # Si le domaine ne repond pas ou n'existe pas sortie de script
-                                        else
-                                            echo -e "${RED}Le domaine '$domain_ssl' n'existe pas ou ne résout pas.${NC}"
-                                            echo "Veuillez résoudre le problème avant de poursuivre l'installation"
-                                            sleep 3
-                                            echo "Le programme d'installation va quitter"
-                                            sleep 2
-                                            exit 1
-                                        fi
+                                        
 
                                     # Choix 2 pas de domaine
                                     elif [[ "$choix_domain_ssl" =~ ^[nN]$ ]]; then
@@ -1059,7 +1087,7 @@ DNS.1 = $dns_vault
 IP.1  = $ip_vault
 EOF
                                                
-                                    
+                                    break
                                     else
                                         clear
                                         afficher_bienvenue 
@@ -1089,10 +1117,10 @@ EOF
                                 echo -e " ${WHITE}[11]${NC}${WHITE}Sécurisation du fichier Certificat${NC}\n"
 
                                 echo -e " ${WHITE}[12]${NC}${WHITE}Clé Privée Certificat => Restrictions des droits${NC}"
-                                echo -e "    └── ${WHITE}[13]${NC}${YELLOW}Tâche Cron pour renouvellement + Systemd${NC}\n"
+                                echo -e "    └── ${WHITE}[13]${NC}${YELLOW}Script pour renouvellement + inscription Systemd${NC}\n"
 
-                                echo -e " ${WHITE}[14]${NC}${WHITE}Clé Privée Chiffrée${NC}"
-                                echo -e "    └── ${WHITE}[15]${NC}${YELLOW}Aucune tâche cron${NC}\n\n"
+                                echo -e " ${WHITE}[14]${NC}${WHITE}Clé Privée Certificat => Chiffrée${NC}"
+                                echo -e "    └── ${WHITE}[15]${NC}${YELLOW}Aucune tâche de renouvellement via Systemd${NC}\n\n"
                                 
                                 
                                 sleep 3
@@ -1148,10 +1176,10 @@ EOF
                                     echo -e " ${WHITE}[11]${NC}${WHITE}Sécurisation du fichier Certificat${NC}\n"
 
                                     echo -e " ${WHITE}[12]${NC}${WHITE}Clé Privée Certificat => Restrictions des droits${NC}"
-                                    echo -e "    └── ${WHITE}[13]${NC}${YELLOW}Tâche Cron pour renouvellement + Systemd${NC}\n"
+                                    echo -e "    └── ${WHITE}[13]${NC}${YELLOW}Script pour renouvellement + inscription Systemd${NC}\n"
 
-                                    echo -e " ${WHITE}[14]${NC}${WHITE}Clé Privée Chiffrée${NC}"
-                                    echo -e "    └── ${WHITE}[15]${NC}${YELLOW}Aucune tâche cron${NC}\n\n"
+                                    echo -e " ${WHITE}[14]${NC}${WHITE}Clé Privée Certificat => Chiffrée${NC}"
+                                    echo -e "    └── ${WHITE}[15]${NC}${YELLOW}Aucune tâche de renouvellement via Systemd${NC}\n\n"
                                     
                                     sleep 2
                                     
@@ -1243,10 +1271,10 @@ EOF
                                         echo -e " ${WHITE}[11]${NC}${WHITE}Sécurisation du fichier Certificat${NC}\n"
 
                                         echo -e " ${WHITE}[12]${NC}${WHITE}Clé Privée Certificat => Restrictions des droits${NC}"
-                                        echo -e "    └── ${WHITE}[13]${NC}${YELLOW}Tâche Cron pour renouvellement + Systemd${NC}\n"
+                                        echo -e "    └── ${WHITE}[13]${NC}${YELLOW}Script pour renouvellement + inscription Systemd${NC}\n"
 
-                                        echo -e " ${WHITE}[14]${NC}${WHITE}Clé Privée Chiffrée${NC}"
-                                        echo -e "    └── ${WHITE}[15]${NC}${YELLOW}Aucune tâche cron${NC}\n\n"
+                                        echo -e " ${WHITE}[14]${NC}${WHITE}Clé Privée Certificat => Chiffrée${NC}"
+                                        echo -e "    └── ${WHITE}[15]${NC}${YELLOW}Aucune tâche de renouvellement via Systemd${NC}\n\n"
                                     
                                         sleep 3
                                         
@@ -1308,10 +1336,10 @@ EOF
                                         echo -e " ${WHITE}[11]${NC}${WHITE}Sécurisation du fichier Certificat${NC}\n"
 
                                         echo -e " ${WHITE}[12]${NC}${WHITE}Clé Privée Certificat => Restrictions des droits${NC}"
-                                        echo -e "    └── ${WHITE}[13]${NC}${YELLOW}Tâche Cron pour renouvellement + Systemd${NC}\n"
+                                        echo -e "    └── ${WHITE}[13]${NC}${YELLOW}Script pour renouvellement + inscription Systemd${NC}\n"
 
-                                        echo -e " ${WHITE}[14]${NC}${WHITE}Clé Privée Chiffrée${NC}"
-                                        echo -e "    └── ${WHITE}[15]${NC}${YELLOW}Aucune tâche cron${NC}\n\n"
+                                        echo -e " ${WHITE}[14]${NC}${WHITE}Clé Privée Certificat => Chiffrée${NC}"
+                                        echo -e "    └── ${WHITE}[15]${NC}${YELLOW}Aucune tâche de renouvellement via Systemd${NC}\n\n"
                                     
                                         sleep 3
 
@@ -1409,10 +1437,10 @@ EOF
                                             echo -e " ${WHITE}[11]${NC}${WHITE}Sécurisation du fichier Certificat${NC}\n"
 
                                             echo -e " ${WHITE}[12]${NC}${WHITE}Clé Privée Certificat => Restrictions des droits${NC}"
-                                            echo -e "    └── ${WHITE}[13]${NC}${YELLOW}Tâche Cron pour renouvellement + Systemd${NC}\n"
+                                            echo -e "    └── ${WHITE}[13]${NC}${YELLOW}Script pour renouvellement + inscription Systemd${NC}\n"
 
-                                            echo -e " ${WHITE}[14]${NC}${WHITE}Clé Privée Chiffrée${NC}"
-                                            echo -e "    └── ${WHITE}[15]${NC}${YELLOW}Aucune tâche cron${NC}\n\n"
+                                            echo -e " ${WHITE}[14]${NC}${WHITE}Clé Privée Certificat => Chiffrée${NC}"
+                                            echo -e "    └── ${WHITE}[15]${NC}${YELLOW}Aucune tâche de renouvellement via Systemd${NC}\n\n"
                                         
                                             sleep 4
                                             
@@ -1485,14 +1513,14 @@ EOF
                                                 echo -e "  - Le fichier => ${WHITE}/etc/vault/ssl/vault.csr${NC} est supprimé pour sécurité."
                                                 echo -e "  - La clé privée ${WHITE}/etc/vault/ssl/vault.key${NC} sera chiffrée avec une clé GPG, offrant une sécurité supplémentaire."
                                                 echo -e "  - Seul un utilisateur ayant accès à la clé privée GPG pourra déchiffrer la clé pour utilisation."
-                                                echo -e "  - ${RED}*Note**${NC} : Cette option ne permet pas l'automatisation via cron, car chaque utilisation nécessite un déchiffrement manuel.\n\n\n"
+                                                echo -e "  - ${RED}*Note**${NC} : Cette option ne permet pas l'automatisation via Systemd, car chaque utilisation nécessite un déchiffrement manuel.\n\n\n"
 
-                                                echo -e "${CYAN_BRIGHT}=== Choix 2 : Sécurisation de la clé privée avec permissions et tâche cron ===${NC}\n\n"
+                                                echo -e "${CYAN_BRIGHT}=== Choix 2 : Sécurisation de la clé privée avec permissions et tâche Systemd ===${NC}\n\n"
                                                 echo -e "  - Le fichier => ${WHITE}/etc/vault/ssl/vault.csr${NC} est supprimé pour sécurité."
                                                 echo -e "  - La clé privée ${WHITE}/etc/vault/ssl/vault.key${NC} ne sera pas chiffrée, mais ses permissions seront strictement contrôlées."
                                                 echo -e "  - Seules les personnes autorisées pourront y accéder, mais elle sera stockée en clair."
-                                                echo -e "  - Cette option permet d'automatiser le renouvellement du certificat via une tâche cron."
-                                                echo -e "  - ${RED}**Note**${NC} : L'automatisation via cron est possible.\n\n\n\n"
+                                                echo -e "  - Cette option permet d'automatiser le renouvellement du certificat via une tâche Script et Systemd."
+                                                echo -e "  - ${RED}**Note**${NC} : L'automatisation via Systemd est possible.\n\n\n\n"
 
                                                 enter
 
@@ -1500,7 +1528,7 @@ EOF
                                                 afficher_bienvenue
 
                                                 echo -e "-${INVERSE}[1]${NC}- ${WHITE}Clé privée Chiffrée / Renouvellement manuel${NC}"
-                                                echo -e "-${INVERSE}[2]${NC}- ${WHITE}Clé privée en clair / Renouvellement via cron${NC}"
+                                                echo -e "-${INVERSE}[2]${NC}- ${WHITE}Clé privée en clair / Renouvellement via Systemd${NC}"
                                                 echo -e "-${INVERSE}[3]${NC}- ${WHITE}Sortie Installation${NC}\n"
 
                                                 read -p "Veuillez sélectionner une option pour gérer le certificat : " choix_cle_priv
@@ -1509,7 +1537,7 @@ EOF
                                                     
                                                     1)
 
-                                                        # === CHIFFREMENT CLE ===
+                                                        # === CHIFFREMENT CLE ET RENOUVELEMENT MANUEL ===
                                                         clear
                                                         afficher_bienvenue
 
@@ -1529,8 +1557,8 @@ EOF
                                                         echo -e "        └── ${GREEN}[√]${NC}${CYAN}Signature du Certificat${NC}\n"
 
                                                         echo -e " ${WHITE}[11]${NC}${WHITE}Sécurisation du fichier Certificat${NC}\n"
-                                                        echo -e "    └── ${WHITE}[12]${NC}${WHITE}Clé Privée Chiffrée${NC}"
-                                                        echo -e "    └── ${WHITE}[13]${NC}${YELLOW}Aucune tâche cron${NC}"
+                                                        echo -e "    └── ${WHITE}[12]${NC}${WHITE}Clé Privée Certificat => Chiffrée${NC}"
+                                                        echo -e "    └── ${WHITE}[13]${NC}${YELLOW}Aucune tâche de renouvellement automatique${NC}"
                                                         
                                                         sleep 3
 
@@ -1646,8 +1674,8 @@ EOF
                                                         echo -e "        └── ${GREEN}[√]${NC}${CYAN}Signature du Certificat${NC}\n"
 
                                                         echo -e " ${GREEN}[√]${NC}${WHITE}Sécurisation du fichier Certificat${NC}\n"
-                                                        echo -e "    └── ${GREEN}[√]${NC}${WHITE}Clé Privée Chiffrée${NC}"
-                                                        echo -e "    └── ${GREEN}[√]${NC}${YELLOW}Aucune tâche cron${NC}"
+                                                        echo -e "    └── ${GREEN}[√]${NC}${WHITE}Clé Privée Certificat => Chiffrée${NC}"
+                                                        echo -e "    └── ${GREEN}[√]${NC}${YELLOW}Aucune tâche de renouvellemnt automatique${NC}"
                                                         
                                                         sleep 3
 
@@ -1657,7 +1685,7 @@ EOF
 
                                                     2)
 
-                                                        # Suppression .csr
+                                                        # === DROIT ET PERMISSION DU LA CLE ET RENOUVELEMENT VIA TACHE SYSTEMD ===
                                                         clear
                                                         afficher_bienvenue
 
@@ -1679,7 +1707,7 @@ EOF
                                                         echo -e " ${WHITE}[11]${NC}${WHITE}Sécurisation du fichier Certificat${NC}\n"
 
                                                         echo -e " ${WHITE}[12]${NC}${WHITE}Clé Privée Certificat => Restrictions des droits${NC}"
-                                                        echo -e "    └── ${WHITE}[13]${NC}${YELLOW}Tâche Cron pour renouvellement + Systemd${NC}\n"
+                                                        echo -e "    └── ${WHITE}[13]${NC}${YELLOW}Script pour renouvellement + inscription Systemd${NC}\n"
 
                                                         sleep 3
 
@@ -1735,12 +1763,12 @@ EOF
                                                         fi
 
 
-                                                        # === Tâche Cron ===
+                                                        # === Tâche Systemd ===
                                                         clear
                                                         afficher_bienvenue
 
                                                         
-                                                        echo -e "${CYAN_BRIGHT}=== Renouvellement du certificat via Cron ===${NC}\n"
+                                                        echo -e "${CYAN_BRIGHT}=== Renouvellement du certificat via Systemd ===${NC}\n"
                                                         echo -e "   - Création d'un script pour le renouvellement automatique du certificat Vault et Mise à jour des permissions."
                                                         echo -e "   - Enregistrement de l'exécution du script dans systemd."
 
@@ -1748,29 +1776,28 @@ EOF
                                                         clear
                                                         afficher_bienvenue
                                                         
-                                                        echo -e "Création script et tâche cron ..."
-                                                        
+                                                        echo -e "Création script de renouvellement ..."
+                                                        sleep 2
+
                                                         sudo touch /usr/local/bin/renew_vault_ssl.sh
                                                         sudo chown root:root /usr/local/bin/renew_vault_ssl.sh
                                                         
-                                                        sudo bash -c 'cat > /usr/local/bin/renew_vault_ssl.sh << EOF
+                                                        sudo bash -c "cat > /usr/local/bin/renew_vault_ssl.sh << EOF
 #!/bin/bash
-openssl req -new -x509 -days "$days_vault" -key /etc/vault/ssl/vault.key -out /etc/vault/ssl/vault.crt -config /etc/vault/ssl/vault_tls.cnf
+openssl req -new -x509 -days $days_vault -key /etc/vault/ssl/vault.key -out /etc/vault/ssl/vault.crt -config /etc/vault/ssl/vault_tls.cnf
 chmod 640 /etc/vault/ssl/vault.crt
 chown root:vault /etc/vault/ssl/vault.crt
 systemctl restart vault
-EOF'
+EOF"
                                             
+                                                        
+                                                        
+                                                        
+                                                        
                                                         sudo chmod 700 /usr/local/bin/renew_vault_ssl.sh
                                                         
-                                                        # Ajouter au cron (renouvellement automatique avant expiration)
-                                                        sudo bash -c "(crontab -l 2>/dev/null | grep -v 'renew_vault_ssl.sh'; echo '0 0 */$(($days_vault - 1)) * * /usr/local/bin/renew_vault_ssl.sh') | crontab -"
-                                                        
-                                                        echo -e "${GREEN} Tâche cron configurée avec succès${NC}"
-                                                        sleep 2
-
-
-                                                        echo -e "Inscription à systemd ..."
+                                                        echo -e "Inscription à systemd d'un service et timer..."
+                                                        sleep 3
 
                                                         sudo bash -c 'cat > /etc/systemd/system/renew_vault_ssl.service << EOF
 [Unit]
@@ -1786,41 +1813,116 @@ Group=root
 [Install]
 WantedBy=multi-user.target
 EOF'
+                                                        
+                                                        days_timer=$((days_vault - 1))
+                                                        sudo bash -c "cat > /etc/systemd/system/renew_vault_ssl.timer << EOF
+[Unit]
+Description=Renew Vault SSL Certificates every 122 days
+Requires=renew_vault_ssl.service
 
+[Timer]
+OnBootSec=5min
+OnUnitActiveSec=${days_timer}d
+Persistent=true
+
+[Install]
+WantedBy=timers.target
+EOF"
+
+                                                        
+                                                        
+                                                        # === AUTORISATION ET DEMARRAGE SYSTEMD ===
+                                                        
                                                         sudo systemctl daemon-reload
+                                                        
+                                                        # .service
                                                         sudo systemctl enable renew_vault_ssl.service
                                                         sudo systemctl start renew_vault_ssl.service
+
+                                                        # .timer
+                                                        sudo systemctl enable renew_vault_ssl.timer
+                                                        sudo systemctl start renew_vault_ssl.timer
+
+
+                                                        # === TEST RENOUVELEMENT ACTIF ===
+
+                                                        if [ -f /etc/systemd/system/renew_vault_ssl.service ] && [ -f /etc/systemd/system/renew_vault_ssl.timer ] && systemctl is-active --quiet renew_vault_ssl.timer && systemctl is-active --quiet renew_vault_ssl.service; then
+                                                            
+                                                            clear
+                                                            afficher_bienvenue
+                                                            echo -e "${GREEN}OK : Fichiers systemd créés, timer et service actifs.${NC}\n"
+                                                            echo -e "le renouvellement du certificat de vault aura lieu automatiquement tous les ${WHITE}${days_timer}${NC} jours"
+                                                            
+                                                            
+                                                            echo -e "${BLUE_BRIGHT}=== Installation et Configuration de Vault ===${NC}\n"
+                                                            echo -e "${WHITE}=== Certificat Vault ===${NC}\n\n"
+
+                                                            echo -e " ${GREEN}[√]${NC}${WHITE}Ajout du Dépôt HashiCorp${NC}"
+                                                            echo -e "    └── ${GREEN}[√]${NC}${YELLOW}Installation du Paquet Vault${NC}"
+                                                            echo -e "        └── ${GREEN}[√]${NC}${CYAN}Vérification de la présence de Vault${NC}\n"
+
+                                                            echo -e " ${GREEN}[√]${NC}${WHITE}Création des clés GPG${NC}"
+                                                            echo -e "    └── ${GREEN}[√]${NC}${YELLOW}Certificat SSL${NC}"
+                                                            echo -e "        └── ${GREEN}[√]${NC}${CYAN}Fichier de configuration${NC}"
+                                                            echo -e "        └── ${GREEN}[√]${NC}${CYAN}Clé Privée${NC}"
+                                                            echo -e "        └── ${GREEN}[√]${NC}${CYAN}Fichier CSR${NC}"
+                                                            echo -e "        └── ${GREEN}[√]${NC}${CYAN}Certificat Vault${NC}"
+                                                            echo -e "        └── ${GREEN}[√]${NC}${CYAN}Signature du Certificat${NC}\n"
+
+                                                            echo -e " ${GREEN}[√]${NC}${WHITE}Sécurisation du fichier Certificat${NC}\n"
+                
+                                                            echo -e " ${GREEN}[√]${NC}${WHITE}Clé Privée Certificat => Restrictions des droits${NC}"
+                                                            echo -e "    └── ${GREEN}[√]${NC}${YELLOW}Script pour renouvellement + inscription Systemd${NC}\n"
+                                                            
+                                                            enter
+                                                            break 2
                                                         
-                                                        echo -e "${GREEN} Inscription à systemd réalisée avec succès${NC}"
-                                                        sleep 3
+                                                        else
+                                                            echo -e "${RED}ERREUR : Problème avec systemd...${NC}"
+                                                            
+                                                            # Détails des problèmes
+                                                            [ ! -f /etc/systemd/system/renew_vault_ssl.service ] && echo -e "  - ${RED}renew_vault_ssl.service manquant${NC}"
+                                                            [ ! -f /etc/systemd/system/renew_vault_ssl.timer ] && echo -e "  - ${RED}renew_vault_ssl.timer manquant${NC}"
+                                                            systemctl is-active --quiet renew_vault_ssl.service || echo -e "  - ${RED}service non actif${NC}"
+                                                            systemctl is-active --quiet renew_vault_ssl.timer || echo -e "  - ${RED}timer non actif${NC}"
+                                                            
+                                                            echo -e "\nPour plus d'information voir le fichier : ${WHITE}/var/log/gcert_install/erreur.log${NC}"
+                                                            
+                                                            echo -e "Le renouvellement du certificat devra être réalisé manuellement"
+                                                            
+                                                            enter
+
+                                                            clear
+                                                            afficher_bienvenue
+
+                                                            echo -e "${BLUE_BRIGHT}=== Installation et Configuration de Vault ===${NC}\n"
+                                                            echo -e "${WHITE}=== Certificat Vault ===${NC}\n\n"
+
+                                                            echo -e " ${GREEN}[√]${NC}${WHITE}Ajout du Dépôt HashiCorp${NC}"
+                                                            echo -e "    └── ${GREEN}[√]${NC}${YELLOW}Installation du Paquet Vault${NC}"
+                                                            echo -e "        └── ${GREEN}[√]${NC}${CYAN}Vérification de la présence de Vault${NC}\n"
+
+                                                            echo -e " ${GREEN}[√]${NC}${WHITE}Création des clés GPG${NC}"
+                                                            echo -e "    └── ${GREEN}[√]${NC}${YELLOW}Certificat SSL${NC}"
+                                                            echo -e "        └── ${GREEN}[√]${NC}${CYAN}Fichier de configuration${NC}"
+                                                            echo -e "        └── ${GREEN}[√]${NC}${CYAN}Clé Privée${NC}"
+                                                            echo -e "        └── ${GREEN}[√]${NC}${CYAN}Fichier CSR${NC}"
+                                                            echo -e "        └── ${GREEN}[√]${NC}${CYAN}Certificat Vault${NC}"
+                                                            echo -e "        └── ${GREEN}[√]${NC}${CYAN}Signature du Certificat${NC}\n"
+
+                                                            echo -e " ${GREEN}[√]${NC}${WHITE}Sécurisation du fichier Certificat${NC}\n"
+                
+                                                            echo -e " ${RED}[X]${NC}${WHITE}Clé Privée Certificat => Restrictions des droits${NC}"
+                                                            echo -e "    └── ${RED}[X]${NC}${YELLOW}Script pour renouvellement + inscription Systemd${NC}\n"
 
 
-                                                        clear
-                                                        afficher_bienvenue
-
-                                                        echo -e "${BLUE_BRIGHT}=== Installation et Configuration de Vault ===${NC}\n"
-                                                        echo -e "${WHITE}=== Certificat Vault ===${NC}\n\n"
-
-                                                        echo -e " ${GREEN}[√]${NC}${WHITE}Ajout du Dépôt HashiCorp${NC}"
-                                                        echo -e "    └── ${GREEN}[√]${NC}${YELLOW}Installation du Paquet Vault${NC}"
-                                                        echo -e "        └── ${GREEN}[√]${NC}${CYAN}Vérification de la présence de Vault${NC}\n"
-
-                                                        echo -e " ${GREEN}[√]${NC}${WHITE}Création des clés GPG${NC}"
-                                                        echo -e "    └── ${GREEN}[√]${NC}${YELLOW}Certificat SSL${NC}"
-                                                        echo -e "        └── ${GREEN}[√]${NC}${CYAN}Fichier de configuration${NC}"
-                                                        echo -e "        └── ${GREEN}[√]${NC}${CYAN}Clé Privée${NC}"
-                                                        echo -e "        └── ${GREEN}[√]${NC}${CYAN}Fichier CSR${NC}"
-                                                        echo -e "        └── ${GREEN}[√]${NC}${CYAN}Certificat Vault${NC}"
-                                                        echo -e "        └── ${GREEN}[√]${NC}${CYAN}Signature du Certificat${NC}\n"
-
-                                                        echo -e " ${GREEN}[√]${NC}${WHITE}Sécurisation du fichier Certificat${NC}\n"
-            
-                                                        echo -e " ${GREEN}[√]${NC}${WHITE}Clé Privée Certificat => Restrictions des droits${NC}"
-                                                        echo -e "    └── ${GREEN}[√]${NC}${YELLOW}Tâche Cron pour renouvellement + Systemd${NC}\n"
-
-                                                        sleep 4
+                                                            enter
+                                                            break 2
                                                         
-                                                        break 2
+                                                        fi
+                                                        
+                                        
+                                                        
                                                         ;;
                                                         
                                                         3)
@@ -1876,7 +1978,7 @@ EOF'
                                 echo -e "${GREEN}[√] Installation des prérequis...${NC}\n" 
                                 echo -e "${GREEN}[√] Installation et configuration de Vault...${NC}\n"
                                 echo -e "-${INVERSE}[3/5]${NC}- Création de l'environnement Python...\n" 
-                                echo -e "-${INVERSE}[4/5]${NC}- Création de la clé GPG et du mot de passe...\n" 
+                                echo -e "-${INVERSE}[4/5]${NC}- Création de la clé GPG et des mots de passe...\n" 
                                 echo -e "-${INVERSE}[5/5]${NC}- Lancement du service G_Cert...\n\n"
                                 
                                enter
@@ -1964,7 +2066,7 @@ echo -e "   - Ne partagez jamais votre mot de passe maître."
                                 echo -e "${GREEN}[√] Installation des prérequis...${NC}\n" 
                                 echo -e "${GREEN}[√] Installation et configuration de Vault...${NC}\n"
                                 echo -e "${GREEN}[√] Création de l'environnement Python...${NC}\n" 
-                                echo -e "-${INVERSE}[4/5]${NC}- Création de la clé GPG et du mot de passe...\n" 
+                                echo -e "-${INVERSE}[4/5]${NC}- Création de la clé GPG et des mots de passe...\n" 
                                 echo -e "-${INVERSE}[5/5]${NC}- Lancement du service G_Cert...\n\n"
                         
                         while true; do
@@ -2543,7 +2645,7 @@ echo -e "   - Ne partagez jamais votre mot de passe maître."
                                 echo -e "${GREEN}[√] Installation des prérequis...${NC}\n" 
                                 echo -e "${GREEN}[√] Installation et configuration de Vault...${NC}\n"
                                 echo -e "${GREEN}[√] Création de l'environnement Python...${NC}\n" 
-                                echo -e "${GREEN}[√] Création de la clé GPG et du mot de passe...${NC}\n" 
+                                echo -e "${GREEN}[√] Création de la clé GPG et des mote de passe...${NC}\n" 
                                 echo -e "-${INVERSE}[5/5]${NC}- Lancement du service G_Cert...\n\n"
                             
                             while true; do
@@ -2579,7 +2681,7 @@ echo -e "   - Ne partagez jamais votre mot de passe maître."
                                 echo -e "${GREEN}[√] Installation des prérequis...${NC}\n" 
                                 echo -e "${GREEN}[√] Installation et configuration de Vault...${NC}\n"
                                 echo -e "${GREEN}[√] Création de l'environnement Python...${NC}\n" 
-                                echo -e "${GREEN}[√] Création de la clé GPG et du mot de passe...${NC}\n" 
+                                echo -e "${GREEN}[√] Création de la clé GPG et des mots de passe...${NC}\n" 
                                 echo -e "${GREEN}[√] Lancement du service G_Cert...${NC}\n\n"
                                 
                                 while true; do
