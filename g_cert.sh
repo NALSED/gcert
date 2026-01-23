@@ -48,7 +48,7 @@ source "$MAIN_BASH"
 
 # === LOG ===
 
-LOG_FILE="/tmp/install.log"
+INSTALL_LOG="/tmp/install.log"
 ERROR_LOG="/var/log/gcert_install/erreur.log"
 
 
@@ -132,19 +132,54 @@ enter() {
     done
 }
 
-# Nettoyage en cas d'echec 
+# Nettoyage en cas d'echec + msg
 
-LOG_FILE="/tmp/install.log"
+
+
+clean_up_total(){
+    
+    clear
+    echo -e "${RED} XXX Annulation de l'installation G.Cert et restauration du système XXX${NC}\n\n"
+    echo -e "Vous pouvez consulter ${WHITE}/var/log/gcert_install/erreur.log${NC}, pour plus d'information\n"
+    
+    msg="Veuillez patienter durant la restauration du système"
+
+    BLA::start_loading_animation "$msg" "${BLA_passing_dots[@]}"
+    
+    clean_up
+    
+    BLA::stop_loading_animation
+}
 
 clean_up() {
-    echo -e "${RED} XXX Annulation de l'installation G.Cert et restauration du système... XXX${NC}"
     while IFS= read -r i; do 
-        dpkg -s "$i" >/dev/null 2>&1 && apt-get purge -y "$i" >/dev/null 2>&1
+        sudo dpkg -s "$i" >/dev/null 2>&1 && sudo apt-get purge -y "$i" >/dev/null 2>&1
         [ -e "$i" ] && rm -rf "$i" >/dev/null 2>&1
-    done < "$LOG_FILE"
-    rm -f "$LOG_FILE" >/dev/null 2>&1
+    done < "$INSTALL_LOG"
+    sudo rm -f "$INSTALL_LOG" >/dev/null 2>&1
     exit 1
 }
+
+
+#clean_up() {
+#    while IFS= read -r i; do
+#        if [[ "$i" == gpg:* ]]; then
+#            key_id="${i#gpg:}"
+#            # Supprimer la clé (privée et/ou publique)
+#            gpg --batch --yes --delete-secret-and-public-key "$key_id" >/dev/null 2>&1
+#        else
+#            sudo dpkg -s "$i" >/dev/null 2>&1 && sudo apt-get purge -y "$i" >/dev/null 2>&1
+#            [ -e "$i" ] && rm -rf "$i" >/dev/null 2>&1
+#        fi
+#    done < "$INSTALL_LOG"
+#    sudo rm -f "$INSTALL_LOG" >/dev/null 2>&1
+#    exit 1
+#}
+
+
+# Après avoir récupéré l'ID avec votre fonction
+#KEY_ID=$(votre_fonction_qui_recupere_id)
+#echo "gpg:$KEY_ID" >> "$INSTALL_LOG"
 
 # === FONCTIONNEMENT SCRIPT ===
 
@@ -447,7 +482,8 @@ afficher_bienvenue
                                             sleep 1.5
                                         else
                                             echo -e "${RED}Problème lors de l'installation de ${WHITE}$pkg${NC}..."
-                                            clean_up
+                                            
+                                            clean_up_total
                                         fi  
                                     done
                                 fi                     
@@ -557,7 +593,7 @@ afficher_bienvenue
                                 afficher_bienvenue
 
                                 msg="Veuillez patienter durant l'installation de Vault"
-                               
+                            
                                 BLA::start_loading_animation "$msg" "${BLA_passing_dots[@]}"
 
                                 # Installation
@@ -572,14 +608,16 @@ afficher_bienvenue
                                     echo -e "${GREEN}Vault installé avec succès${NC}"
                                     sleep 2
                                 else
-                                    echo -e "${RED}Problème lors de l'installation de Vault...${NC}\n"
-                                    echo -e "Veuillez consulter ${WHITE}/var/log/gcert_install/erreur.log${NC}, pour plus d'information\n"
-                                    sleep 4
-                                    clear
-                                    afficher_bienvenue
-                                    echo -e "Le programme d'installation va quitter..."
-                                    sleep 2 
-                                    exit 1 
+                                    
+                                    clean_up_total
+                                    #echo -e "${RED}Problème lors de l'installation de Vault...${NC}\n"
+                                    #echo -e "Veuillez consulter ${WHITE}/var/log/gcert_install/erreur.log${NC}, pour plus d'information\n"
+                                    #sleep 4
+                                    #clear
+                                    #afficher_bienvenue
+                                    #echo -e "Le programme d'installation va quitter..."
+                                    #sleep 2 
+                                    #exit 1 
                                 
                                 fi
 
@@ -697,6 +735,7 @@ afficher_bienvenue
                                 afficher_bienvenue
                                 
                                 echo -e "\n${YELLOW}=== Création clé GPG pour les unseal keys et le root token de Vault ===${NC}\n"
+                                
                                 sudo gpg --full-generate-key
 
                                 while true; do
@@ -988,7 +1027,7 @@ afficher_bienvenue
                                                 sudo mkdir -p /etc/vault/ssl
 
                                                 # Edition fichier certificat vault_tls.cnf
-                                                sudo tee /etc/vault/ssl/vault_tls.cnf <<-EOF > /dev/null 2>> /var/log/gcert_install/erreur.log
+                                                sudo tee /etc/vault/ssl/vault_tls.cnf <<-EOF > /dev/null 2>> "$ERROR_LOG" && echo "/etc/vault/ssl/vault_tls.cnf" >> "$INSTALL_LOG"  
 [ req ]
 default_bits       = 4096
 prompt             = no
@@ -1124,7 +1163,7 @@ EOF
                                             sudo mkdir -p /etc/vault/ssl
 
                                             # Edition fichier certificat vault_tls.cnf
-                                            sudo tee /etc/vault/ssl/vault_tls.cnf <<-EOF
+                                            sudo tee /etc/vault/ssl/vault_tls.cnf <<-EOF > /dev/null 2>> "$ERROR_LOG" && echo "/etc/vault/ssl/vault_tls.cnf" >> "$INSTALL_LOG"
 [ req ]
 default_bits       = 4096
 prompt             = no
@@ -1182,7 +1221,7 @@ EOF
                                 sleep 4
                                 
                                 # Création de la clé privée
-                                sudo openssl genrsa -out /etc/vault/ssl/vault.key > /dev/null 2>> /var/log/gcert_install/erreur.log
+                                sudo openssl genrsa -out /etc/vault/ssl/vault.key > /dev/null 2>> "$ERROR_LOG" && echo "/etc/vault/ssl/vault.key" >> "$INSTALL_LOG" 
                                     
                                     clear
                                     afficher_bienvenue
@@ -1195,12 +1234,14 @@ EOF
                                         echo -e "${GREEN}OK : vault.key créé.${NC}"
                                         sleep 3
                                     else
-                                        echo -e "${RED}ERREUR : vault.key manquante...${NC}"
-                                        echo -e "Pour plus d'information voir le fichier : ${WHITE}/var/log/gcert_install/erreur.log${NC}" 
-                                        sleep 3
-                                        echo -e "Le programme d'installation va quitter"
-                                        sleep 1
-                                        exit 1
+                                        
+                                        clean_up_total
+                                        #echo -e "${RED}ERREUR : vault.key manquante...${NC}"
+                                        #echo -e "Pour plus d'information voir le fichier : ${WHITE}/var/log/gcert_install/erreur.log${NC}" 
+                                        #sleep 3
+                                        #echo -e "Le programme d'installation va quitter"
+                                        #sleep 1
+                                        #exit 1
                                     fi
 
                                 # droit strict sur vault.key
@@ -1209,7 +1250,7 @@ EOF
                                 # === CREATION CSR ===
                                 
                                 # Commande de création du CSR avec redirection des logs
-                                sudo openssl req -new -key /etc/vault/ssl/vault.key -out /etc/vault/ssl/vault.csr -config /etc/vault/ssl/vault_tls.cnf > /dev/null 2>> /var/log/gcert_install/erreur.log
+                                sudo openssl req -new -key /etc/vault/ssl/vault.key -out /etc/vault/ssl/vault.csr -config /etc/vault/ssl/vault_tls.cnf > /dev/null 2>> "$ERROR_LOG" && echo "/etc/vault/ssl/vault.csr" >> "$INSTALL_LOG"
 
                                     clear
                                     afficher_bienvenue
@@ -1247,12 +1288,13 @@ EOF
                                         echo -e "${GREEN}OK : vault.csr créé.${NC}"
                                         sleep 3
                                     else
-                                        echo -e "${RED}ERREUR : vault.csr manquante...${NC}"
-                                        echo -e "Pour plus d'information voir le fichier : ${WHITE}/var/log/gcert_install/erreur.log${NC}" 
-                                        sleep 3
-                                        echo -e "Le programme d'installation va quitter"
-                                        sleep 1
-                                        exit 1
+                                        clean_up_total
+                                        #echo -e "${RED}ERREUR : vault.csr manquante...${NC}"
+                                        #echo -e "Pour plus d'information voir le fichier : ${WHITE}/var/log/gcert_install/erreur.log${NC}" 
+                                        #sleep 3
+                                        #echo -e "Le programme d'installation va quitter"
+                                        #sleep 1
+                                        #exit 1
                                     fi
                                 
                                 
@@ -1345,7 +1387,7 @@ EOF
                                             BLA::stop_loading_animation
 
                                         # Signature certificat auto-signé
-                                        sudo openssl x509 -req -in /etc/vault/ssl/vault.csr -signkey /etc/vault/ssl/vault.key -out /etc/vault/ssl/vault.crt -days "$days_vault" -extensions req_ext -extfile /etc/vault/ssl/vault_tls.cnf > /dev/null 2>> /var/log/gcert_install/erreur.log
+                                        sudo openssl x509 -req -in /etc/vault/ssl/vault.csr -signkey /etc/vault/ssl/vault.key -out /etc/vault/ssl/vault.crt -days "$days_vault" -extensions req_ext -extfile /etc/vault/ssl/vault_tls.cnf > /dev/null 2>> "$ERROR_LOG" && echo "/etc/vault/ssl/vault.crt" >> "$INSTALL_LOG" 
 
                                       
                                         # Test présence du certificat
@@ -1404,7 +1446,7 @@ EOF
                                         afficher_bienvenue
 
                                         # Chemin fichier .crt + test
-                                        read -p "Veuillez indiquer le chemin vers le CA existant (chemin absolue vers le fichier .crt)" ca_existant_crt
+                                        read -p "Veuillez indiquer le chemin vers le CA existant (chemin absolue vers le fichier .crt + droit correct)" ca_existant_crt
 
                                         if [ -f "$ca_existant_crt" ]; then
                                             
@@ -1467,7 +1509,7 @@ EOF
                                         afficher_bienvenue
                                         
                                         # Test présence du certificat
-                                        if openssl x509 -in /etc/vault/ssl/vault.crt -noout >/dev/null 2>&1; then
+                                        if openssl x509 -in /etc/vault/ssl/vault.crt -noout > /dev/null 2>> "$ERROR_LOG"; then
                                             
                                             echo -e "${GREEN}OK : vault.crt créé avec succès et valide.${NC}"
                                             sleep 3
