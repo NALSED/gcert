@@ -270,7 +270,16 @@ afficher_bienvenue
 
                 
 
-                enter        
+                while true; do
+                    read -p "Appuyez sur [Entrée] pour continuer : " input
+                    echo -e "\n\n"
+                    if [[ -z "$input" ]]; then
+                        break
+                    else
+                        echo -e "\n${RED}Erreur : appuyez uniquement sur [Entrée].${NC}\n"
+                    fi
+                done        
+                
                 # Test WAN
                 
                 clear
