@@ -580,7 +580,7 @@ afficher_bienvenue
                                 afficher_bienvenue    
 
                                 echo -e "${BLUE_BRIGHT}=== Installation et Configuration de Vault ===${NC}\n"
-                                echo -e "${WHITE}=== Clé GPG ===${NC}\n\n"
+                                echo -e "${WHITE}=== Création clés GPG ===${NC}\n\n"
 
                                 echo -e " ${GREEN}[√]${NC}${WHITE}Ajout du Dépôt HashiCorp${NC}"
                                 echo -e "    └── ${GREEN}[√]${NC}${YELLOW}Installation du Paquet Vault${NC}"
@@ -711,7 +711,7 @@ afficher_bienvenue
                                 afficher_bienvenue
                                 
                                 echo -e "${BLUE_BRIGHT}=== Installation et Configuration de Vault ===${NC}\n"
-                                echo -e "${WHITE}=== Certificat Vault ===${NC}\n\n"
+                                echo -e "${WHITE}=== Certificat SSL Vault ===${NC}\n\n"
 
                                 echo -e " ${GREEN}[√]${NC}${WHITE}Ajout du Dépôt HashiCorp${NC}"
                                 echo -e "    └── ${GREEN}[√]${NC}${YELLOW}Installation du Paquet Vault${NC}"
@@ -778,8 +778,9 @@ afficher_bienvenue
                                                         afficher_bienvenue
                                                         echo -e "\n${RED}Le domaine '$domain_ssl' n'existe pas ou ne résout pas.${NC}"
                                                         echo "Veuillez résoudre le problème avant de poursuivre l'installation"
-                                                        host "$domain_ssl" 2>> /var/log/gcert_install/erreur.log
                                                         
+                                                        
+                                                        enter 
                                                         while true;do
                                                         
                                                             clear
@@ -787,8 +788,8 @@ afficher_bienvenue
                                                             
                                                             echo -e "${YELLOW}Veuillez pouvez : ${NC}\n"
                                     
-                                                            echo -e "-${INVERSE}[1]${NC}- ${WHITE}Rester su l'installation${NC}"    
-                                                            echo -e "-${INVERSE}[3]${NC}- ${WHITE}Sortie Installation${NC}\n"
+                                                            echo -e "-${INVERSE}[1]${NC}- ${WHITE}Rester sur l'installation${NC}"    
+                                                            echo -e "-${INVERSE}[2]${NC}- ${WHITE}Sortie Installation${NC}\n"
 
                                                             read -p "Choix CA : " choix_ca
 
@@ -796,8 +797,7 @@ afficher_bienvenue
                                                             
                                                                 
                                                                 1)
-                                                                       
-                                                                       break
+                                                                    break
                                                                 
                                                                 ;;
                                                                 
@@ -1144,7 +1144,7 @@ EOF
                                 afficher_bienvenue
                                 
                                 echo -e "${BLUE_BRIGHT}=== Installation et Configuration de Vault ===${NC}\n"
-                                echo -e "${WHITE}=== Certificat Vault ===${NC}\n\n"
+                                echo -e "${WHITE}=== Clé privée certificat Vault ===${NC}\n\n"
 
                                 echo -e " ${GREEN}[√]${NC}${WHITE}Ajout du Dépôt HashiCorp${NC}"
                                 echo -e "    └── ${GREEN}[√]${NC}${YELLOW}Installation du Paquet Vault${NC}"
@@ -1167,7 +1167,7 @@ EOF
                                 echo -e "    └── ${WHITE}[15]${NC}${YELLOW}Aucune tâche de renouvellement via Systemd${NC}\n\n"
                                 
                                 
-                                sleep 3
+                                sleep 4
                                 
                                 # Création de la clé privée
                                 sudo openssl genrsa -out /etc/vault/ssl/vault.key > /dev/null 2>> /var/log/gcert_install/erreur.log
@@ -1181,7 +1181,7 @@ EOF
                                         clear
                                         afficher_bienvenue
                                         echo -e "${GREEN}OK : vault.key créé.${NC}"
-                                        sleep 2
+                                        sleep 3
                                     else
                                         echo -e "${RED}ERREUR : vault.key manquante...${NC}"
                                         echo -e "Pour plus d'information voir le fichier : ${WHITE}/var/log/gcert_install/erreur.log${NC}" 
@@ -1203,7 +1203,7 @@ EOF
                                     afficher_bienvenue
                                     
                                     echo -e "${BLUE_BRIGHT}=== Installation et Configuration de Vault ===${NC}\n"
-                                    echo -e "${WHITE}=== Certificat Vault ===${NC}\n\n"
+                                    echo -e "${WHITE}=== Fichier CSR Certificat Vault ===${NC}\n\n"
 
                                     echo -e " ${GREEN}[√]${NC}${WHITE}Ajout du Dépôt HashiCorp${NC}"
                                     echo -e "    └── ${GREEN}[√]${NC}${YELLOW}Installation du Paquet Vault${NC}"
@@ -1225,7 +1225,7 @@ EOF
                                     echo -e " ${WHITE}[14]${NC}${WHITE}Clé Privée Certificat => Chiffrée${NC}"
                                     echo -e "    └── ${WHITE}[15]${NC}${YELLOW}Aucune tâche de renouvellement via Systemd${NC}\n\n"
                                     
-                                    sleep 2
+                                    sleep 4
                                     
                                     # Test présence CSR
                                     if [ -f /etc/vault/ssl/vault.csr ]; then
@@ -1298,7 +1298,7 @@ EOF
                                         afficher_bienvenue
                                         
                                         echo -e "${BLUE_BRIGHT}=== Installation et Configuration de Vault ===${NC}\n"
-                                        echo -e "${WHITE}=== Certificat Vault ===${NC}\n\n"
+                                        echo -e "${WHITE}=== Certificat (Auto-signé) Vault ===${NC}\n\n"
 
                                         echo -e " ${GREEN}[√]${NC}${WHITE}Ajout du Dépôt HashiCorp${NC}"
                                         echo -e "    └── ${GREEN}[√]${NC}${YELLOW}Installation du Paquet Vault${NC}"
@@ -1363,7 +1363,7 @@ EOF
                                         afficher_bienvenue
                                         
                                         echo -e "${BLUE_BRIGHT}=== Installation et Configuration de Vault ===${NC}\n"
-                                        echo -e "${WHITE}=== Certificat Vault ===${NC}\n\n"
+                                        echo -e "${WHITE}=== Certificat (avec CA existant) Vault ===${NC}\n\n"
 
                                         echo -e " ${GREEN}[√]${NC}${WHITE}Ajout du Dépôt HashiCorp${NC}"
                                         echo -e "    └── ${GREEN}[√]${NC}${YELLOW}Installation du Paquet Vault${NC}"
@@ -1459,40 +1459,6 @@ EOF
                                             
                                             echo -e "${GREEN}OK : vault.crt créé avec succès et valide.${NC}"
                                             sleep 3
-                                            
-                                            clear
-                                            afficher_bienvenue
-                                            
-                                            echo -e "${BLUE_BRIGHT}=== Installation et Configuration de Vault ===${NC}\n"
-                                            echo -e "${WHITE}=== Certificat Vault ===${NC}\n\n"
-
-                                            echo -e " ${GREEN}[√]${NC}${WHITE}Ajout du Dépôt HashiCorp${NC}"
-                                            echo -e "    └── ${GREEN}[√]${NC}${YELLOW}Installation du Paquet Vault${NC}"
-                                            echo -e "        └── ${GREEN}[√]${NC}${CYAN}Vérification de la présence de Vault${NC}\n"
-
-                                            echo -e " ${GREEN}[√]${NC}${WHITE}Création des clés GPG${NC}"
-                                            echo -e "    └── ${GREEN}[√]${NC}${YELLOW}Certificat SSL${NC}"
-                                            echo -e "        └── ${GREEN}[√]${NC}${CYAN}Fichier de configuration${NC}"
-                                            echo -e "        └── ${GREEN}[√]${NC}${CYAN}Clé Privée${NC}"
-                                            echo -e "        └── ${GREEN}[√]${NC}${CYAN}Fichier CSR${NC}"
-                                            echo -e "        └── ${GREEN}[√]${NC}${CYAN}Certificat Vault${NC}"
-                                            echo -e "        └── ${GREEN}[√]${NC}${CYAN}Signature du Certificat${NC}\n"
-
-                                            echo -e " ${WHITE}[11]${NC}${WHITE}Sécurisation du fichier Certificat${NC}\n"
-
-                                            echo -e " ${WHITE}[12]${NC}${WHITE}Clé Privée Certificat => Restrictions des droits${NC}"
-                                            echo -e "    └── ${WHITE}[13]${NC}${YELLOW}Script pour renouvellement + inscription Systemd${NC}\n"
-
-                                            echo -e " ${WHITE}[14]${NC}${WHITE}Clé Privée Certificat => Chiffrée${NC}"
-                                            echo -e "    └── ${WHITE}[15]${NC}${YELLOW}Aucune tâche de renouvellement via Systemd${NC}\n\n"
-                                        
-                                            sleep 4
-                                            
-                                            
-                                            
-                                            
-                                            
-                                            
                                             break
 
                                         else
@@ -1586,7 +1552,7 @@ EOF
                                                         afficher_bienvenue
 
                                                         echo -e "${BLUE_BRIGHT}=== Installation et Configuration de Vault ===${NC}\n"
-                                                        echo -e "${WHITE}=== Certificat Vault ===${NC}\n\n"
+                                                        echo -e "${WHITE}=== Chiffrement clé Certificat Vault ===${NC}\n\n"
 
                                                         echo -e " ${GREEN}[√]${NC}${WHITE}Ajout du Dépôt HashiCorp${NC}"
                                                         echo -e "    └── ${GREEN}[√]${NC}${YELLOW}Installation du Paquet Vault${NC}"
@@ -1620,7 +1586,7 @@ EOF
                                                             sleep 3
                                                         else
                                                             echo -e "${GREEN}OK : Suppression réussie.${NC}"
-                                                            sleep 2
+                                                            sleep 3
                                                         fi
 
                                                         # Chiffrement .key
@@ -1629,7 +1595,7 @@ EOF
                                                         
                                                         echo -e "${WHITE}Chiffrement et permissions de la clé privée : /etc/vault/ssl/vault.key${NC}\n"
 
-                                                        sleep 2
+                                                        sleep 3
 
                                                         # Chiffrement de la clé TLS avec GPG
                                                         sudo gpg -e -r "$KEY_PRIVATE_TLS" /etc/vault/ssl/vault.key
@@ -1639,7 +1605,8 @@ EOF
                                                             
                                                             echo -e "${GREEN}OK : le fichier: ${WHITE}/etc/vault/ssl/vault.key${NC} a bien été chiffré.${NC}"
                                                             echo -e "Le fichier vault.key va être supprimé\n"
-                                                            sleep 4
+                                                            
+                                                            enter
                                                             
                                                             # Suppression
                                                             sudo rm /etc/vault/ssl/vault.key
@@ -1650,8 +1617,11 @@ EOF
                                                                 echo -e "Suite à l'installation de Gcert, veuillez supprimer ce fichier."
                                                                 sleep 3
                                                             else
+                                                                
+                                                                clear
+                                                                afficher_bienvenue
                                                                 echo -e "${GREEN}OK : Suppression réussie.${NC}"
-                                                                sleep 2
+                                                                sleep 3
                                                             fi
 
                                                         else
@@ -1675,35 +1645,18 @@ EOF
 
                                                         if [[ $(stat -c "%a" /etc/vault/ssl/vault.key.gpg) == "600" && $(stat -c "%U:%G" /etc/vault/ssl/vault.key.gpg) == "vault:vault" ]]; then
                                                             echo -e "${GREEN}OK : le fichier ${WHITE}/etc/vault/ssl/vault.key.gpg${GREEN} est bien sécurisé.${NC}"
-                                                            sleep 3
+                                                            
+                                                            sleep 4
+
                                                         else
                                                             echo -e "${RED}ERREUR : permissions ou propriétaire incorrects pour ${WHITE}/etc/vault/ssl/vault.key.gpg${NC}"
                                                             echo -e "Suite à l'installation de Gcert, veuillez résoudre ce problème."
                                                             sleep 3
                                                         fi
 
-                                                        clear
-                                                        afficher_bienvenue
-
-                                                        echo -e "   - Droits restreints sur le fichier de configuration : chmod 640 ${WHITE}/etc/vault/ssl/vault_tls.cnf${NC}."
-                                                        echo -e "   - Propriétaire et groupe sécurisés : chown root:vault ${WHITE}/etc/vault/ssl/vault_tls.cnf${NC}.\n"
-
-                                                        # Appliquer les droits
-                                                        sudo chmod 640 /etc/vault/ssl/vault_tls.cnf
-                                                        sudo chown root:vault /etc/vault/ssl/vault_tls.cnf
-
-                                                        # Vérification droit et propriétaire
-                                                        if [[ $(stat -c "%a" /etc/vault/ssl/vault_tls.cnf) == "640" && $(stat -c "%U:%G" /etc/vault/ssl/vault_tls.cnf) == "root:vault" ]]; then
-                                                            echo -e "${GREEN}OK : le fichier ${WHITE}/etc/vault/ssl/vault_tls.cnf${GREEN} est bien sécurisé.${NC}"
-                                                            sleep 3
-                                                        else
-                                                            echo -e "${RED}ERREUR : permissions ou propriétaire incorrects pour ${WHITE}/etc/vault/ssl/vault_tls.cnf${NC}"
-                                                            echo -e "Veuillez vérifier et corriger les droits du fichier."
-                                                            sleep 3
-                                                        fi
-
+                                                        
                                                         echo -e "${BLUE_BRIGHT}=== Installation et Configuration de Vault ===${NC}\n"
-                                                        echo -e "${WHITE}=== Certificat Vault ===${NC}\n\n"
+                                                        echo -e "${WHITE}=== Fin de Tache Certificat Vault ===${NC}\n\n"
 
                                                         echo -e " ${GREEN}[√]${NC}${WHITE}Ajout du Dépôt HashiCorp${NC}"
                                                         echo -e "    └── ${GREEN}[√]${NC}${YELLOW}Installation du Paquet Vault${NC}"
@@ -1899,7 +1852,7 @@ EOF"
                                                             
                                                             
                                                             echo -e "${BLUE_BRIGHT}=== Installation et Configuration de Vault ===${NC}\n"
-                                                            echo -e "${WHITE}=== Certificat Vault ===${NC}\n\n"
+                                                            echo -e "${WHITE}=== Fin de Tache Certificat Vault ===${NC}\n\n"
 
                                                             echo -e " ${GREEN}[√]${NC}${WHITE}Ajout du Dépôt HashiCorp${NC}"
                                                             echo -e "    └── ${GREEN}[√]${NC}${YELLOW}Installation du Paquet Vault${NC}"
@@ -1940,7 +1893,7 @@ EOF"
                                                             afficher_bienvenue
 
                                                             echo -e "${BLUE_BRIGHT}=== Installation et Configuration de Vault ===${NC}\n"
-                                                            echo -e "${WHITE}=== Certificat Vault ===${NC}\n\n"
+                                                            echo -e "${WHITE}=== Probléme renouvellement auto, Certificat Vault ===${NC}\n\n"
 
                                                             echo -e " ${GREEN}[√]${NC}${WHITE}Ajout du Dépôt HashiCorp${NC}"
                                                             echo -e "    └── ${GREEN}[√]${NC}${YELLOW}Installation du Paquet Vault${NC}"
