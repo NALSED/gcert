@@ -25,6 +25,7 @@ WHITE_BRIGHT='\033[1;37m'
 
 INVERSE='\033[7m'           # Inversé (fond et texte inversés)
 UNDERLINE='\033[4m'         # Texte souligné
+
 # === INFOS SYSTÈME ===
 NOW="$(date '+%Y-%m-%d %H:%M:%S')"
 USER_NAME="$(whoami)"
@@ -45,6 +46,12 @@ MAIN_BASH="$SCRIPT_DIR/my_package/script/load.sh"
 # Charger les fonctions d'animation
 source "$MAIN_BASH"
 
+# === LOG ===
+
+LOG_FILE="/tmp/install.log"
+ERROR_LOG="/var/log/gcert_install/erreur.log"
+
+
 # =========================================================
 
 
@@ -62,20 +69,23 @@ dependencies=(pyfiglet psutil cryptography python-nmap termcolor colorlog tabula
 # ### FONCTIONS ###
 
 # GUM
+
 repo_gum() {
-    sudo mkdir -p /etc/apt/keyrings
-    curl -fsSL https://repo.charm.sh/apt/gpg.key | sudo gpg --dearmor -o /etc/apt/keyrings/charm.gpg > /dev/null 2>> /var/log/gcert_install/erreur.log
-    echo "deb [signed-by=/etc/apt/keyrings/charm.gpg] https://repo.charm.sh/apt/ /" | sudo tee /etc/apt/sources.list.d/charm.list > /dev/null 2>> /var/log/gcert_install/erreur.log
-    sudo apt -qq update -y > /dev/null 2>> /var/log/gcert_install/erreur.log && sudo apt install -qq gum -y > /dev/null 2>> /var/log/gcert_install/erreur.log
+    sudo mkdir -p /etc/apt/keyrings >/dev/null 2>> "$ERROR_LOG"
+    curl -fsSL https://repo.charm.sh/apt/gpg.key | sudo gpg --dearmor -o /etc/apt/keyrings/charm.gpg 2>> "$ERROR_LOG" && echo "/etc/apt/keyrings/charm.gpg" >> "$INSTALL_LOG"
+    echo "deb [signed-by=/etc/apt/keyrings/charm.gpg] https://repo.charm.sh/apt/ /" | sudo tee /etc/apt/sources.list.d/charm.list >/dev/null 2>> "$ERROR_LOG" && echo "/etc/apt/sources.list.d/charm.list" >> "$INSTALL_LOG"
+    sudo apt -qq update -y >/dev/null 2>> "$ERROR_LOG" && sudo apt install -qq gum -y >/dev/null 2>> "$ERROR_LOG" && echo "gum" >> "$INSTALL_LOG"
 }
 
 # VAULT 
 
 repo_vault() {
-    sudo apt -qq update -y > /dev/null && sudo apt install -y gnupg wget lsb-release > /dev/null 2>> /var/log/gcert_install/erreur.log
-    curl -fsSL https://apt.releases.hashicorp.com/gpg | sudo gpg --dearmor -o /usr/share/keyrings/hashicorp-archive-keyring.gpg > /dev/null 2>> /var/log/gcert_install/erreur.log
-    echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/hashicorp-archive-keyring.gpg] https://apt.releases.hashicorp.com $(lsb_release -cs) main" | sudo tee /etc/apt/sources.list.d/hashicorp.list > /dev/null 2>> /var/log/gcert_install/erreur.log
-    sudo apt -qq update -y > /dev/null 2>> /var/log/gcert_install/erreur.log && sudo apt install -qq vault -y > /dev/null 2>> /var/log/gcert_install/erreur.log
+    sudo apt -qq update -y >/dev/null 2>> "$ERROR_LOG" && sudo apt install -y gnupg wget lsb-release >/dev/null 2>> "$ERROR_LOG" && {
+        echo "gnupg" >> "$INSTALL_LOG"
+        }
+    curl -fsSL https://apt.releases.hashicorp.com/gpg | sudo gpg --dearmor -o /usr/share/keyrings/hashicorp-archive-keyring.gpg 2>> "$ERROR_LOG" && echo "/usr/share/keyrings/hashicorp-archive-keyring.gpg" >> "$INSTALL_LOG"
+    echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/hashicorp-archive-keyring.gpg] https://apt.releases.hashicorp.com $(lsb_release -cs) main" | sudo tee /etc/apt/sources.list.d/hashicorp.list >/dev/null 2>> "$ERROR_LOG" && echo "/etc/apt/sources.list.d/hashicorp.list" >> "$INSTALL_LOG"
+    sudo apt -qq update -y >/dev/null 2>> "$ERROR_LOG" && sudo apt install -qq vault -y >/dev/null 2>> "$ERROR_LOG" && echo "vault" >> "$INSTALL_LOG"
 }
 
 
@@ -122,25 +132,17 @@ enter() {
     done
 }
 
-# Nettoyage en cas d'echec
+# Nettoyage en cas d'echec 
+
+LOG_FILE="/tmp/install.log"
 
 clean_up() {
-    while read -r item; do
-        if [ -e "$item" ]; then
-            # Vérifie si c'est un paquet installé
-            if dpkg -l | grep -q "^ii.*${item}"; then
-                # Purge le paquet installé silencieusement
-                apt-get purge -y "$item" > /dev/null 2>&1
-            else
-                # Supprime le fichier ou répertoire manuellement créé
-                rm -rf "$item" > /dev/null 2>&1
-            fi
-        fi
-    done < "/tmp/install.log"
-
-    # Supprimer le fichier de log silencieusement
-    rm -f "/tmp/install.log" > /dev/null 2>&1
-
+    echo -e "${RED} XXX Annulation de l'installation G.Cert et restauration du système... XXX${NC}"
+    while IFS= read -r i; do 
+        dpkg -s "$i" >/dev/null 2>&1 && apt-get purge -y "$i" >/dev/null 2>&1
+        [ -e "$i" ] && rm -rf "$i" >/dev/null 2>&1
+    done < "$LOG_FILE"
+    rm -f "$LOG_FILE" >/dev/null 2>&1
     exit 1
 }
 
@@ -195,7 +197,7 @@ afficher_bienvenue
                     sleep 2
                 else
                     echo -e "${RED}ERREUR : Problème lors de la création du répertoire ${WHITE}/var/log/gcert_install${RED}.${NC}"
-                    echo -e "Veuillez créer le répertoire avec la commande : sudo mkdir /var/log/gcert_install"
+                    echo -e "Veuillez créer le répertoire avec la commande : ${WHITE}sudo mkdir /var/log/gcert_install${NC}"
                     sleep 3
                     exit 1
                 fi
@@ -292,7 +294,7 @@ afficher_bienvenue
                 sleep 3
                 
                 # Effectuer le ping
-                if ping -c 1 "1.1.1.1" > /dev/null 2>> /var/log/gcert_install/erreur.log; then
+                if ping -c 1 "1.1.1.1" > /dev/null 2>> "$ERROR_LOG"; then
                     BLA::stop_loading_animation
                     
                     echo -e "${GREEN}Connexion WAN OK !${NC}"
@@ -426,12 +428,12 @@ afficher_bienvenue
                                         msg="Veuillez patienter durant l'installation de $pkg"
                                         
                                         
-                                         BLA::start_loading_animation "$msg" "${BLA_passing_dots[@]}"
+                                        BLA::start_loading_animation "$msg" "${BLA_passing_dots[@]}"
                                         
                                         if [[ ${pkg} == "gum" ]]; then        
                                             repo_gum    
-                                        else       
-                                            sudo apt install -qq ${pkg} -y > /dev/null 2>> /var/log/gcert_install/erreur.log
+                                        else  
+                                            sudo apt install -qq ${pkg} -y > /dev/null 2>> "$ERROR_LOG" && echo "${pkg}" >> "$INSTALL_LOG" 
                                         fi
                                         
                                         # Effacer la ligne du message dynamique
@@ -445,7 +447,7 @@ afficher_bienvenue
                                             sleep 1.5
                                         else
                                             echo -e "${RED}Problème lors de l'installation de ${WHITE}$pkg${NC}..."
-                                            exit 1
+                                            clean_up
                                         fi  
                                     done
                                 fi                     
@@ -559,8 +561,7 @@ afficher_bienvenue
                                 BLA::start_loading_animation "$msg" "${BLA_passing_dots[@]}"
 
                                 # Installation
-                                repo_vault > /dev/null 2>> /var/log/gcert_install/erreur.log
-
+                                repo_vault 
 
                                 # Effacer la ligne du message dynamique
                                 echo -ne "\r\033[K"
