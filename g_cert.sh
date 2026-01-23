@@ -484,7 +484,7 @@ afficher_bienvenue
 
                                 echo -e "${WHITE}[2] Clés GPG et Certificats TLS :${NC}"
                                 echo -e "   - Création des clés GPG pour la clé privé du certificat et des unseal keys/root token."
-                                echo -e "   - Génération de la clé TLS et certificat (auto-signé ou CA existante)."
+                                echo -e "   - Génération de la clé TLS et certificat (auto-signé ou CA existante).\n"
                                 
 
                                 echo -e "${WHITE}[3] Configuration de Vault :${NC}"
@@ -600,7 +600,7 @@ afficher_bienvenue
                                 echo -e "    └── ${WHITE}[13]${NC}${YELLOW}Script pour renouvellement + inscription Systemd${NC}\n"
 
                                 echo -e " ${WHITE}[14]${NC}${WHITE}Clé Privée Certificat => Chiffrée${NC}"
-                                echo -e "    └── ${WHITE}[15]${NC}${YELLOW}Script pour renouvellement + inscription Systemd${NC}\n\n"
+                                echo -e "    └── ${WHITE}[15]${NC}${YELLOW}Aucune tâche de renouvellement via Systemd${NC}\n\n"
 
     
                                 enter
@@ -731,7 +731,7 @@ afficher_bienvenue
                                 echo -e "    └── ${WHITE}[13]${NC}${YELLOW}Script pour renouvellement + inscription Systemd${NC}\n"
 
                                 echo -e " ${WHITE}[14]${NC}${WHITE}Clé Privée Certificat => Chiffrée${NC}"
-                                echo -e "    └── ${WHITE}[15]${NC}${YELLOW}Script pour renouvellement + inscription Systemd${NC}\n\n"
+                                echo -e "    └── ${WHITE}[15]${NC}${YELLOW}Aucune tâche de renouvellement via Systemd${NC}\n\n"
 
 
                                 enter
@@ -762,7 +762,7 @@ afficher_bienvenue
                                         
                                                 if [[ "$validation_domain" =~ ^[yY]$ ]]; then
                                                 # test si le nom de domaine existe
-                                                    if nslookup "$domain_ssl" > /dev/null 2>> /var/log/gcert_install/erreur.log; then
+                                                    if host "$domain_ssl" 2>&1 | grep -q "has address\|has IPv6 address"; then
                                             
                                                         clear
                                                         afficher_bienvenue
@@ -772,14 +772,58 @@ afficher_bienvenue
 
                                                     # Si le domaine ne repond pas ou n'existe pas sortie de script
                                                     else
-                                                        echo -e "${RED}Le domaine '$domain_ssl' n'existe pas ou ne résout pas.${NC}"
+                                                        
+                                                        
+                                                        clear
+                                                        afficher_bienvenue
+                                                        echo -e "\n${RED}Le domaine '$domain_ssl' n'existe pas ou ne résout pas.${NC}"
                                                         echo "Veuillez résoudre le problème avant de poursuivre l'installation"
+                                                        host "$domain_ssl" 2>> /var/log/gcert_install/erreur.log
                                                         
-                                                        enter 
+                                                        while true;do
+                                                        
+                                                            clear
+                                                            afficher_bienvenue
+                                                            
+                                                            echo -e "${YELLOW}Veuillez pouvez : ${NC}\n"
+                                    
+                                                            echo -e "-${INVERSE}[1]${NC}- ${WHITE}Rester su l'installation${NC}"    
+                                                            echo -e "-${INVERSE}[3]${NC}- ${WHITE}Sortie Installation${NC}\n"
 
-                                                        
-                                                        
-                                                        
+                                                            read -p "Choix CA : " choix_ca
+
+                                                            case "$choix_ca" in    
+                                                            
+                                                                
+                                                                1)
+                                                                       
+                                                                       break
+                                                                
+                                                                ;;
+                                                                
+                                                                2)
+                                                                    
+                                                                    clear
+                                                                    afficher_bienvenue
+                                                                    echo -e "${RED}Le programme d'installation va quitter...${NC}" 
+                                                                                                                                
+                                                                    msg="Veuillez patienter"
+                                                                    echo -e "\n"
+                                                                    BLA::start_loading_animation "$msg" "${BLA_passing_dots[@]}"
+                                                                    sleep 4
+                                                                    BLA::stop_loading_animation
+                                                                                                        
+                                                                    exit 1         
+                                                                ;;
+
+                                                                *)
+                                                                    echo -e "${RED}Erreur, Réponse invalide.${NC}"
+                                                                ;;
+
+
+                                                            esac
+                                                        done    
+                                                                                              
                                                     fi
                                                 elif [[ "$validation_domain" =~ ^[nN]$ ]]; then
                                                     
