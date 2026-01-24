@@ -132,11 +132,36 @@ enter() {
     done
 }
 
+
+
+# === SUPPRESSION ===
+
+# Restauration systeme
+clean_up() {
+    while IFS= read -r i; do
+        if [[ "$i" == gpg:* ]]; then
+            key_id="${i#gpg:}"
+            # Supprimer la clé (privée et/ou publique)
+            sudo gpg --batch --yes --delete-secret-and-public-key "$key_id" >/dev/null 2>&1
+        elif [[ "$i" == pipx:* ]]; then
+            pkg_name="${i#pipx:}"
+            # Désinstaller le package pipx
+            pipx uninstall "$pkg_name" >/dev/null 2>&1
+        else
+            # Supprime les paquets et fichiers
+            sudo dpkg -s "$i" >/dev/null 2>&1 && sudo apt-get purge -y "$i" >/dev/null 2>&1
+            [ -e "$i" ] && rm -rf "$i" >/dev/null 2>&1
+        fi
+    done < "$INSTALL_LOG"
+    sudo rm -f "$INSTALL_LOG" >/dev/null 2>&1
+    exit 1
+}
+
 # Nettoyage en cas d'echec + msg
-clean_up_total(){
+clean_up_error(){
     
     clear
-    echo -e "${RED} XXX Annulation de l'installation G.Cert et restauration du système XXX${NC}\n\n"
+    echo -e "${RED}[ERREUR] Annulation de l'installation G.Cert et restauration du système [ERREUR]${NC}\n\n"
     echo -e "Vous pouvez consulter ${WHITE}/var/log/gcert_install/erreur.log${NC}, pour plus d'information\n"
     
     msg="Veuillez patienter durant la restauration du système"
@@ -148,23 +173,33 @@ clean_up_total(){
     BLA::stop_loading_animation
 }
 
-# Fonction de Suppression
+# Nettoyage sortie utilisateur avec confirmation + msg
 
-clean_up() {
-    while IFS= read -r i; do
-        if [[ "$i" == gpg:* ]]; then
-            key_id="${i#gpg:}"
-            # Supprimer la clé (privée et/ou publique)
-            sudo gpg --batch --yes --delete-secret-and-public-key "$key_id" >/dev/null 2>&1
+clean_up_choice(){
+    
+    while true; do
+        read -p "Etes vous sur de vouloir quitter (cela entrainera une remise à niveau du système, avant le lancement de l'installation de G.Cert) y/n : " choix_quit
+        
+        if [[ "$choix_quit" =~ ^[yY]$ ]]; then
+            clear
+            echo -e "${RED} XXX Vous avez choisi de quitter l'installation G.Cert, mise en route de la restauration du système XXX${NC}\n\n"
+            echo -e "Vous pouvez consulter ${WHITE}/var/log/gcert_install/erreur.log${NC}, pour plus d'information\n"
+            
+            msg="Veuillez patienter durant la restauration du système"
+            BLA::start_loading_animation "$msg" "${BLA_passing_dots[@]}"
+            
+            clean_up
+            
+            BLA::stop_loading_animation
+        
+        elif [[ "$choix_quit" =~ ^[nN]$ ]]; then
+            break
         else
-            # Supprime les paquet et fichier
-            sudo dpkg -s "$i" >/dev/null 2>&1 && sudo apt-get purge -y "$i" >/dev/null 2>&1
-            [ -e "$i" ] && rm -rf "$i" >/dev/null 2>&1
+            echo -e "\n${RED}Réponse invalide. Tapez y ou n.${NC}"
         fi
-    done < "$INSTALL_LOG"
-    sudo rm -f "$INSTALL_LOG" >/dev/null 2>&1
-    exit 1
+    done
 }
+
 
 # === FONCTIONNEMENT SCRIPT ===
 
@@ -457,7 +492,7 @@ afficher_bienvenue
                                         else
                                             echo -e "${RED}Problème lors de l'installation de ${WHITE}$pkg${NC}..."
                                             
-                                            clean_up_total
+                                            clean_up_error
                                         fi  
                                     done
                                 fi                     
@@ -583,7 +618,7 @@ afficher_bienvenue
                                     sleep 2
                                 else
                                     
-                                    clean_up_total
+                                    clean_up_error
                                     #echo -e "${RED}Problème lors de l'installation de Vault...${NC}\n"
                                     #echo -e "Veuillez consulter ${WHITE}/var/log/gcert_install/erreur.log${NC}, pour plus d'information\n"
                                     #sleep 4
@@ -783,7 +818,7 @@ afficher_bienvenue
                                             afficher_bienvenue
 
                                             echo -e "Domain = ${WHITE}$domain_ssl${NC}\n"
-                                            read -p "Le CN est-il correct ? y/n : " validation_domain
+                                            read -p "Le nom de domaine est-il correct ? y/n : " validation_domain
                                         
                                                 if [[ "$validation_domain" =~ ^[yY]$ ]]; then
                                                 # test si le nom de domaine existe
@@ -827,18 +862,7 @@ afficher_bienvenue
                                                                 ;;
                                                                 
                                                                 2)
-                                                                    
-                                                                    clear
-                                                                    afficher_bienvenue
-                                                                    echo -e "${RED}Le programme d'installation va quitter...${NC}" 
-                                                                                                                                
-                                                                    msg="Veuillez patienter"
-                                                                    echo -e "\n"
-                                                                    BLA::start_loading_animation "$msg" "${BLA_passing_dots[@]}"
-                                                                    sleep 4
-                                                                    BLA::stop_loading_animation
-                                                                                                        
-                                                                    exit 1         
+                                                                    clean_up_choice         
                                                                 ;;
 
                                                                 *)
@@ -848,7 +872,7 @@ afficher_bienvenue
 
                                                             esac
                                                         done    
-                                                                                              
+
                                                     fi
                                                 elif [[ "$validation_domain" =~ ^[nN]$ ]]; then
                                                     
@@ -1051,7 +1075,7 @@ EOF
                                                     clear
                                                     afficher_bienvenue
                                                     echo -e "${GREEN}CN confirmé :${NC} $cn_vault"
-                                                    sleep 3
+                                                    sleep 2
                                                     break
                                                 elif [[ "$validation_cn" =~ ^[nN]$ ]]; then
                                                     echo -e "${RED}Recommençons...${NC}"
@@ -1081,7 +1105,7 @@ EOF
                                                     clear
                                                     afficher_bienvenue
                                                     echo -e "${GREEN}DNS.1 confirmé :${NC} $dns_vault"
-                                                    sleep 3
+                                                    sleep 2
                                                     break
                                                 elif [[ "$validation_dns1" =~ ^[nN]$ ]]; then
                                                     echo -e "${RED}Recommençons...${NC}"
@@ -1211,7 +1235,7 @@ EOF
                                         sleep 3
                                     else
                                         
-                                        clean_up_total
+                                        clean_up_error
                                         #echo -e "${RED}ERREUR : vault.key manquante...${NC}"
                                         #echo -e "Pour plus d'information voir le fichier : ${WHITE}/var/log/gcert_install/erreur.log${NC}" 
                                         #sleep 3
@@ -1264,7 +1288,7 @@ EOF
                                         echo -e "${GREEN}OK : vault.csr créé.${NC}"
                                         sleep 3
                                     else
-                                        clean_up_total
+                                        clean_up_error
                                         #echo -e "${RED}ERREUR : vault.csr manquante...${NC}"
                                         #echo -e "Pour plus d'information voir le fichier : ${WHITE}/var/log/gcert_install/erreur.log${NC}" 
                                         #sleep 3
@@ -1364,8 +1388,6 @@ EOF
 
                                         # Signature certificat auto-signé
                                         sudo openssl x509 -req -in /etc/vault/ssl/vault.csr -signkey /etc/vault/ssl/vault.key -out /etc/vault/ssl/vault.crt -days "$days_vault" -extensions req_ext -extfile /etc/vault/ssl/vault_tls.cnf > /dev/null 2>> "$ERROR_LOG" && echo "/etc/vault/ssl/vault.crt" >> "$INSTALL_LOG" 
-
-                                      
                                         # Test présence du certificat
                                         if openssl x509 -in /etc/vault/ssl/vault.crt -noout >/dev/null 2>&1; then
                                             
@@ -1376,11 +1398,8 @@ EOF
                                             break
                                         else
                                             echo -e "${RED}ERREUR : vault.csr manquante...${NC}"
-                                            echo -e "Pour plus d'information voir le fichier : ${WHITE}/var/log/gcert_install/erreur.log${NC}" 
                                             sleep 3
-                                            echo -e "Le programme d'installation va quitter"
-                                            sleep 1
-                                            exit 1
+                                            clean_up_error
                                         fi
 
 
@@ -1417,46 +1436,61 @@ EOF
                                     
                                         sleep 3
 
-
-                                        clear
-                                        afficher_bienvenue
-
-                                        # Chemin fichier .crt + test
-                                        read -p "Veuillez indiquer le chemin vers le CA existant (chemin absolue vers le fichier .crt + droit correct)" ca_existant_crt
-
-                                        if [ -f "$ca_existant_crt" ]; then
-                                            
+                                        # CHEMIN .CRT
+                                        while true; do
                                             clear
                                             afficher_bienvenue
-                                            echo -e "${GREEN}OK : le fichier existe.${NC}"
-                                            sleep 2
-                                        else
-                                            echo -e "${RED}ERREUR : dans la récupération du fichier .crt...${NC}"
-                                            sleep 2
-                                            echo -e "Le programme d'installation va quitter"
-                                            sleep 1
-                                            exit 1
-                                        fi
+                                            read -p "Veuillez indiquer le chemin vers le CA existant (chemin absolue vers le fichier .crt + droit correct)" ca_existant_crt
 
-                                        clear
-                                        afficher_bienvenue
+                                            echo -e "Chemin Certificat = ${WHITE}$ca_existant_crt${NC}\n"
+                                            read -p "Le Certificat est-il correct ? y/n " validation_crt
+
+                                            if [[ "$validation_crt" =~ ^[yY]$ ]]; then
+                                                clear
+                                                afficher_bienvenue
+                                                echo -e "${GREEN}Certificat confirmé :${NC} $ca_existant_crt"
+                                                sleep 3
+                                                break
+
+                                            elif [[ "$validation_crt" =~ ^[nN]$ ]]; then
+                                                clear
+                                                afficher_bienvenue
+                                                echo -e "${RED}Recommençons...${NC}"
+                                                sleep 2
+
+                                            else
+                                                echo -e "${RED}Réponse invalide. Tapez y ou n.${NC}"
+                                            fi
+                                        done
+
                                         
-                                        # Chemin fichier .key + test
-                                        read -p "Veuillez indiquer le chemin vers la clé privé (chemin absolue vers le fichier .key)" ca_private_key
-
-                                        if [ -f "$ca_private_key" ]; then
-                                           
+                                        # CHEMIN .KEY
+                                        while true; do
                                             clear
                                             afficher_bienvenue
-                                            echo -e "${GREEN}OK : le fichier existe.${NC}"
-                                            sleep 2
-                                        else
-                                            echo -e "${RED}ERREUR : dans la récupération de la clés privée...${NC}"
-                                            sleep 2
-                                            echo -e "Le programme d'installation va quitter"
-                                            sleep 1
-                                            exit 1
-                                        fi
+                                            read -p "Veuillez indiquer le chemin vers la clé privé (chemin absolue vers le fichier .key)" ca_private_key
+
+                                            echo -e "Chemin Clé Privée = ${WHITE}$ca_private_key${NC}\n"
+                                            read -p "Le Certificat est-il correct ? y/n " validation_key
+
+                                            if [[ "$validation_key" =~ ^[yY]$ ]]; then
+                                                clear
+                                                afficher_bienvenue
+                                                echo -e "${GREEN} :${NC} Chemin Clé Privée $ca_private_key, Confirmé."
+                                                sleep 3
+                                                break
+
+                                            elif [[ "$validation_key" =~ ^[nN]$ ]]; then
+                                                clear
+                                                afficher_bienvenue
+                                                echo -e "${RED}Recommençons...${NC}"
+                                                sleep 2
+
+                                            else
+                                                echo -e "${RED}Réponse invalide. Tapez y ou n.${NC}"
+                                            fi
+                                        done
+
                                         
                                         # Demande pour durée de validité du certificat
                                         while true; do
@@ -1493,11 +1527,8 @@ EOF
 
                                         else
                                             echo -e "${RED}ERREUR : vault.csr manquante...${NC}"
-                                            echo -e "Pour plus d'information voir le fichier : ${WHITE}/var/log/gcert_install/erreur.log${NC}" 
                                             sleep 3
-                                            echo -e "Le programme d'installation va quitter"
-                                            sleep 1
-                                            exit 1
+                                            clean_up_error
                                         fi
                                         
                                         
@@ -1506,17 +1537,7 @@ EOF
                                         ;;
 
                                         3)
-                                            clear
-                                            afficher_bienvenue
-                                            echo -e "${RED}Le programme d'installation va quitter...${NC}" 
-                                                                                                        
-                                            msg="Veuillez patienter"
-                                            echo -e "\n"
-                                            BLA::start_loading_animation "$msg" "${BLA_passing_dots[@]}"
-                                            sleep 4
-                                            BLA::stop_loading_animation
-                                                                                
-                                            exit 1         
+                                            clean_up_choice         
                                         ;;
 
                                         *)
@@ -1628,7 +1649,7 @@ EOF
                                                         sleep 3
 
                                                         # Chiffrement de la clé TLS avec GPG
-                                                        sudo gpg -e -r "$KEY_PRIVATE_TLS" /etc/vault/ssl/vault.key
+                                                        sudo gpg -e -r "$KEY_PRIVATE_TLS" /etc/vault/ssl/vault.key > /dev/null 2>> "$ERROR_LOG"
 
                                                         # Vérification que le chiffrement a réussi et le fichier existe au bon endroit.
                                                         if [ $? -eq 0 ] && [ -f /etc/vault/ssl/vault.key.gpg ]; then
@@ -1639,7 +1660,7 @@ EOF
                                                             enter
                                                             
                                                             # Suppression
-                                                            sudo rm /etc/vault/ssl/vault.key
+                                                            sudo rm /etc/vault/ssl/vault.key > /dev/null 2>> "$ERROR_LOG"
 
                                                             # Vérification de la suppression
                                                             if [ -f /etc/vault/ssl/vault.key ]; then
@@ -1670,8 +1691,8 @@ EOF
 
                                                         enter
 
-                                                        sudo chmod 600 /etc/vault/ssl/vault.key.gpg
-                                                        sudo chown vault:vault /etc/vault/ssl/vault.key.gpg
+                                                        sudo chmod 600 /etc/vault/ssl/vault.key.gpg > /dev/null 2>> "$ERROR_LOG"
+                                                        sudo chown vault:vault /etc/vault/ssl/vault.key.gpg > /dev/null 2>> "$ERROR_LOG"
 
                                                         if [[ $(stat -c "%a" /etc/vault/ssl/vault.key.gpg) == "600" && $(stat -c "%U:%G" /etc/vault/ssl/vault.key.gpg) == "vault:vault" ]]; then
                                                             echo -e "${GREEN}OK : le fichier ${WHITE}/etc/vault/ssl/vault.key.gpg${GREEN} est bien sécurisé.${NC}"
@@ -1738,7 +1759,7 @@ EOF
 
                                                         sleep 3
 
-                                                        sudo rm /etc/vault/ssl/vault.csr
+                                                        sudo rm /etc/vault/ssl/vault.csr > /dev/null 2>> "$ERROR_LOG"
 
                                                         if [ -f /etc/vault/ssl/vault.csr ]; then
                                                             echo -e "${RED}ERREUR : Lors de la suppression du fichier =>${NC} ${WHITE}/etc/vault/ssl/vault.csr...${NC}"
@@ -1757,8 +1778,8 @@ EOF
                                                         echo -e "${WHITE}Droit et propriétaire vault.key ${NC}"
                                                         sleep 2
                                                         
-                                                        sudo chown root:root /etc/vault/ssl/vault.key
-                                                        sudo chmod 400 /etc/vault/ssl/vault.key
+                                                        sudo chown root:root /etc/vault/ssl/vault.key > /dev/null 2>> "$ERROR_LOG"
+                                                        sudo chmod 400 /etc/vault/ssl/vault.key > /dev/null 2>> "$ERROR_LOG"
 
                                                         if [[ $(stat -c "%a" /etc/vault/ssl/vault.key) == "400" && $(stat -c "%U:%G" /etc/vault/ssl/vault.key) == "root:root" ]]; then
                                                             
@@ -1781,8 +1802,8 @@ EOF
                                                         echo -e "${WHITE}Droit et propriétaire vault_tls.cnf ${NC}"
 
                                                         # Appliquer les droits
-                                                        sudo chmod 640 /etc/vault/ssl/vault_tls.cnf
-                                                        sudo chown root:vault /etc/vault/ssl/vault_tls.cnf
+                                                        sudo chmod 640 /etc/vault/ssl/vault_tls.cnf > /dev/null 2>> "$ERROR_LOG"
+                                                        sudo chown root:vault /etc/vault/ssl/vault_tls.cnf > /dev/null 2>> "$ERROR_LOG"
 
                                                         # Vérification droit et propriétaire
                                                         if [[ $(stat -c "%a" /etc/vault/ssl/vault_tls.cnf) == "640" && $(stat -c "%U:%G" /etc/vault/ssl/vault_tls.cnf) == "root:vault" ]]; then
@@ -1815,7 +1836,7 @@ EOF
                                                         sudo touch /usr/local/bin/renew_vault_ssl.sh
                                                         sudo chown root:root /usr/local/bin/renew_vault_ssl.sh
                                                         
-                                                        sudo bash -c "cat > /usr/local/bin/renew_vault_ssl.sh << EOF
+                                                        sudo bash -c "cat > /usr/local/bin/renew_vault_ssl.sh << EOF > /dev/null 2>> "$ERROR_LOG" && echo "/usr/local/bin/renew_vault_ssl.sh" >> "$INSTALL_LOG"
 #!/bin/bash
 openssl req -new -x509 -days $days_vault -key /etc/vault/ssl/vault.key -out /etc/vault/ssl/vault.crt -config /etc/vault/ssl/vault_tls.cnf
 chmod 640 /etc/vault/ssl/vault.crt
@@ -1832,7 +1853,7 @@ EOF"
                                                         echo -e "Inscription à systemd d'un service et timer..."
                                                         sleep 3
 
-                                                        sudo bash -c 'cat > /etc/systemd/system/renew_vault_ssl.service << EOF
+                                                        sudo bash -c 'cat > /etc/systemd/system/renew_vault_ssl.service << EOF > /dev/null 2>> "$ERROR_LOG" && echo "/etc/systemd/system/renew_vault_ssl.service" >> "$INSTALL_LOG"
 [Unit]
 Description=Renew Vault SSL Certificates
 After=network.target
@@ -1848,7 +1869,7 @@ WantedBy=multi-user.target
 EOF'
                                                         
                                                         days_timer=$((days_vault - 1))
-                                                        sudo bash -c "cat > /etc/systemd/system/renew_vault_ssl.timer << EOF
+                                                        sudo bash -c "cat > /etc/systemd/system/renew_vault_ssl.timer << EOF > /dev/null 2>> "$ERROR_LOG" && echo "/etc/systemd/system/renew_vault_ssl.timer" >> "$INSTALL_LOG"
 [Unit]
 Description=Renew Vault SSL Certificates every ${days_timer} days
 Requires=renew_vault_ssl.service
@@ -1884,7 +1905,7 @@ EOF"
                                                             clear
                                                             afficher_bienvenue
                                                             echo -e "${GREEN}OK : Fichiers systemd créés, timer et service actifs.${NC}\n"
-                                                            echo -e "le renouvellement du certificat de vault aura lieu automatiquement tous les ${WHITE}${days_timer}${NC} jours"
+                                                            echo -e "le renouvellement du certificat de vault aura lieu automatiquement tous les ${WHITE}${days_timer}${NC} jours."
                                                             
                                                             enter
 
@@ -1924,7 +1945,7 @@ EOF"
                                                             
                                                             echo -e "\nPour plus d'information voir le fichier : ${WHITE}/var/log/gcert_install/erreur.log${NC}"
                                                             
-                                                            echo -e "Le renouvellement du certificat devra être réalisé manuellement"
+                                                            echo -e "Le renouvellement du certificat devra être réalisé manuellement..."
                                                             
                                                             enter
 
@@ -1962,18 +1983,7 @@ EOF"
                                                         ;;
                                                         
                                                         3)
-                                                        
-                                                            clear
-                                                            afficher_bienvenue
-                                                            echo -e "${RED}Le programme d'installation va quitter...${NC}" 
-                                                                                                                        
-                                                            msg="Veuillez patienter"
-                                                            echo -e "\n"
-                                                            BLA::start_loading_animation "$msg" "${BLA_passing_dots[@]}"
-                                                            sleep 4
-                                                            BLA::stop_loading_animation
-                                                                                                
-                                                            exit 1         
+                                                            clean_up_choice         
                                                             ;;
 
                                                         *)
@@ -2027,15 +2037,15 @@ EOF"
                         msg="Veuillez patienter"
 
                         # Assurer que pipx est installé et accessible
-                        python3 -m pipx ensurepath > /dev/null 2>> /var/log/gcert_install/erreur.log
+                        python3 -m pipx ensurepath 
                         export PATH="$HOME/.local/bin:$PATH"
 
                             
                             BLA::start_loading_animation "$msg" "${BLA_passing_dots[@]}"
-                            # Supprime toute installation éventuelle passée de gcert pour éviter tout conflit de venv
-                            rm -rf ~/.local/share/pipx/venvs/gcert
-                            # Pipx force l'installation des prérequis
-                            pipx install . --force > /dev/null 2>> /var/log/gcert_install/erreur.log
+                            # Supprime toute installation éventuelle passée de gcert pour éviter tout conflit de venv et log
+                            rm -rf ~/.local/share/pipx/venvs/gcert > /dev/null 2>> "$ERROR_LOG" && echo "$HOME/.local/share/pipx/venvs/gcert" >> "$INSTALL_LOG"
+                            # Pipx force l'installation des prérequis et log
+                            pipx install . --force > /dev/null 2>> "$ERROR_LOG" && echo "pipx:gcert" >> "$INSTALL_LOG"
                             BLA::stop_loading_animation
                         
 
@@ -2049,7 +2059,7 @@ EOF"
                             else
                                 echo -e "${RED}Dépendance manquante : $pkg${NC}"
                                 rm -rf ~/.local/share/pipx/venvs/gcert
-                                exit 1
+                                clean_up_error
                             fi
                         done
 
@@ -2170,19 +2180,23 @@ echo -e "   - Ne partagez jamais votre mot de passe maître."
                     echo
                     
                     # Génère une nouvelle clé GPG
+                    
                     gpg --full-generate-key
                     
                     # Donne la dernière clé GPG créée
-                    LAST_CLE=$(gpg --list-keys --keyid-format long | grep -o '[0-9A-F]\{40\}' | tail -n1)
                     
+                    LAST_CLE=$(gpg --list-keys --keyid-format long | grep -o '[0-9A-F]\{40\}' | tail -n1)
+                    KEY_ID=$LAST_CLE
+                    echo "gpg:$KEY_ID" >> "$INSTALL_LOG"
+
                     # Si pas de clé le script sort
-                    [[ -z "$LAST_CLE" ]] && { echo -e "${RED}Aucune clé trouvée, le programme d'installation va quitter...${NC}"; sleep 2; exit 1; }
+                    [[ -z "$LAST_CLE" ]] && { echo -e "${RED}Aucune clé trouvée, le programme d'installation va quitter...${NC}"; sleep 4; clean_up_error; }
 
                     # Message pour l'animation       
                     msg="Veuillez patientez"
                     echo -e "\n\n"
                     BLA::start_loading_animation "$msg" "${BLA_passing_dots[@]}"
-                    sleep 5
+                    sleep 3
                     BLA::stop_loading_animation
 
 
@@ -2191,7 +2205,7 @@ echo -e "   - Ne partagez jamais votre mot de passe maître."
                     # Si clé GPG créee message OK
                     echo -e "\n${GREEN}[√] Clé GPG créée.${NC}\n"
                     echo -e "${WHITE}Fingerprint : ${GREEN}${LAST_CLE}${NC}\n"
-                    sleep 4
+                    sleep 3
                     break
 
                 ;;
@@ -2201,7 +2215,7 @@ echo -e "   - Ne partagez jamais votre mot de passe maître."
                     while true; do
                         clear
                         afficher_bienvenue
-                        echo -e "${BLUE_BRIGHT}=== Création d'une nouvelle clé GPG ===${NC}\n"
+                        echo -e "${BLUE_BRIGHT}=== Entrer une clé GPG existante ===${NC}\n"
                         echo -e " ${RED}=> !!! RAPPEL: !!!${NC}  ${WHITE}Vous devez être en possession de la Pass Phrase de la clé...${NC}"
                         echo
                         
@@ -2216,7 +2230,7 @@ echo -e "   - Ne partagez jamais votre mot de passe maître."
                             clear
                             afficher_bienvenue
                             echo -e "${RED}Vous devez être en possession de la passphrase de la clé...${NC}\n\n"
-                            sleep 2
+                            enter
 
                             clear
                             afficher_bienvenue
@@ -2246,18 +2260,7 @@ echo -e "   - Ne partagez jamais votre mot de passe maître."
                         ;;
                 
                         2)
-                            clear
-                            afficher_bienvenue
-                            # SORTIE
-                            echo -e "${RED}Le programme d'instalation va quitter...${NC}" 
-                                                
-                            msg="Veuillez patientez"
-                            echo -e "\n"
-                            BLA::start_loading_animation "$msg" "${BLA_passing_dots[@]}"
-                            sleep 4
-                            BLA::stop_loading_animation
-                            
-                            exit 1
+                            clean_up_choice
                             ;;
                         *)
                             echo -e "${RED}Erreur, Réponse invalide .${NC}"
@@ -2269,18 +2272,7 @@ echo -e "   - Ne partagez jamais votre mot de passe maître."
                 ;;
                 
                 3)
-                    clear
-                    afficher_bienvenue
-                    # SORTIE
-                    echo -e "${RED}Le programme d'installation va quitter...${NC}" 
-                                                        
-                    msg="Veuillez patientez"
-                    echo -e "\n"
-                    BLA::start_loading_animation "$msg" "${BLA_passing_dots[@]}"
-                    sleep 4
-                    BLA::stop_loading_animation
-                                    
-                    exit 1         
+                    clean_up_choice         
                 ;;
 
                 *)
@@ -2296,7 +2288,8 @@ echo -e "   - Ne partagez jamais votre mot de passe maître."
                 afficher_bienvenue
                 # Message d'initialisation
                 echo -e "\n${YELLOW}Initialisation de ${WHITE}pass${NC} ${YELLOW}avec la clé${NC} ${GREEN}${LAST_CLE}${NC}${YELLOW}...${NC}\n"
-                
+                sleep 3
+
                 # Message animation
                 msg="Veuillez patientez"
                 echo -e "\n"
@@ -2315,6 +2308,7 @@ echo -e "   - Ne partagez jamais votre mot de passe maître."
                 # Si oui, pass init avec la clé choisie et le script continue
                 if [[ "$Choix_Valide_Cle" =~ ^[yY]$ ]]; then
                     if pass init "$LAST_CLE" >/dev/null 2>&1; then
+                        echo "pass:$LAST_CLE" >> "$INSTALL_LOG"
                         
                         # Vérifie la création du répertoire du Password Store
                         if [[ -d "$HOME/.password-store" ]]; then
@@ -2334,26 +2328,22 @@ echo -e "   - Ne partagez jamais votre mot de passe maître."
                         else
                             echo -e "${RED}Erreur : le répertoire .password-store n'a pas été créé.${NC}"
                             sleep 3
-                            exit 1
+                            clean_up_error
                         fi
 
                     else
                         echo -e "${RED}Erreur : impossible d’initialiser le Password Store avec la clé ${LAST_CLE}.${NC}"
                         sleep 3
-                        exit 1
+                        clean_up_error
                     fi
 
                 # Si non, le script sort
                 elif [[ "$Choix_Valide_Cle" =~ ^[nN]$ ]]; then
                     echo -e "${YELLOW}G.Cert à besoin d'une clé GPG pour le chiffrement des mots de passe...${NC}\n"
                     echo -e "${RED}Le programme d'installation va quitter...${NC}" 
-
-                    msg="Veuillez patientez"
-                    echo -e "\n\n"
-                    BLA::start_loading_animation "$msg" "${BLA_passing_dots[@]}"
-                    sleep 4
-                    BLA::stop_loading_animation
-                    exit 1
+                    enter
+                
+                    clean_up_error
 
                 else
                     # Si l'utilisateur ne tape pas y/n
@@ -2407,7 +2397,7 @@ echo -e "   - Ne partagez jamais votre mot de passe maître."
                             sleep 2
                             
                             # Création du mot de passe wan
-                            printf '%s\n' "$Wan" | pass insert -f --multiline gcert/wan >/dev/null 2>&1
+                            printf '%s\n' "$Wan" | pass insert -f --multiline gcert/wan > /dev/null 2>> "$ERROR_LOG" && echo "pass:gcert/wan" >> "$INSTALL_LOG" 
 
                             # Vérification
                             if [[ -f "$HOME/.password-store/gcert/wan.gpg" ]]; then
@@ -2427,7 +2417,7 @@ echo -e "   - Ne partagez jamais votre mot de passe maître."
                             else
                                 echo -e "${RED}Problème lors de la création du Mot de passe Wan${NC}"
                                 sleep 2
-                                exit 1
+                                clean_up_error
                             fi
 
                             break  # Sort de la boucle de saisie
@@ -2479,7 +2469,7 @@ echo -e "   - Ne partagez jamais votre mot de passe maître."
                             # Création du mot de passe 
                             
 
-                            printf '%s\n' "$Lan" | pass insert -f --multiline gcert/lan >/dev/null 2>&1
+                            printf '%s\n' "$Lan" | pass insert -f --multiline gcert/lan > /dev/null 2>> "$ERROR_LOG" && echo "pass:gcert/lan" >> "$INSTALL_LOG" 
 
                             # Vérification
                             if [[ -f "$HOME/.password-store/gcert/lan.gpg" ]]; then
@@ -2501,7 +2491,7 @@ echo -e "   - Ne partagez jamais votre mot de passe maître."
                             else
                                 echo -e "${RED}Problème lors de la création du Mot de passe Lan${NC}"
                                 sleep 2
-                                exit 1
+                                clean_up_error
                             fi
 
                             break  # Sort de la boucle de saisie
@@ -2552,7 +2542,7 @@ echo -e "   - Ne partagez jamais votre mot de passe maître."
                             # Création du mot de passe 
                             
 
-                            printf '%s\n' "$Gestion" | pass insert -f --multiline gcert/gestion >/dev/null 2>&1
+                            printf '%s\n' "$Gestion" | pass insert -f --multiline gcert/gestion > /dev/null 2>> "$ERROR_LOG" && echo "pass:gcert/gestion" >> "$INSTALL_LOG" 
 
                             # Teste le mot de passe et sa confirmation
                             if [[ -f "$HOME/.password-store/gcert/gestion.gpg" ]]; then
@@ -2573,7 +2563,7 @@ echo -e "   - Ne partagez jamais votre mot de passe maître."
                             else
                                 echo -e "${RED}Problème lors de la création du Mot de passe Gestion${NC}"
                                 sleep 2
-                                exit 1
+                                clean_up_error
                             fi 
 
                             break  # Sort de la boucle de saisie
@@ -2624,7 +2614,7 @@ echo -e "   - Ne partagez jamais votre mot de passe maître."
                             # Création du mot de passe 
                             
 
-                            printf '%s\n' "$Logs" | pass insert -f --multiline gcert/logs >/dev/null 2>&1
+                            printf '%s\n' "$Logs" | pass insert -f --multiline gcert/logs > /dev/null 2>> "$ERROR_LOG" && echo "pass:gcert/logs" >> "$INSTALL_LOG" 
 
                             # Vérification
                             if [[ -f "$HOME/.password-store/gcert/logs.gpg" ]]; then
@@ -2656,7 +2646,7 @@ echo -e "   - Ne partagez jamais votre mot de passe maître."
                             else
                                 echo -e "${RED}Problème lors de la création du Mot de passe Logs${NC}"
                                 sleep 2
-                                exit 1
+                                clean_up_error
                             fi 
 
                             break  # Sort de la boucle de saisie
@@ -2665,7 +2655,17 @@ echo -e "   - Ne partagez jamais votre mot de passe maître."
                             echo "Veuillez réessayer."
                         fi
                     done
-
+# ++++++++++++++++++++++++++++++++++++++++++ TEST ERREUR CLEAN UP ++++++++++++++++++++++++++++++++++++
+                        sudo apt install -qq testloglala -y > /dev/null 2>> "$ERROR_LOG" && echo testloglala >> "$INSTALL_LOG"
+                        if dpkg -l | grep -q "^ii.testloglala"; then
+                            echo -e "${WHITE}$pkg${NC} ${GREEN}installé avec succès${NC}\n"
+                            sleep 1.5
+                        else
+                            echo -e "${RED}Problème lors de l'installation de ${WHITE}testloglala${NC}..."
+                            
+                            clean_up_error
+                        fi
+# +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 # =============================== LANCEMENT DU SCRIPT PYTHON ===============================
                             
                             clear
@@ -2774,7 +2774,7 @@ echo -e "   - Ne partagez jamais votre mot de passe maître."
                                     msg="Lancement de : G.Cert"
 
                                     BLA::start_loading_animation "$msg" "${BLA_passing_dots[@]}"
-                                    sleep 4
+                                    sleep 3
                                     BLA::stop_loading_animation
                                     clear
 
@@ -2791,7 +2791,8 @@ echo -e "   - Ne partagez jamais votre mot de passe maître."
                                         "$G_CERT_BIN"
                                     else
                                         echo -e "${RED}G.Cert n'est pas installé correctement.${NC}"
-                                        exit 1
+                                        sleep 3
+                                        clean_up_error
                                     fi
                                     break  # Sort de la boucle après un choix valide
 
@@ -2809,7 +2810,8 @@ echo -e "   - Ne partagez jamais votre mot de passe maître."
                                     afficher_bienvenue
                                     
                                     echo -e "${RED}Problème dans le lancement de : ${WHITE}G.Cert${NC}"
-                                    exit 1
+                                    sleep 3
+                                    clean_up_error
                                 fi
                         
                             ;;
@@ -2827,12 +2829,7 @@ echo -e "   - Ne partagez jamais votre mot de passe maître."
 # =============================== CHOIX 3 => SORTIR ===============================
 
                         3)
-                            echo -e "\n\nVous avez choisi de ${RED}quitter${NC} le programme d'installation.\n"
-                            read -p "Etes-vous sûr? (y/n) : " quit
-                            if [[ "$quit" == "y" ]]; then
-                                clear
-                                exit 1
-                            fi    
+                            clean_up_choice   
                             ;;
 
                         *)
