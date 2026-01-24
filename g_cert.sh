@@ -183,7 +183,7 @@ clean_up_choice(){
         if [[ "$choix_quit" =~ ^[yY]$ ]]; then
             clear
             echo -e "${RED} XXX Vous avez choisi de quitter l'installation G.Cert, mise en route de la restauration du système XXX${NC}\n\n"
-            echo -e "Vous pouvez consulter ${WHITE}/var/log/gcert_install/erreur.log${NC}, pour plus d'information\n"
+            
             sleep 4
 
             clear
@@ -397,10 +397,10 @@ afficher_bienvenue
                                 echo -e "${WHITE}             Récapitulatif des étapes d'installation${NC}"
                                 echo -e "${YELLOW}============================================================${NC}\n\n"
                                 
-                                echo -e "-${INVERSE}[1/5]${NC}- Installation des prérequis...\n" 
-                                echo -e "-${INVERSE}[2/5]${NC}- Installation et configuration de Vault...\n"
-                                echo -e "-${INVERSE}[3/5]${NC}- Création de l'environnement Python...\n" 
-                                echo -e "-${INVERSE}[4/5]${NC}- Création de la clé GPG et des mots de passe...\n" 
+                                echo -e "-${INVERSE}[1/5]${NC}- Installation des prérequis..." 
+                                echo -e "-${INVERSE}[2/5]${NC}- Installation et configuration de Vault..."
+                                echo -e "-${INVERSE}[3/5]${NC}- Création de l'environnement Python..." 
+                                echo -e "-${INVERSE}[4/5]${NC}- Création de la clé GPG et des mots de passe..." 
                                 echo -e "-${INVERSE}[5/5]${NC}- Lancement du service G_Cert...\n\n"
                                 
                                 enter
@@ -841,7 +841,7 @@ afficher_bienvenue
                                             
                                                         clear
                                                         afficher_bienvenue
-                                                        echo -e "\n${GREEN}Le domaine ${NC}$domain_ssl${NC} ${GREEN}existe et résout correctement.${NC}"
+                                                        echo -e "${GREEN}Le domaine ${NC}$domain_ssl${NC} ${GREEN}existe et résout correctement.${NC}"
                                                         sleep 3
                                                         break 
 
@@ -851,8 +851,8 @@ afficher_bienvenue
                                                         
                                                         clear
                                                         afficher_bienvenue
-                                                        echo -e "\n${RED}Le domaine '$domain_ssl' n'existe pas ou ne résout pas.${NC}"
-                                                        echo "Veuillez résoudre le problème avant de poursuivre l'installation"
+                                                        echo -e "\n${RED}Le domaine '$domain_ssl' n'existe pas ou ne résout pas.${NC}\n"
+                                                        echo "Veuillez résoudre le problème avant de poursuivre l'installation\n\n"
                                                         
                                                         
                                                         enter 
@@ -921,7 +921,7 @@ afficher_bienvenue
                                                     
                                                     clear
                                                     afficher_bienvenue
-                                                    echo -e "\n${GREEN}CN confirmé : ${NC}$cn_vault${NC}${GREEN}...${NC}"
+                                                    echo -e "${GREEN}CN confirmé : ${NC}$cn_vault${NC}${GREEN}...${NC}"
                                                     sleep 2
                                                     break
                                                 elif [[ "$validation_cn" =~ ^[nN]$ ]]; then
@@ -956,7 +956,7 @@ afficher_bienvenue
                                                     
                                                     clear
                                                     afficher_bienvenue
-                                                    echo -e "\n${GREEN}DNS.1 confirmé : ${NC}$dns_vault${NC}${GREEN}...${NC}"
+                                                    echo -e "${GREEN}DNS.1 confirmé : ${NC}$dns_vault${NC}${GREEN}...${NC}"
                                                     sleep 2
                                                     break
                                                 elif [[ "$validation_dns1" =~ ^[nN]$ ]]; then
@@ -984,7 +984,7 @@ afficher_bienvenue
                                                     clear
                                                     afficher_bienvenue
                                                     
-                                                    echo -e "\n${GREEN}IP valide${NC}"
+                                                    echo -e "${GREEN}IP valide${NC}"
                                                     sleep 2
 
                                                     while true; do
@@ -999,7 +999,7 @@ afficher_bienvenue
                                                            
                                                             clear
                                                             afficher_bienvenue
-                                                            echo -e "\n${GREEN}IP confirmée : ${NC}$ip_vault${NC}${GREEN}...${NC}"
+                                                            echo -e "${GREEN}IP confirmée : ${NC}$ip_vault${NC}${GREEN}...${NC}"
                                                             sleep 2
                                                             break 2
                                                         elif [[ "$validation_ip" =~ ^[nN]$ ]]; then
@@ -1018,7 +1018,7 @@ afficher_bienvenue
                                                     echo -e "\n${RED}IP invalide${NC}\n"
                                                     echo -e "\nRecommençons..."
                                                     sleep 2
-                                                    sleep 2
+                                                    
                                                 fi
                                             done
 
@@ -1910,15 +1910,15 @@ EOF
                                                         
                                                         # === AUTORISATION ET DEMARRAGE SYSTEMD ===
                                                         
-                                                        sudo systemctl daemon-reload
+                                                        sudo systemctl daemon-reload > /dev/null 2>&1
                                                         
                                                         # .service
-                                                        sudo systemctl enable renew_vault_ssl.service
-                                                        sudo systemctl start renew_vault_ssl.service
+                                                        sudo systemctl enable renew_vault_ssl.service > /dev/null 2>&1
+                                                        sudo systemctl start renew_vault_ssl.service > /dev/null 2>&1
 
                                                         # .timer
-                                                        sudo systemctl enable renew_vault_ssl.timer
-                                                        sudo systemctl start renew_vault_ssl.timer
+                                                        sudo systemctl enable renew_vault_ssl.timer > /dev/null 2>&1
+                                                        sudo systemctl start renew_vault_ssl.timer > /dev/null 2>&1
 
 
                                                         # === TEST RENOUVELEMENT ACTIF ===
@@ -1928,7 +1928,7 @@ EOF
                                                             clear
                                                             afficher_bienvenue
                                                             echo -e "${GREEN}OK : Fichiers systemd créés, timer et service actifs.${NC}\n"
-                                                            echo -e "le renouvellement du certificat de vault aura lieu automatiquement tous les ${WHITE}${days_timer}${NC} jours."
+                                                            echo -e "le renouvellement du certificat de vault aura lieu automatiquement tous les ${WHITE}${days_timer}${NC} jours.\n\n"
                                                             
                                                             enter
 
@@ -2060,10 +2060,10 @@ EOF
                         msg="Veuillez patienter pendant la mise en place des dépendances Python"
 
                         # Assurer que pipx est installé et accessible + msg avertissement
-                        echo "[INFO] Sortie pipx ci-dessous (avertissements normaux possibles)" >> "$ERROR_LOG"
+                        echo -e "\n\n${WHITE}[INFO] Sortie pipx ci-dessous (avertissements normaux possibles)${NC}\n\n" >> "$ERROR_LOG"
                         python3 -m pipx ensurepath > /dev/null 2>> "$ERROR_LOG" 
                         export PATH="$HOME/.local/bin:$PATH"
-
+                        echo -e "\n\n${WHITE}[INFO] Fin de log pipx ci-dessus ${NC}\n\n" >> "$ERROR_LOG"
                             
                             BLA::start_loading_animation "$msg" "${BLA_passing_dots[@]}"
                             # Supprime toute installation éventuelle passée de gcert pour éviter tout conflit de venv et log
@@ -2684,17 +2684,7 @@ echo -e "   - Ne partagez jamais votre mot de passe maître."
                             echo "Veuillez réessayer."
                         fi
                     done
-# ++++++++++++++++++++++++++++++++++++++++++ TEST ERREUR CLEAN UP ++++++++++++++++++++++++++++++++++++
-                        sudo apt install -qq testloglala -y > /dev/null 2>> "$ERROR_LOG" && echo testloglala >> "$INSTALL_LOG"
-                        if dpkg -l | grep -q "^ii.testloglala"; then
-                            echo -e "${WHITE}$pkg${NC} ${GREEN}installé avec succès${NC}\n"
-                            sleep 1.5
-                        else
-                            echo -e "${RED}Problème lors de l'installation de ${WHITE}testloglala${NC}..."
-                            
-                            clean_up_error
-                        fi
-# +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
 # =============================== LANCEMENT DU SCRIPT PYTHON ===============================
                             
                             clear
