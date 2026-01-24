@@ -144,7 +144,7 @@ clean_up() {
         else
             # Supprime les paquets et fichiers
             sudo dpkg -s "$i" >/dev/null 2>&1 && sudo apt-get purge -y "$i" >/dev/null 2>&1
-            [ -e "$i" ] && rm -rf "$i" >/dev/null 2>&1
+            [ -e "$i" ] && sudo rm -rf "$i" >/dev/null 2>&1
         fi
     done < "$INSTALL_LOG"
     sudo rm -f "$INSTALL_LOG" >/dev/null 2>&1
@@ -319,7 +319,7 @@ afficher_bienvenue
                     sleep 3
                     exit 1
                 fi
-                
+
                 clear
                 afficher_bienvenue
                 echo -e "${WHITE}=== Informations en cas de problème ===${NC}\n"
@@ -1111,6 +1111,7 @@ EOF
                                                     break
                                                 elif [[ "$validation_dns1" =~ ^[nN]$ ]]; then
                                                     echo -e "${RED}Recommençons...${NC}"
+                                                    sleep 1
                                                 else
                                                     echo -e "${RED}Réponse invalide. Tapez y ou n.${NC}"
                                                 fi
