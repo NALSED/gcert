@@ -1184,7 +1184,7 @@ subjectAltName = @alt_names
 DNS.1 = $dns_vault
 IP.1  = $ip_vault
 EOF
-                                               
+
                                     break
                                     else
                                         clear
@@ -1516,7 +1516,7 @@ EOF
                                             sleep 2
                                             BLA::stop_loading_animation
 
-                                        openssl x509 -req -in "$ca_existant_crt" -signkey "$ca_private_key" -out /etc/vault/ssl/vault.crt -days "$days_vault" -extensions req_ext -extfile /etc/vault/ssl/vault_tls.cnf > /dev/null 2>> /var/log/gcert_install/erreur.log
+                                        openssl x509 -req -in "$ca_existant_crt" -signkey "$ca_private_key" -out /etc/vault/ssl/vault.crt -days "$days_vault" -extensions req_ext -extfile /etc/vault/ssl/vault_tls.cnf > /dev/null 2>> "$ERROR_LOG" && echo "/etc/vault/ssl/vault.crt" >> "$INSTALL_LOG"
 
                                         clear
                                         afficher_bienvenue
