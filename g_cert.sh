@@ -133,9 +133,6 @@ enter() {
 }
 
 # Nettoyage en cas d'echec + msg
-
-
-
 clean_up_total(){
     
     clear
@@ -151,35 +148,23 @@ clean_up_total(){
     BLA::stop_loading_animation
 }
 
+# Fonction de Suppression
+
 clean_up() {
-    while IFS= read -r i; do 
-        sudo dpkg -s "$i" >/dev/null 2>&1 && sudo apt-get purge -y "$i" >/dev/null 2>&1
-        [ -e "$i" ] && rm -rf "$i" >/dev/null 2>&1
+    while IFS= read -r i; do
+        if [[ "$i" == gpg:* ]]; then
+            key_id="${i#gpg:}"
+            # Supprimer la clé (privée et/ou publique)
+            sudo gpg --batch --yes --delete-secret-and-public-key "$key_id" >/dev/null 2>&1
+        else
+            # Supprime les paquet et fichier
+            sudo dpkg -s "$i" >/dev/null 2>&1 && sudo apt-get purge -y "$i" >/dev/null 2>&1
+            [ -e "$i" ] && rm -rf "$i" >/dev/null 2>&1
+        fi
     done < "$INSTALL_LOG"
     sudo rm -f "$INSTALL_LOG" >/dev/null 2>&1
     exit 1
 }
-
-
-#clean_up() {
-#    while IFS= read -r i; do
-#        if [[ "$i" == gpg:* ]]; then
-#            key_id="${i#gpg:}"
-#            # Supprimer la clé (privée et/ou publique)
-#            gpg --batch --yes --delete-secret-and-public-key "$key_id" >/dev/null 2>&1
-#        else
-#            sudo dpkg -s "$i" >/dev/null 2>&1 && sudo apt-get purge -y "$i" >/dev/null 2>&1
-#            [ -e "$i" ] && rm -rf "$i" >/dev/null 2>&1
-#        fi
-#    done < "$INSTALL_LOG"
-#    sudo rm -f "$INSTALL_LOG" >/dev/null 2>&1
-#    exit 1
-#}
-
-
-# Après avoir récupéré l'ID avec votre fonction
-#KEY_ID=$(votre_fonction_qui_recupere_id)
-#echo "gpg:$KEY_ID" >> "$INSTALL_LOG"
 
 # === FONCTIONNEMENT SCRIPT ===
 
@@ -229,7 +214,7 @@ afficher_bienvenue
                 # Vérifier si le répertoire /var/log/gcert_install existe
                 if [ -d "/var/log/gcert_install" ]; then
                     echo -e "${GREEN}OK : Le répertoire ${WHITE}/var/log/gcert_install${GREEN} créé avec succès.${NC}\n"
-                    sleep 2
+                    sleep 1
                 else
                     echo -e "${RED}ERREUR : Problème lors de la création du répertoire ${WHITE}/var/log/gcert_install${RED}.${NC}"
                     echo -e "Veuillez créer le répertoire avec la commande : ${WHITE}sudo mkdir /var/log/gcert_install${NC}"
@@ -253,7 +238,7 @@ afficher_bienvenue
                 # Vérification de la propriété du répertoire /var/log/gcert_install
                 if [[ $(stat -c "%U:%G" /var/log/gcert_install) == "$USER:$USER" ]]; then
                     echo -e "${GREEN}OK : Le propriétaire du répertoire ${WHITE}/var/log/gcert_install${GREEN} est correct : $USER.${NC}\n"
-                    sleep 2
+                    sleep 1
                 else
                     echo -e "${RED}ERREUR : Le propriétaire du répertoire ${WHITE}/var/log/gcert_install${RED} est incorrect.${NC}"
                     echo -e "Veuillez corriger la propriété avec la commande : sudo chown $USER:$USER /var/log/gcert_install"
@@ -264,7 +249,7 @@ afficher_bienvenue
                 # Vérification du propriétaire du fichier /tmp/install.log
                 if [[ $(stat -c "%U:%G" /tmp/install.log) == "$USER:$USER" ]]; then
                     echo -e "${GREEN}OK : Le propriétaire du fichier ${WHITE}/tmp/install.log${GREEN} est correct : $USER.${NC}\n"
-                    sleep 2
+                    sleep 1
                 else
                     echo -e "${RED}ERREUR : Le propriétaire du fichier ${WHITE}/tmp/install.log${RED} est incorrect.${NC}"
                     echo -e "Veuillez corriger la propriété avec la commande : sudo chown $USER:$USER /tmp/install.log"
@@ -279,12 +264,12 @@ afficher_bienvenue
                 # Vérification des permissions du répertoire /var/log/gcert_install
                 if [[ $(stat -c "%a" /var/log/gcert_install) == "755" ]]; then
                     echo -e "${GREEN}OK : Les permissions du répertoire ${WHITE}/var/log/gcert_install${GREEN} sont correctes :${NC} ${WHITE}755 ${NC}\n"
-                    sleep 2
+                    sleep 1
                 else
                     echo -e "${RED}ERREUR : Les permissions du répertoire ${WHITE}/var/log/gcert_install${RED} sont incorrectes.${NC}"
                     echo -e "Veuillez corriger les permissions avec la commande : sudo chmod 755 /var/log/gcert_install"
                     sleep 3
-                    exit
+                    exit 1
                 fi
 
                 # Vérification des permissions du fichier /tmp/install.log
@@ -300,31 +285,20 @@ afficher_bienvenue
                 
                 clear
                 afficher_bienvenue
-
                 echo -e "${WHITE}=== Informations en cas de problème ===${NC}\n"
                 echo -e "   - En cas d'erreur, le script s'arrêtera immédiatement et effacera les installations effectuées."
                 echo -e "   - Les erreurs seront enregistrées dans ${WHITE}/var/log/gcert_install/erreur.log${NC}.\n"
-
                 
-
-                while true; do
-                    read -p "Appuyez sur [Entrée] pour continuer : " input
-                    echo -e "\n\n"
-                    if [[ -z "$input" ]]; then
-                        break
-                    else
-                        echo -e "\n${RED}Erreur : appuyez uniquement sur [Entrée].${NC}\n"
-                    fi
-                done        
+                enter       
                 
                 # Test WAN
                 
                 clear
                 afficher_bienvenue
                 
-                msg="Test de la connexion WAN en cours "
-            
                 # Démarrer l'animation
+                msg="Test de la connexion WAN en cours "
+                
                 BLA::start_loading_animation "$msg" "${BLA_passing_dots[@]}"
                 sleep 3
                 
@@ -401,7 +375,7 @@ afficher_bienvenue
                         echo -e "${WHITE}Avant de commencer, G.cert nécessite quelques programmes et bibliothèques :${NC}\n"
 
                         echo -e "${WHITE}• curl :${NC} pour récupérer des fichiers depuis Internet."
-                        echo -e "${WHITE}• gnupg :${NC} pour générer vos clés RSA et chiffrer vos mots de passe."
+                        echo -e "${WHITE}• gnupg :${NC} pour générer vos clés RSA et chiffrer."
                         echo -e "${WHITE}• gum :${NC} pour afficher des menus et messages clairs."
                         echo -e "${WHITE}• Python 3 (+ venv, pip, pipx) :${NC} pour exécuter les scripts de G.cert."
                         echo -e "${WHITE}• pass :${NC} pour gérer vos mots de passe chiffrés."
@@ -715,9 +689,10 @@ afficher_bienvenue
                                 done
 
                                 # Variable ID clé GPG ==========> Clé privée OpenSSL
-                                KEY_PRIVATE_TLS=$(sudo gpg --list-keys --keyid-format long | grep -o '[0-9A-F]\{40\}' | tail -n1)
-
                                 
+                                KEY_PRIVATE_TLS=$(sudo gpg --list-keys --keyid-format long | grep -o '[0-9A-F]\{40\}' | tail -n1)
+                                KEY_ID=$KEY_PRIVATE_TLS
+                                echo "gpg:$KEY_ID" >> "$INSTALL_LOG"
                                 
                                 # === Clé GPG pour unseal keys et le root token ===
                                 clear
@@ -751,7 +726,8 @@ afficher_bienvenue
 
                                 # Variable ID clé GPG ==========> Clées Vault
                                 KEY_VAULT=$(sudo gpg --list-keys --keyid-format long | grep -o '[0-9A-F]\{40\}' | tail -n1)
-
+                                KEY_ID=$KEY_VAULT
+                                echo "gpg:$KEY_ID" >> "$INSTALL_LOG"
 
                                 # ===== CERTIFICAT OPENSSL POUR VAULT  =====
                                 
