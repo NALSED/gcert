@@ -10,16 +10,9 @@ WHITE='\033[1;37m'
 YELLOW='\033[0;33m'
 MAGENTA='\033[0;35m'  
 CYAN='\033[0;36m'     
-GRAY='\033[0;90m' 
 
 # === COULEUR VIVE ===
-RED_BRIGHT='\033[1;31m'     
-GREEN_BRIGHT='\033[1;32m'   
 YELLOW_BRIGHT='\033[1;33m'  
-BLUE_BRIGHT='\033[1;34m'    
-MAGENTA_BRIGHT='\033[1;35m' 
-CYAN_BRIGHT='\033[1;36m'    
-WHITE_BRIGHT='\033[1;37m'   
 
 # === AUTRE COULEUR ===
 
@@ -41,6 +34,7 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 MAIN_PY="$SCRIPT_DIR/main.py"
 # DOCUMENTATION
 MAIN_DOC="$SCRIPT_DIR/my_package/script/doc.md"
+
 # BASH_ANIMATION
 MAIN_BASH="$SCRIPT_DIR/my_package/script/load.sh"
 # Charger les fonctions d'animation
@@ -179,7 +173,6 @@ clean_up_error(){
 }
 
 # Nettoyage sortie utilisateur avec confirmation + msg
-
 clean_up_choice(){
     
     while true; do
