@@ -176,6 +176,8 @@ clean_up_error(){
 clean_up_choice(){
     
     while true; do
+        clear
+        afficher_bienvenue
         read -p "Etes vous sur de vouloir quitter (cela entrainera une remise à niveau du système, avant le lancement de l'installation de G.Cert) y/n : " choix_quit
         
         if [[ "$choix_quit" =~ ^[yY]$ ]]; then
@@ -1070,7 +1072,7 @@ EOF
                                                 afficher_bienvenue
 
                                                 echo -e "CN = ${WHITE}$cn_vault${NC}\n"
-                                                read -p "Le CN est-il correct ? y/n" validation_cn
+                                                read -p "Le CN est-il correct ? y/n : " validation_cn
 
                                                 if [[ "$validation_cn" =~ ^[yY]$ ]]; then
                                                     
@@ -1100,13 +1102,13 @@ EOF
                                                 afficher_bienvenue
 
                                                 echo -e "DNS.1 = ${WHITE}$dns_vault${NC}\n"
-                                                read -p "Le DNS.1 est-il correct ? y/n" validation_dns1
+                                                read -p "Le DNS.1 est-il correct ? y/n : " validation_dns1
 
                                                 if [[ "$validation_dns1" =~ ^[yY]$ ]]; then
                                                     
                                                     clear
                                                     afficher_bienvenue
-                                                    echo -e "${GREEN}DNS.1 confirmé :${NC} $dns_vault"
+                                                    echo -e "${GREEN}DNS.1 confirmé : ${NC} $dns_vault"
                                                     sleep 2
                                                     break
                                                 elif [[ "$validation_dns1" =~ ^[nN]$ ]]; then
@@ -1144,7 +1146,7 @@ EOF
                                                             
                                                             clear
                                                             afficher_bienvenue
-                                                            echo -e "${GREEN}IP confirmée :${NC} $ip_vault"
+                                                            echo -e "${GREEN}IP confirmée : ${NC} $ip_vault"
                                                             sleep 2
                                                             break 2
                                                         elif [[ "$validation_ip" =~ ^[nN]$ ]]; then
@@ -1652,7 +1654,8 @@ EOF
                                                         sleep 3
 
                                                         # Chiffrement de la clé TLS avec GPG
-                                                        sudo gpg -e -r "$KEY_PRIVATE_TLS" /etc/vault/ssl/vault.key > /dev/null 2>> "$ERROR_LOG"
+                                                        sudo gpg -e -r "$KEY_PRIVATE_TLS" /etc/vault/ssl/vault.key > /dev/null 2>> "$ERROR_LOG" && echo "/etc/vault/ssl/vault.key" >> "$INSTALL_LOG" 
+
 
                                                         # Vérification que le chiffrement a réussi et le fichier existe au bon endroit.
                                                         if [ $? -eq 0 ] && [ -f /etc/vault/ssl/vault.key.gpg ]; then
@@ -1787,10 +1790,8 @@ EOF
 
                                                         if [[ $(stat -c "%a" /etc/vault/ssl/vault.key) == "400" && $(stat -c "%U:%G" /etc/vault/ssl/vault.key) == "root:root" ]]; then
                                                             
-                                                            clear
-                                                            afficher_bienvenue
-                                                            echo -e "${GREEN}OK : le fichier ${WHITE}/etc/vault/ssl/vault.key${GREEN} est bien sécurisé.${NC}"
-                                                            echo -e "Avec -r-------- 1 root root vault.key " 
+                                                            echo -e "${GREEN}OK : le fichier ${WHITE}/etc/vault/ssl/vault.key${GREEN} est bien sécurisé.${NC}\n"
+                                                            echo -e "Avec -r-------- 1 root root vault.key\n\n " 
                                                             enter
                                                         else
                                                             echo -e "${RED}ERREUR : permissions ou propriétaire incorrects pour ${WHITE}/etc/vault/ssl/vault.key${NC}"
@@ -1840,13 +1841,14 @@ EOF
                                                         sudo touch /usr/local/bin/renew_vault_ssl.sh
                                                         sudo chown root:root /usr/local/bin/renew_vault_ssl.sh
                                                         
-                                                        sudo bash -c "cat > /usr/local/bin/renew_vault_ssl.sh << EOF > /dev/null 2>> "$ERROR_LOG" && echo "/usr/local/bin/renew_vault_ssl.sh" >> "$INSTALL_LOG"
+                                                        sudo bash -c "cat > /usr/local/bin/renew_vault_ssl.sh << 'EOF'
 #!/bin/bash
 openssl req -new -x509 -days $days_vault -key /etc/vault/ssl/vault.key -out /etc/vault/ssl/vault.crt -config /etc/vault/ssl/vault_tls.cnf
 chmod 640 /etc/vault/ssl/vault.crt
 chown root:vault /etc/vault/ssl/vault.crt
 systemctl restart vault
-EOF"
+EOF
+" 2>> "$ERROR_LOG" && echo "/usr/local/bin/renew_vault_ssl.sh" >> "/tmp/install.log"
                                             
                                                         
                                                         
@@ -1854,10 +1856,12 @@ EOF"
                                                         
                                                         sudo chmod 700 /usr/local/bin/renew_vault_ssl.sh
                                                         
+
+                                                        #service
                                                         echo -e "Inscription à systemd d'un service et timer..."
                                                         sleep 3
 
-                                                        sudo bash -c 'cat > /etc/systemd/system/renew_vault_ssl.service << EOF > /dev/null 2>> "$ERROR_LOG" && echo "/etc/systemd/system/renew_vault_ssl.service" >> "$INSTALL_LOG"
+                                                        sudo bash -c "cat > /etc/systemd/system/renew_vault_ssl.service << 'EOF'
 [Unit]
 Description=Renew Vault SSL Certificates
 After=network.target
@@ -1870,10 +1874,13 @@ Group=root
 
 [Install]
 WantedBy=multi-user.target
-EOF'
+EOF
+" > /dev/null 2>> "$ERROR_LOG" && echo "/etc/systemd/system/renew_vault_ssl.service" >> "$INSTALL_LOG"
                                                         
+
+                                                        # timer
                                                         days_timer=$((days_vault - 1))
-                                                        sudo bash -c "cat > /etc/systemd/system/renew_vault_ssl.timer << EOF > /dev/null 2>> "$ERROR_LOG" && echo "/etc/systemd/system/renew_vault_ssl.timer" >> "$INSTALL_LOG"
+                                                        sudo bash -c "cat > /etc/systemd/system/renew_vault_ssl.timer << EOF
 [Unit]
 Description=Renew Vault SSL Certificates every ${days_timer} days
 Requires=renew_vault_ssl.service
@@ -1885,7 +1892,8 @@ Persistent=true
 
 [Install]
 WantedBy=timers.target
-EOF"
+EOF
+" > /dev/null 2>> "$ERROR_LOG" && echo "/etc/systemd/system/renew_vault_ssl.timer" >> "$INSTALL_LOG"
 
                                                         
                                                         
