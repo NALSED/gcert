@@ -227,7 +227,7 @@ afficher_bienvenue
                 clear
                 afficher_bienvenue
                 
-                echo -e "\n${WHITE}=== Redirections des logs du programme d'installation de G.Cert===${NC}"
+                echo -e "\n${WHITE}=== Redirections des logs du programme d'installation de G.Cert ===${NC}"
                 echo -e "\n\n-${INVERSE}[1]${NC}- Création d'un fichier de logs pour les sorties d'erreur :"
                 echo -e "   - Les erreurs sont redirigées vers ${WHITE}/var/log/gcert_install/erreur.log${NC}"
                 echo -e "\n-${INVERSE}[2]${NC}- Création d'un fichier de logs pour lister les installations/actions du programme."
