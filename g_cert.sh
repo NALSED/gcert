@@ -227,7 +227,7 @@ afficher_bienvenue
                 clear
                 afficher_bienvenue
                 
-                echo -e "\n${WHITE}=== Redirections des logs ===${NC}"
+                echo -e "\n${WHITE}=== Redirections des logs du programme d'installation de G.Cert===${NC}"
                 echo -e "\n\n-${INVERSE}[1]${NC}- Création d'un fichier de logs pour les sorties d'erreur :"
                 echo -e "   - Les erreurs sont redirigées vers ${WHITE}/var/log/gcert_install/erreur.log${NC}"
                 echo -e "\n-${INVERSE}[2]${NC}- Création d'un fichier de logs pour lister les installations/actions du programme."
@@ -2040,7 +2040,8 @@ EOF"
                         # Message pour l'animation
                         msg="Veuillez patienter pendant la mise en place des dépendances Python"
 
-                        # Assurer que pipx est installé et accessible
+                        # Assurer que pipx est installé et accessible + msg avertissement
+                        echo "[INFO] Sortie pipx ci-dessous (avertissements normaux possibles)" >> "$ERROR_LOG"
                         python3 -m pipx ensurepath > /dev/null 2>> "$ERROR_LOG" 
                         export PATH="$HOME/.local/bin:$PATH"
 
