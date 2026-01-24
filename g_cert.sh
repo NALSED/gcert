@@ -523,10 +523,10 @@ afficher_bienvenue
                                 echo -e "${WHITE}             Récapitulatif des étapes d'installation${NC}"
                                 echo -e "${YELLOW}============================================================${NC}\n\n"
 
-                                echo -e "${GREEN}[√] Installation des prérequis...${NC}\n" 
-                                echo -e "-${INVERSE}[2/5]${NC}- Installation et configuration de Vault...\n"
-                                echo -e "-${INVERSE}[3/5]${NC}- Création de l'environnement Python...\n" 
-                                echo -e "-${INVERSE}[4/5]${NC}- Création de la clé GPG et des mots de passe...\n" 
+                                echo -e "${GREEN}[√] Installation des prérequis...${NC}" 
+                                echo -e "-${INVERSE}[2/5]${NC}- Installation et configuration de Vault..."
+                                echo -e "-${INVERSE}[3/5]${NC}- Création de l'environnement Python..." 
+                                echo -e "-${INVERSE}[4/5]${NC}- Création de la clé GPG et des mots de passe..." 
                                 echo -e "-${INVERSE}[5/5]${NC}- Lancement du service G_Cert...\n\n"
 
                                 enter
@@ -2044,10 +2044,10 @@ EOF
                                 echo -e "${WHITE}             Récapitulatif des étapes d'installation${NC}"
                                 echo -e "${YELLOW}============================================================${NC}\n\n"
                                
-                                echo -e "${GREEN}[√] Installation des prérequis...${NC}\n" 
-                                echo -e "${GREEN}[√] Installation et configuration de Vault...${NC}\n"
-                                echo -e "-${INVERSE}[3/5]${NC}- Création de l'environnement Python...\n" 
-                                echo -e "-${INVERSE}[4/5]${NC}- Création de la clé GPG et des mots de passe...\n" 
+                                echo -e "${GREEN}[√] Installation des prérequis...${NC}" 
+                                echo -e "${GREEN}[√] Installation et configuration de Vault...${NC}"
+                                echo -e "-${INVERSE}[3/5]${NC}- Création de l'environnement Python..." 
+                                echo -e "-${INVERSE}[4/5]${NC}- Création de la clé GPG et des mots de passe..." 
                                 echo -e "-${INVERSE}[5/5]${NC}- Lancement du service G_Cert...\n\n"
                                 
                                enter
@@ -2133,10 +2133,10 @@ echo -e "   - Ne partagez jamais votre mot de passe maître."
                                 echo -e "${WHITE}             Récapitulatif des étapes d'installation${NC}"
                                 echo -e "${YELLOW}============================================================${NC}\n\n"
                                 
-                                echo -e "${GREEN}[√] Installation des prérequis...${NC}\n" 
-                                echo -e "${GREEN}[√] Installation et configuration de Vault...${NC}\n"
-                                echo -e "${GREEN}[√] Création de l'environnement Python...${NC}\n" 
-                                echo -e "-${INVERSE}[4/5]${NC}- Création de la clé GPG et des mots de passe...\n" 
+                                echo -e "${GREEN}[√] Installation des prérequis...${NC}" 
+                                echo -e "${GREEN}[√] Installation et configuration de Vault...${NC}"
+                                echo -e "${GREEN}[√] Création de l'environnement Python...${NC}" 
+                                echo -e "-${INVERSE}[4/5]${NC}- Création de la clé GPG et des mots de passe..." 
                                 echo -e "-${INVERSE}[5/5]${NC}- Lancement du service G_Cert...\n\n"
                         
                         while true; do
@@ -2707,10 +2707,10 @@ echo -e "   - Ne partagez jamais votre mot de passe maître."
                                 echo -e "${WHITE}             Récapitulatif des étapes d'installation${NC}"
                                 echo -e "${YELLOW}============================================================${NC}\n\n"
                               
-                                echo -e "${GREEN}[√] Installation des prérequis...${NC}\n" 
-                                echo -e "${GREEN}[√] Installation et configuration de Vault...${NC}\n"
-                                echo -e "${GREEN}[√] Création de l'environnement Python...${NC}\n" 
-                                echo -e "${GREEN}[√] Création de la clé GPG et des mote de passe...${NC}\n" 
+                                echo -e "${GREEN}[√] Installation des prérequis...${NC}" 
+                                echo -e "${GREEN}[√] Installation et configuration de Vault...${NC}"
+                                echo -e "${GREEN}[√] Création de l'environnement Python...${NC}" 
+                                echo -e "${GREEN}[√] Création de la clé GPG et des mote de passe...${NC}" 
                                 echo -e "-${INVERSE}[5/5]${NC}- Lancement du service G_Cert...\n\n"
                             
                             while true; do
