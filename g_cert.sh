@@ -237,12 +237,12 @@ afficher_bienvenue
 
                 enter
 
-                sudo mkdir /var/log/gcert_install           
-                sudo chown $USER:$USER /var/log/gcert_install/
-                sudo chmod 755 /var/log/gcert_install/
-                sudo touch /tmp/install.log
-                sudo chown $USER:$USER /tmp/install.log
-                sudo chmod 644 /tmp/install.log
+                sudo mkdir /var/log/gcert_install >/dev/null 2>&1          
+                sudo chown $USER:$USER /var/log/gcert_install/ >/dev/null 2>&1
+                sudo chmod 755 /var/log/gcert_install/ >/dev/null 2>&1
+                sudo touch /tmp/install.log >/dev/null 2>&1
+                sudo chown $USER:$USER /tmp/install.log >/dev/null 2>&1
+                sudo chmod 644 /tmp/install.log >/dev/null 2>&1
 
                
                 clear
@@ -713,7 +713,13 @@ afficher_bienvenue
                                 clear
                                 afficher_bienvenue
                                 
-                                echo -e "\n${YELLOW}=== Création clé GPG pour la Clé privée OpenSSL  ===${NC}\n"
+                                echo -e "\n${YELLOW}=== Création clé GPG pour la Clé privée OpenSSL ===${NC}\n\n"
+                                echo -e "${RED}  IMPORTANT : Sélectionnez un algorithme supportant le chiffrement ET le déchiffrement${NC}\n"
+                                echo -e "   => Option recommandée : ${GREEN}}(9) ECC (sign and encrypt)${NC}"
+                                echo -e "   => Alternative : ${GREEN}(1) RSA and RSA${NC}"
+                                echo -e "   NE PAS choisir : ${RED}(3), (4) ou (10) - sign only (incompatibles)${NC}\n\n"
+
+                                echo -e "\n${BLUE_BRIGHT}=== Création Clé GPG via GnuPG : ===${NC}\n\n"
                                 sudo gpg --full-generate-key
 
                                 while true; do
@@ -729,7 +735,7 @@ afficher_bienvenue
 
                                 # Variable ID clé GPG ==========> Clé privée OpenSSL
                                 
-                                KEY_PRIVATE_TLS=$(sudo gpg --list-keys --keyid-format long | grep -o '[0-9A-F]\{40\}' | tail -n1)
+                                KEY_PRIVATE_TLS=$(sudo gpg --list-keys --keyid-format long | grep -o '[0-9A-Fa-f]\{40\}' | tail -n1)
                                 KEY_ID=$KEY_PRIVATE_TLS
                                 echo "gpg:$KEY_ID" >> "$INSTALL_LOG"
                                 
@@ -749,7 +755,12 @@ afficher_bienvenue
                                 afficher_bienvenue
                                 
                                 echo -e "\n${YELLOW}=== Création clé GPG pour les unseal keys et le root token de Vault ===${NC}\n"
-                                
+                                echo -e "${RED}  IMPORTANT : Sélectionnez un algorithme supportant le chiffrement ET le déchiffrement${NC}\n"
+                                echo -e "   => Option recommandée : ${GREEN}}(9) ECC (sign and encrypt)${NC}"
+                                echo -e "   => Alternative : ${GREEN}(1) RSA and RSA${NC}"
+                                echo -e "   NE PAS choisir : ${RED}(3), (4) ou (10) - sign only (incompatibles)${NC}\n\n"
+
+                                echo -e "\n${BLUE_BRIGHT}=== Création Clé GPG via GnuPG : ===${NC}\n\n"
                                 sudo gpg --full-generate-key
 
                                 while true; do
@@ -764,7 +775,7 @@ afficher_bienvenue
                                 done
 
                                 # Variable ID clé GPG ==========> Clées Vault
-                                KEY_VAULT=$(sudo gpg --list-keys --keyid-format long | grep -o '[0-9A-F]\{40\}' | tail -n1)
+                                KEY_VAULT=$(sudo gpg --list-keys --keyid-format long | grep -o '[0-9A-Fa-f]\{40\}' | tail -n1)
                                 KEY_ID=$KEY_VAULT
                                 echo "gpg:$KEY_ID" >> "$INSTALL_LOG"
 
@@ -2198,7 +2209,7 @@ echo -e "   - Ne partagez jamais votre mot de passe maître."
                     
                     # Donne la dernière clé GPG créée
                     
-                    LAST_CLE=$(gpg --list-keys --keyid-format long | grep -o '[0-9A-F]\{40\}' | tail -n1)
+                    LAST_CLE=$(gpg --list-keys --keyid-format long | grep -o '[0-9A-Fa-f]\{40\}' | tail -n1)
                     KEY_ID=$LAST_CLE
                     echo "gpg:$KEY_ID" >> "$INSTALL_LOG"
 
@@ -2256,7 +2267,7 @@ echo -e "   - Ne partagez jamais votre mot de passe maître."
                             # Liste les clés GPG et les affiche numérotées :
                             # =>   1. 0123456789ABCDEF0123456789ABCDEF01234567
                             # =>   2. ABCDEF0123456789ABCDEF0123456789ABCDEF01
-                            cle=$(gpg --list-keys --keyid-format long | grep -o '[0-9A-F]\{40\}' | nl -w2 -s'. ')
+                            cle=$(gpg --list-keys --keyid-format long | grep -o '[0-9A-Fa-f]\{40\}' | nl -w2 -s'. ')
                             
                             # En tête liste clé:
                             echo -e "${YELLOW}=== Liste Clé :===${NC}\n"                                    
