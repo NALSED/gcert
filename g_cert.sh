@@ -154,7 +154,7 @@ clean_up() {
         fi
     done < "$INSTALL_LOG"
     sudo rm -f "$INSTALL_LOG" >/dev/null 2>&1
-    exit 1
+    
 }
 
 # Nettoyage en cas d'echec + msg
@@ -163,7 +163,9 @@ clean_up_error(){
     clear
     echo -e "${RED}[ERREUR] Annulation de l'installation G.Cert et restauration du système [ERREUR]${NC}\n\n"
     echo -e "Vous pouvez consulter ${WHITE}/var/log/gcert_install/erreur.log${NC}, pour plus d'information\n"
-    
+    sleep 4
+
+    clear
     msg="Veuillez patienter durant la restauration du système"
 
     BLA::start_loading_animation "$msg" "${BLA_passing_dots[@]}"
@@ -171,6 +173,9 @@ clean_up_error(){
     clean_up
     
     BLA::stop_loading_animation
+    clear
+    sleep 1
+    exit 1
 }
 
 # Nettoyage sortie utilisateur avec confirmation + msg
@@ -184,14 +189,18 @@ clean_up_choice(){
             clear
             echo -e "${RED} XXX Vous avez choisi de quitter l'installation G.Cert, mise en route de la restauration du système XXX${NC}\n\n"
             echo -e "Vous pouvez consulter ${WHITE}/var/log/gcert_install/erreur.log${NC}, pour plus d'information\n"
-            
+            sleep 4
+
+            clear
             msg="Veuillez patienter durant la restauration du système"
             BLA::start_loading_animation "$msg" "${BLA_passing_dots[@]}"
             
             clean_up
             
             BLA::stop_loading_animation
-        
+            clear
+            sleep 1
+            exit 1
         elif [[ "$choix_quit" =~ ^[nN]$ ]]; then
             break
         else
@@ -1671,7 +1680,7 @@ EOF
                                                                 
                                                                 clear
                                                                 afficher_bienvenue
-                                                                echo -e "${GREEN}OK : Suppression réussie.${NC}"
+                                                                echo -e "${GREEN}OK : Suppression de ${WHITE}/etc/vault/ssl/vault.key${NC} réussie.${NC}"
                                                                 sleep 3
                                                             fi
 
@@ -1705,7 +1714,8 @@ EOF
                                                             sleep 3
                                                         fi
 
-                                                        
+                                                        clear
+                                                        afficher_bienvenue
                                                         echo -e "${BLUE_BRIGHT}=== Installation et Configuration de Vault ===${NC}\n"
                                                         echo -e "${WHITE}=== Fin de Tache Certificat Vault ===${NC}\n\n"
 
@@ -2034,10 +2044,10 @@ EOF"
                         echo -e "\n${YELLOW}=== INSTALLATION DEPENDANCES PYTHON DANS UN VENV ===${NC}\n"
                     
                         # Message pour l'animation
-                        msg="Veuillez patienter"
+                        msg="Veuillez patienter pendant la mise en place des dépendances Python"
 
                         # Assurer que pipx est installé et accessible
-                        python3 -m pipx ensurepath 
+                        python3 -m pipx ensurepath > /dev/null 2>> "$ERROR_LOG" 
                         export PATH="$HOME/.local/bin:$PATH"
 
                             
@@ -2131,9 +2141,9 @@ echo -e "   - Ne partagez jamais votre mot de passe maître."
                         clear
                         afficher_bienvenue
 
-                        echo -e "${YELLOW}====================================================${NC}"
+                        echo -e "${YELLOW}======================================================================${NC}"
                         echo -e "${WHITE}INFORMATION : Clé GPG pour le gestionnaire de mots de passe 'pass'${NC}"
-                        echo -e "${YELLOW}====================================================${NC}"
+                        echo -e "${YELLOW}======================================================================${NC}"
                         echo -e "Pour utiliser ${GREEN}pass${NC}, seule une clé ${GREEN}RSA capable de signer et chiffrer${NC} est compatible."
                         echo -e "\nLes options disponibles lors de la création d'une clé GPG :"
                         echo -e "  (1) ${GREEN}RSA and RSA${NC}           => signature et chiffrement compatible avec pass"
@@ -2143,7 +2153,7 @@ echo -e "   - Ne partagez jamais votre mot de passe maître."
                         echo -e "  (9) ECC (sign and encrypt)           => non compatible (Attention par défaut)"
                         echo -e " (10) ECC (sign only)                  => non compatible"
                         echo -e " (14) Existing key from card           => Clé RSA existante ET RSA chiffrante"
-                        echo -e "\n${YELLOW}====================================================${NC}\n"
+                        echo -e "\n${YELLOW}======================================================================${NC}\n"
                         
                         while true; do
                             read -p "Appuyez sur [Entrée] pour continuer : " input
@@ -2193,11 +2203,16 @@ echo -e "   - Ne partagez jamais votre mot de passe maître."
                     [[ -z "$LAST_CLE" ]] && { echo -e "${RED}Aucune clé trouvée, le programme d'installation va quitter...${NC}"; sleep 4; clean_up_error; }
 
                     # Message pour l'animation       
-                    msg="Veuillez patientez"
-                    echo -e "\n\n"
-                    BLA::start_loading_animation "$msg" "${BLA_passing_dots[@]}"
-                    sleep 3
-                    BLA::stop_loading_animation
+                    while true; do
+                        echo -e "\n\n${YELLOW}Veuillez enregistrer les informations ci-dessus${NC}\n"
+                        read -p "Appuyez sur [Entrée] pour continuer : " input
+
+                        if [[ -z "$input" ]]; then
+                            break
+                        else
+                            echo -e "\n${RED}Erreur : appuyez uniquement sur Entrée.${NC}\n"
+                        fi
+                    done
 
 
                     clear
