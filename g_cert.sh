@@ -616,7 +616,7 @@ afficher_bienvenue
                                 echo -e "    └── ${WHITE}[2]${NC}${YELLOW}Installation du Paquet Vault${NC}"
                                 echo -e "        └── ${WHITE}[3]${NC}${CYAN}Vérification de la présence de Vault${NC}\n"
 
-                                echo -e " ${WHITE}[4]${NC}${WHITE}Création clés GPG${NC}"
+                                echo -e " ${WHITE}[4]${NC}${WHITE}Création clé GPG${NC}"
                                 echo -e "    └── ${WHITE}[5]${NC}${YELLOW}Certificat SSL${NC}"
                                 echo -e "        └── ${WHITE}[6]${NC}${CYAN}Fichier de configuration${NC}"
                                 echo -e "        └── ${WHITE}[7]${NC}${CYAN}Clé Privée${NC}"
@@ -651,6 +651,7 @@ afficher_bienvenue
 
                                 # test l'installation de Vault
                                 if dpkg -s vault >/dev/null 2>&1; then
+                                    
                                     echo -e "${GREEN}Vault installé avec succès${NC}"
                                     sleep 2
                                 
@@ -680,7 +681,7 @@ afficher_bienvenue
                                                 enter
                                             fi
                                     else
-                                        echo -e "${GREEN}Le répertoire /etc/vault.d existe déjà${NC}"
+                                        echo -e "${GREEN}Le répertoire ${WHITE}/etc/vault.d${NC} existe déjà, l'instalation va poursuivre${NC}"
                                         sleep 2
                                     fi
                                 
@@ -705,7 +706,7 @@ afficher_bienvenue
                                 echo -e "    └── ${GREEN}[√]${NC}${YELLOW}Installation du Paquet Vault${NC}"
                                 echo -e "        └── ${GREEN}[√]${NC}${CYAN}Vérification de la présence de Vault${NC}\n"
 
-                                echo -e " ${WHITE}[4]${NC}${WHITE}Création des clés GPG${NC}"
+                                echo -e " ${WHITE}[4]${NC}${WHITE}Création clé GPG${NC}"
                                 echo -e "    └── ${WHITE}[5]${NC}${YELLOW}Certificat SSL${NC}"
                                 echo -e "        └── ${WHITE}[6]${NC}${CYAN}Fichier de configuration${NC}"
                                 echo -e "        └── ${WHITE}[7]${NC}${CYAN}Clé Privée${NC}"
@@ -724,7 +725,7 @@ afficher_bienvenue
                                 clear
                                 afficher_bienvenue
 
-                                msg="Initialisation Clé GPG et Certificats"
+                                msg="Initialisation Clé GPG et Certificat"
                                 echo -e "\n"
 
                                 BLA::start_loading_animation "$msg" "${BLA_passing_dots[@]}"
@@ -751,7 +752,7 @@ afficher_bienvenue
                                 clear
                                 afficher_bienvenue
 
-                                msg=" Initialisation création clés GPG, afin de protéger la Clée privée du certificat de Vault"
+                                msg=" Initialisation création clé GPG, afin de protéger la Clé privée du certificat : Vault"
                                 echo -e "\n"
 
                                 BLA::start_loading_animation "$msg" "${BLA_passing_dots[@]}"
@@ -766,7 +767,7 @@ afficher_bienvenue
                                 echo -e "${RED}  IMPORTANT : Sélectionnez un algorithme supportant le chiffrement ET le déchiffrement${NC}\n"
                                 echo -e "   => Option recommandée : ${GREEN}}(9) ECC (sign and encrypt)${NC}"
                                 echo -e "   => Alternative : ${GREEN}(1) RSA and RSA${NC}"
-                                echo -e "   NE PAS choisir : ${RED}(3), (4) ou (10) - sign only (incompatibles)${NC}\n\n"
+                                echo -e "   NE PAS choisir : ${RED}(3), (4) ou (10) - sign only (incompatibles)${NC}\n\n\n"
 
                                 echo -e "\n${BLUE_BRIGHT}=== Création Clé GPG via GnuPG : ===${NC}\n\n"
                                 
@@ -774,6 +775,7 @@ afficher_bienvenue
 
                                 while true; do
                                     echo -e "\n\n${YELLOW}Veuillez enregistrer les informations ci-dessus${NC}\n"
+                                    
                                     read -p "Appuyez sur [Entrée] pour continuer : " input
 
                                     if [[ -z "$input" ]]; then
@@ -803,7 +805,7 @@ afficher_bienvenue
                                 echo -e "    └── ${GREEN}[√]${NC}${YELLOW}Installation du Paquet Vault${NC}"
                                 echo -e "        └── ${GREEN}[√]${NC}${CYAN}Vérification de la présence de Vault${NC}\n"
 
-                                echo -e " ${GREEN}[√]${NC}${WHITE}Création des clés GPG${NC}"
+                                echo -e " ${GREEN}[√]${NC}${WHITE}Création clé GPG${NC}"
                                 echo -e "    └── ${WHITE}[5]${NC}${YELLOW}Certificat SSL${NC}"
                                 echo -e "        └── ${WHITE}[6]${NC}${CYAN}Fichier de configuration${NC}"
                                 echo -e "        └── ${WHITE}[7]${NC}${CYAN}Clé Privée${NC}"
@@ -977,7 +979,7 @@ afficher_bienvenue
                                                 fi
                                             done
 
-                                            # === 3-3) IP serveur ===
+                                            # === 3-3) IP serveur Vault ===
                                             while true; do
                                                 clear
                                                 afficher_bienvenue
@@ -990,7 +992,7 @@ afficher_bienvenue
                                                     clear
                                                     afficher_bienvenue
                                                     
-                                                    echo -e "${GREEN}IP valide${NC}"
+                                                    echo -e "${GREEN}Format adresse IP valide${NC}"
                                                     sleep 2
 
                                                     while true; do
@@ -1021,7 +1023,7 @@ afficher_bienvenue
                                                         fi
                                                     done
                                                 else
-                                                    echo -e "\n${RED}IP invalide${NC}\n"
+                                                    echo -e "\n${RED}Format adresse IP invalide${NC}\n"
                                                     echo -e "\nRecommençons..."
                                                     sleep 2
                                                     
@@ -1029,6 +1031,8 @@ afficher_bienvenue
                                             done
 
 
+                                                
+                                                # /etc/vault.d/vault_tls.cnf
                                                 clear
                                                 afficher_bienvenue
 
@@ -1070,7 +1074,6 @@ EOF
                                     # Choix 2 pas de domaine
                                     elif [[ "$choix_domain_ssl" =~ ^[nN]$ ]]; then
                                             
-                                           
                                             # === 1-3) NOM serveur CN ===
                                             clear
                                             afficher_bienvenue
@@ -1090,7 +1093,7 @@ EOF
                                                     
                                                     clear
                                                     afficher_bienvenue
-                                                    echo -e "${GREEN}CN confirmé :${NC} $cn_vault"
+                                                    echo -e "${GREEN}CN confirmé : ${NC} $cn_vault"
                                                     sleep 2
                                                     break
                                                 elif [[ "$validation_cn" =~ ^[nN]$ ]]; then
@@ -1134,7 +1137,7 @@ EOF
                                             while true; do
                                                 
                                                 
-                                                # === 3-3) Ip serveur ===
+                                                # === 3-3) Ip serveur Vault ===
                                                 clear
                                                 afficher_bienvenue
 
@@ -1143,7 +1146,7 @@ EOF
 
                                                 # Test IP
                                                 if validate_ip "$ip_vault"; then
-                                                    echo -e "${GREEN}IP valide${NC}"
+                                                    echo -e "${GREEN}Format adresse IP valide${NC}"
                                                     sleep 2
 
                                                     while true; do
@@ -1171,13 +1174,13 @@ EOF
                                                         fi
                                                     done
                                                 else
-                                                    echo -e "${RED}IP invalide${NC}"
+                                                    echo -e "${RED}Format adresse IP invalide${NC}"
                                                     sleep 2
                                                 fi
                                             done
 
 
-                                            # Edition fichier certificat vault_tls.cnf
+                                            # /etc/vault.d/vault_tls.cnf
                                             sudo tee /etc/vault.d/vault_tls.cnf <<-EOF > /dev/null 2>> "$ERROR_LOG" && echo "/etc/vault.d/vault_tls.cnf" >> "$INSTALL_LOG"
 [ req ]
 default_bits       = 4096
@@ -1206,6 +1209,8 @@ EOF
                                 done
 
                                 # === CLEE PRIVEE CERTIFICAT === 
+                                # /etc/vault.d/vault.key
+
                                 clear
                                 afficher_bienvenue
                                 
@@ -1216,7 +1221,7 @@ EOF
                                 echo -e "    └── ${GREEN}[√]${NC}${YELLOW}Installation du Paquet Vault${NC}"
                                 echo -e "        └── ${GREEN}[√]${NC}${CYAN}Vérification de la présence de Vault${NC}\n"
 
-                                echo -e " ${GREEN}[√]${NC}${WHITE}Création des clés GPG${NC}"
+                                echo -e " ${GREEN}[√]${NC}${WHITE}Création clé GPG${NC}"
                                 echo -e "    └── ${WHITE}[5]${NC}${YELLOW}Certificat SSL${NC}"
                                 echo -e "        └── ${GREEN}[√]${NC}${CYAN}Fichier de configuration${NC}"
                                 echo -e "        └── ${WHITE}[7]${NC}${CYAN}Clé Privée${NC}"
@@ -1242,10 +1247,18 @@ EOF
                                         
                                         clear
                                         afficher_bienvenue
-                                        echo -e "${GREEN}OK : Clé privée ${WHITE}/etc/vault.d/vault.key$}${NC} ${GREEN}créé.${NC}"
-                                        sleep 3
-                                    else
+                                        echo -e "${GREEN}OK : Clé privée ${WHITE}/etc/vault.d/vault.key${NC} ${GREEN}créée.${NC}"
+                                        echo -e "\n${RED} Avertissement :${NC}"
+                                        echo -e "${YELLOW}--------------------------------------------------${NC}"
+                                        echo -e "${WHITE}1. Stockez la clé dans un emplacement sécurisé.${NC}"
+                                        echo -e "${WHITE}2. Limitez l'accès aux utilisateurs autorisés.${NC}"
+                                        echo -e "${WHITE}3. Effectuez des sauvegardes régulières.${NC}"
+                                        echo -e "${YELLOW}--------------------------------------------------${NC}"                                        
                                         
+                                        enter
+                                    else
+                                        echo -e "${RED}ERREUR : Problème lors de la création de la clé privée ${WHITE}/etc/vault.d/vault.key${NC}"
+                                        sleep 3
                                         clean_up_error
                                     fi
 
@@ -1253,7 +1266,8 @@ EOF
                                 sudo chmod 600 /etc/vault.d/vault.key
                                 
                                 # === CREATION CSR ===
-                                
+                                # /etc/vault.d/vault.csr
+
                                 # Commande de création du CSR avec redirection des logs
                                 sudo openssl req -new -key /etc/vault.d/vault.key -out /etc/vault.d/vault.csr -config /etc/vault.d/vault_tls.cnf > /dev/null 2>> "$ERROR_LOG" && echo "/etc/vault.d/vault.csr" >> "$INSTALL_LOG"
 
@@ -1267,7 +1281,7 @@ EOF
                                     echo -e "    └── ${GREEN}[√]${NC}${YELLOW}Installation du Paquet Vault${NC}"
                                     echo -e "        └── ${GREEN}[√]${NC}${CYAN}Vérification de la présence de Vault${NC}\n"
 
-                                    echo -e " ${GREEN}[√]${NC}${WHITE}Création des clés GPG${NC}"
+                                    echo -e " ${GREEN}[√]${NC}${WHITE}Création clé GPG${NC}"
                                     echo -e "    └── ${WHITE}[5]${NC}${YELLOW}Certificat SSL${NC}"
                                     echo -e "        └── ${GREEN}[√]${NC}${CYAN}Fichier de configuration${NC}"
                                     echo -e "        └── ${GREEN}[√]${NC}${CYAN}Clé Privée${NC}"
@@ -1280,9 +1294,6 @@ EOF
                                     echo -e " ${WHITE}[12]${NC}${WHITE}Clé Privée Certificat => Restrictions des droits${NC}"
                                     echo -e "    └── ${WHITE}[13]${NC}${YELLOW}Script pour renouvellement + inscription Systemd${NC}\n"
 
-                                    echo -e " ${WHITE}[14]${NC}${WHITE}Clé Privée Certificat => Chiffrée${NC}"
-                                    echo -e "    └── ${WHITE}[15]${NC}${YELLOW}Aucune tâche de renouvellement via Systemd${NC}\n\n"
-                                    
                                     sleep 4
                                     
                                     # Test présence CSR
@@ -1290,9 +1301,11 @@ EOF
                                         
                                         clear
                                         afficher_bienvenue
-                                        echo -e "${GREEN}OK : Fichier ${WHITE}/etc/vault.d/vault.csr${NC}${GREEN} créé.${NC}"
+                                        echo -e "${GREEN}OK : Fichier ${WHITE}/etc/vault.d/vault.csr${NC}${GREEN} créé avec succés.${NC}"
                                         sleep 4
                                     else
+                                        echo -e "${RED}ERREUR : Problème lors de la création du fichier ${WHITE}/etc/vault.d/vault.csr${NC}"
+                                        sleep 3
                                         clean_up_error
                                     fi
                                 
@@ -1310,7 +1323,7 @@ EOF
                                         sleep 2
                                         break
                                     else
-                                        echo "Erreur : veuillez entrer un nombre entre 1 et 365."
+                                        echo "Erreur : veuillez entrer un nombre entre 1 et 365 ."
                                     fi
                                 done
 
@@ -1331,7 +1344,7 @@ EOF
                                     echo -e "   - La clé doit être déverrouillée uniquement pour la durée de la signature."
                                     echo -e "   - Ne jamais stocker la clé de la CA en clair de façon permanente."
                                     echo -e "   - Privilégier une CA hors ligne ou une CA intermédiaire dédiée."
-                                    echo -e "   - Rechiffrer ou supprimer immédiatement toute clé déchiffrée après usage.\n"
+                                    echo -e "   - Rechiffrer ou supprimer immédiatement toute clé déchiffrée après usage.\n\n"
 
 
                                     echo -e "${YELLOW}Veuillez choisir un mode de CA : ${NC}\n"
@@ -1357,7 +1370,7 @@ EOF
                                         echo -e "    └── ${GREEN}[√]${NC}${YELLOW}Installation du Paquet Vault${NC}"
                                         echo -e "        └── ${GREEN}[√]${NC}${CYAN}Vérification de la présence de Vault${NC}\n"
 
-                                        echo -e " ${GREEN}[√]${NC}${WHITE}Création des clés GPG${NC}"
+                                        echo -e " ${GREEN}[√]${NC}${WHITE}Création clé GPG${NC}"
                                         echo -e "    └── ${WHITE}[5]${NC}${YELLOW}Certificat SSL${NC}"
                                         echo -e "        └── ${GREEN}[√]${NC}${CYAN}Fichier de configuration${NC}"
                                         echo -e "        └── ${GREEN}[√]${NC}${CYAN}Clé Privée${NC}"
@@ -1376,7 +1389,7 @@ EOF
                                         
                                         clear
                                         afficher_bienvenue
-                                        msg="Edition du certificat auto-signé"
+                                        msg="Edition du certificat : auto-signé"
                                             echo -e "\n"
                                             BLA::start_loading_animation "$msg" "${BLA_passing_dots[@]}"
                                             sleep 2
@@ -1393,7 +1406,7 @@ EOF
                                             sleep 5
                                             break
                                         else
-                                            echo -e "${RED}ERREUR : vault.csr manquante...${NC}"
+                                            echo -e "${RED}ERREUR : Problème lors de la création du fichier ${WHITE}/etc/vault.d/vault.crt${NC}"
                                             sleep 3
                                             clean_up_error
                                         fi
@@ -1460,7 +1473,7 @@ EOF
                                         while true; do
                                             clear
                                             afficher_bienvenue
-                                            read -p "Veuillez indiquer le chemin vers la clé privé (chemin absolue vers le fichier .key)" ca_private_key
+                                            read -p "Veuillez indiquer le chemin vers la clé privé (chemin absolue vers le fichier .key / .pem)" ca_private_key
 
                                             echo -e "Chemin Clé Privée = ${WHITE}$ca_private_key${NC}\n"
                                             read -p "Le Certificat est-il correct ? y/n " validation_key
@@ -1518,7 +1531,7 @@ EOF
                                             break
 
                                         else
-                                            echo -e "${RED}ERREUR : vault.csr manquante...${NC}"
+                                            echo -e "${RED}ERREUR : Problème lors de la création du fichier ${WHITE}/etc/vault.d/vault.crt${NC}${NC}"
                                             sleep 3
                                             clean_up_error
                                         fi
@@ -1550,7 +1563,7 @@ EOF
                                 echo -e "${WHITE}=== Sécurisation des fichiers SSL ===${NC}\n"
 
                                 echo -e "${RED}Attention : les fichiers clés et certificats sont très sensibles.${NC}\n\n"
-                                read -p "Voulez-vous sécuriser tous les fichiers maintenant y/n ? " secu_ssl
+                                read -p "Voulez-vous sécuriser tous les fichiers relatif au certificat ssl de Vault maintenant y/n ? " secu_ssl
 
                                     
                                     while true; do
@@ -1560,12 +1573,10 @@ EOF
                                                 clear
                                                 afficher_bienvenue
 
-                                                echo -e "${CYAN_BRIGHT}=== Choix 2 : Sécurisation de la clé privée avec permissions et tâche Systemd ===${NC}\n\n"
+                                                echo -e "${CYAN_BRIGHT}===Sécurisation de la clé privée avec des permissions strictes et mise en place d'une tâche de renouvellement automatique via Systemd. ===${NC}\n\n"
                                                 echo -e "  - Le fichier => ${WHITE}/etc/vault.d/vault.csr${NC} est supprimé pour sécurité."
-                                                echo -e "  - La clé privée ${WHITE}/etc/vault.d/vault.key${NC} ne sera ${RED}pas chiffrée${NC}, mais ses permissions seront strictement contrôlées (${WHITE}600${NC})."
-                                                echo -e "  - Seul l'utilisateur ${WHITE}vault${NC} pourra y accéder."
-                                                echo -e "  - ${GREEN}Permissions appliquées${NC} : ${WHITE}chown vault:vault${NC} et ${WHITE}chmod 600${NC}"
-                                                echo -e "  - Cette option permet d'automatiser le renouvellement du certificat via Script et Systemd Timer."
+                                                echo -e "  - La clé privée ${WHITE}/etc/vault.d/vault.key${NC} : Permissions appliquées : ${WHITE}chown vault:vault${NC} et ${WHITE}chmod 600${NC} "
+                                                echo -e "  - Renouvellement automatique du certificat via Script et Systemd : .Service / .Timer."
                                                 echo -e "  - ${YELLOW}**Note**${NC} : Le renouvellement automatique se fera tous les ${WHITE}${days_timer}${NC} jours.\n\n\n"
 
                                                 enter
@@ -1581,7 +1592,7 @@ EOF
                                                         echo -e "    └── ${GREEN}[√]${NC}${YELLOW}Installation du Paquet Vault${NC}"
                                                         echo -e "        └── ${GREEN}[√]${NC}${CYAN}Vérification de la présence de Vault${NC}\n"
 
-                                                        echo -e " ${GREEN}[√]${NC}${WHITE}Création des clés GPG${NC}"
+                                                        echo -e " ${GREEN}[√]${NC}${WHITE}Création clé GPG${NC}"
                                                         echo -e "    └── ${GREEN}[√]${NC}${YELLOW}Certificat SSL${NC}"
                                                         echo -e "        └── ${GREEN}[√]${NC}${CYAN}Fichier de configuration${NC}"
                                                         echo -e "        └── ${GREEN}[√]${NC}${CYAN}Clé Privée${NC}"
@@ -1594,6 +1605,11 @@ EOF
                                                         echo -e " ${WHITE}[12]${NC}${WHITE}Clé Privée Certificat => Restrictions des droits${NC}"
                                                         echo -e "    └── ${WHITE}[13]${NC}${YELLOW}Script pour renouvellement + inscription Systemd${NC}\n"
 
+                                                        sleep 4
+
+                                                        clear
+                                                        afficher_bienvenue
+                                                        echo -e "Suppression de : ${WHITE}/etc/vault.d/vault.csr${NC}"
                                                         sleep 3
 
                                                         sudo rm /etc/vault.d/vault.csr > /dev/null 2>> "$ERROR_LOG"
@@ -1603,7 +1619,9 @@ EOF
                                                             echo -e "Suite à l'installation de G.cert, veuillez supprimer ce fichier." 
                                                             sleep 3
                                                         else
-                                                            echo -e "${GREEN}OK : Suppression réussie de /etc/vault.d/vault.csr.${NC}"
+                                                            clear
+                                                            afficher_bienvenue
+                                                            echo -e "${GREEN}OK : Suppression réussie de : ${WHITE}/etc/vault.d/vault.csr${NC}"
                                                             sleep 3
                                                         fi
 
@@ -1612,17 +1630,22 @@ EOF
                                                         clear
                                                         afficher_bienvenue
 
-                                                        echo -e "${WHITE}Droit et propriétaire de /etc/vault.d/vault.key ${NC}\n"
-                                                        sleep 2
+                                                        echo -e "${WHITE}Droits et propriétaire de /etc/vault.d/vault.key ${NC}\n"
+                                                        sleep 3
                                                         
                                                         sudo chown vault:vault /etc/vault.d/vault.key > /dev/null 2>> "$ERROR_LOG"
 
                                                         if [[ $(stat -c "%a" /etc/vault.d/vault.key) == "600" && $(stat -c "%U:%G" /etc/vault.d/vault.key) == "vault:vault" ]]; then
                                                             
+                                                            clear
+                                                            afficher_bienvenue
                                                             echo -e "${GREEN}OK : le fichier ${WHITE}/etc/vault.d/vault.key${GREEN} est bien sécurisé.${NC}\n"
                                                             echo -e "Avec rw------- vault vault vault.key\n\n " 
                                                             enter
                                                         else
+                                                            
+                                                            clear
+                                                            afficher_bienvenue
                                                             echo -e "${RED}ERREUR : permissions ou propriétaire incorrects pour ${WHITE}/etc/vault.d/vault.key${NC}"
                                                             echo -e "Veuillez vérifier et corriger les droits du fichier."
                                                             sleep 3
@@ -1634,6 +1657,7 @@ EOF
                                                         afficher_bienvenue
 
                                                         echo -e "${WHITE}Droit et propriétaire vault_tls.cnf ${NC}"
+                                                        sleep 3
 
                                                         # Appliquer les droits
                                                         sudo chmod 640 /etc/vault.d/vault_tls.cnf > /dev/null 2>> "$ERROR_LOG"
@@ -1641,9 +1665,15 @@ EOF
 
                                                         # Vérification droit et propriétaire
                                                         if [[ $(stat -c "%a" /etc/vault.d/vault_tls.cnf) == "640" && $(stat -c "%U:%G" /etc/vault.d/vault_tls.cnf) == "root:vault" ]]; then
+                                                            
+                                                            clear
+                                                            afficher_bienvenue
                                                             echo -e "${GREEN}OK : le fichier ${WHITE}/etc/vault.d/vault_tls.cnf${GREEN} est bien sécurisé.${NC}"
                                                             sleep 3
                                                         else
+                                                            
+                                                            clear
+                                                            afficher_bienvenue
                                                             echo -e "${RED}ERREUR : permissions ou propriétaire incorrects pour ${WHITE}/etc/vault.d/vault_tls.cnf${NC}"
                                                             echo -e "Veuillez vérifier et corriger les droits du fichier."
                                                             sleep 3
@@ -1656,16 +1686,23 @@ EOF
 
                                                         
                                                         echo -e "${CYAN_BRIGHT}=== Renouvellement du certificat via Systemd ===${NC}\n"
-                                                        echo -e "   - Création d'un script pour le renouvellement automatique du certificat Vault et Mise à jour des permissions."
+                                                        echo -e "   - Création d'un script pour le renouvellement automatique du certificat Vault."
                                                         echo -e "   - Enregistrement de l'exécution du script dans systemd."
                                                         sleep 4
 
                                                         # Script de renouvellement
+
                                                         clear
                                                         afficher_bienvenue
-                                                        
-                                                        echo -e "Création script de renouvellement ..."
+
+                                                        msg="Création script de renouvellement"
+                                                    
+                                                        BLA::start_loading_animation "$msg" "${BLA_passing_dots[@]}"
+
                                                         sleep 2
+                                                        # Effacer la ligne du message dynamique
+                                                        echo -ne "\r\033[K"
+                                                        BLA::stop_loading_animation
 
                                                         sudo touch /usr/local/bin/renew_vault_ssl.sh
                                                         sudo chown root:root /usr/local/bin/renew_vault_ssl.sh
@@ -1687,8 +1724,17 @@ EOF
                                                         
 
                                                         #service
-                                                        echo -e "Inscription à systemd d'un service et timer..."
+                                                        clear
+                                                        afficher_bienvenue
+
+                                                        msg="Inscription à systemd =>  renew_vault_ssl.service et renew_vault_ssl.timer"
+                                                    
+                                                        BLA::start_loading_animation "$msg" "${BLA_passing_dots[@]}"
+
                                                         sleep 3
+                                                        # Effacer la ligne du message dynamique
+                                                        echo -ne "\r\033[K"
+                                                        BLA::stop_loading_animation
 
                                                         sudo bash -c "cat > /etc/systemd/system/renew_vault_ssl.service << 'EOF'
 [Unit]
@@ -1745,7 +1791,7 @@ EOF
                                                             
                                                             clear
                                                             afficher_bienvenue
-                                                            echo -e "${GREEN}OK : Fichiers systemd créés, timer et service actifs.${NC}\n"
+                                                            echo -e "${GREEN}OK : Fichiers systemd créés, .timer et .service actifs et opérationnels.${NC}\n"
                                                             echo -e "le renouvellement du certificat de vault aura lieu automatiquement tous les ${WHITE}${days_timer}${NC} jours.\n\n"
                                                             
                                                             enter
