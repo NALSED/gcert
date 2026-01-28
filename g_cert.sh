@@ -714,11 +714,46 @@ afficher_bienvenue
                                 clear
                                 afficher_bienvenue
                                 
-                                echo -e "${CYAN_BRIGHT}=== Génération clés GPG ===${NC}\n"
+                                echo -e "${CYAN_BRIGHT}=== Génération clés GPG Vault===${NC}\n\n"
 
                                 echo -e "${WHITE}Clé GPG Vault :${NC}"
-                                echo -e "   - Création d'une clé GPG dédiée à Vault (unseal keys et root token).\n"
+                                echo -e "   - Création d'une clé GPG dédiée à Vault (protection unseal keys et root token).\n"
 
+                                enter
+
+
+
+                                clear
+                                afficher_bienvenue
+                                echo -e "${CYAN_BRIGHT}=== Génération clés GPG Vault===${NC}\n\n"
+
+                                echo -e "\n${RED}=== Configuration Recommandée ===${NC}\n"
+                                echo -e "${YELLOW}-----------------------------------------------${NC}"
+                                echo -e "${WHITE}- Clé GPG SANS expiration recommandée${NC}"
+                                echo -e "${WHITE}- Pour des données critiques (Vault unseal keys)${NC}"
+                                echo -e "${WHITE}- Lors de la création GPG, indiquez :${NC}"
+                                echo -e "       - Key is valid for? (0) ${GREEN}0${NC}"
+                                echo -e "${WHITE}- Raison : Perte de clé expirée = perte de Vault${NC}"
+                                echo -e "${YELLOW}-----------------------------------------------${NC}\n\n\n"
+
+
+                                echo -e "\n${RED}=== Mesures de Sécurité Essentielles ===${NC}\n"
+                                echo -e "${YELLOW}-----------------------------------------------${NC}"
+                                echo -e "${WHITE}- Passphrase robuste (>20 caractères recommandés)${NC}"
+                                echo -e "${WHITE}- Sauvegarde de la clé privée :${NC}"
+                                echo -e "       - Exportez : gpg --export-secret-keys -a KEY_ID${NC}"
+                                echo -e "       - Stockez sur USB chiffré hors ligne${NC}"
+                                echo -e "       - Conservez dans un coffre-fort physique${NC}"
+                                echo -e "${WHITE}- Certificat de révocation :${NC}"
+                                echo -e "$       - Générez : gpg --gen-revoke KEY_ID${NC}"
+                                echo -e "$       - Stockez séparément de la clé privée${NC}"
+                                echo -e "${WHITE}- Tests réguliers (tous les 3-6 mois) :${NC}"
+                                echo -e "$       - Vérifiez le déchiffrement${NC}"
+                                echo -e "$       - Testez la restauration depuis sauvegarde${NC}"
+                                echo -e "${YELLOW}-----------------------------------------------${NC}\n"
+
+                                echo -e "${BLUE_BRIGHT} Info : ${WHITE}G.Cert permettra d'administrer vos clés GPG : (génération, validité, révocation, suppression)${NC}"
+                               
                                 enter
 
                                 clear
@@ -1984,17 +2019,7 @@ echo -e "   - Ne partagez jamais votre mot de passe maître."
                                 echo -e "-${INVERSE}[4/5]${NC}- Création de la clé GPG et des mots de passe..." 
                                 echo -e "-${INVERSE}[5/5]${NC}- Lancement du service G_Cert...\n\n"
                         
-                        while true; do
-                            read -p "Appuyez sur [Entrée] pour continuer : " input
-                        
-                            if [[ -z "$input" ]]; then
-                                
-                            break
-                            else
-                                echo -e "\n${RED}Erreur : appuyez uniquement sur Entrée.${NC}\n"
-                            fi
-                        done
-              
+                        enter
 
 
                         clear
@@ -2014,17 +2039,41 @@ echo -e "   - Ne partagez jamais votre mot de passe maître."
                         echo -e " (14) Existing key from card           => Clé RSA existante ET RSA chiffrante"
                         echo -e "\n${YELLOW}======================================================================${NC}\n"
                         
-                        while true; do
-                            read -p "Appuyez sur [Entrée] pour continuer : " input
-                        
-                            if [[ -z "$input" ]]; then
-                                
-                            break
-                            else
-                                echo -e "\n${RED}Erreur : appuyez uniquement sur Entrée.${NC}\n"
-                            fi
-                        done
+                        enter
 
+                        clear
+                        afficher_bienvenue
+                        echo -e "${CYAN_BRIGHT}=== Génération clés GPG Pass ===${NC}\n\n"
+
+                        echo -e "\n${RED}=== Configuration Recommandée ===${NC}\n"
+                        echo -e "${YELLOW}-----------------------------------------------${NC}"
+                        echo -e "${WHITE}- Clé GPG SANS expiration recommandée${NC}"
+                        echo -e "${WHITE}- Pour des données critiques (mots de passe Pass)${NC}"
+                        echo -e "${WHITE}- Lors de la création GPG, indiquez :${NC}"
+                        echo -e "       - Key is valid for? (0) ${GREEN}0${NC}"
+                        echo -e "${WHITE}- Raison : Perte de clé expirée = perte de tous les mots de passe${NC}"
+                        echo -e "${YELLOW}-----------------------------------------------${NC}\n\n\n"
+
+
+                        echo -e "\n${RED}=== Mesures de Sécurité Essentielles ===${NC}\n"
+                        echo -e "${YELLOW}-----------------------------------------------${NC}"
+                        echo -e "${WHITE}- Passphrase robuste (>20 caractères recommandés)${NC}"
+                        echo -e "${WHITE}- Sauvegarde de la clé privée :${NC}"
+                        echo -e "       - Exportez : gpg --export-secret-keys -a KEY_ID${NC}"
+                        echo -e "       - Stockez sur USB chiffré hors ligne${NC}"
+                        echo -e "       - Conservez dans un coffre-fort physique${NC}"
+                        echo -e "${WHITE}- Certificat de révocation :${NC}"
+                        echo -e "       - Générez : gpg --gen-revoke KEY_ID${NC}"
+                        echo -e "       - Stockez séparément de la clé privée${NC}"
+                        echo -e "${WHITE}- Tests réguliers (tous les 3-6 mois) :${NC}"
+                        echo -e "       - Vérifiez le déchiffrement${NC}"
+                        echo -e "       - Testez la restauration depuis sauvegarde${NC}"
+                        echo -e "${YELLOW}-----------------------------------------------${NC}\n"
+
+                        echo -e "${BLUE_BRIGHT} Info : ${WHITE}G.Cert permettra d'administrer vos clés GPG : (génération, validité, révocation, suppression)${NC}"
+                                        
+                        enter
+                
                 while true; do
 
                 clear
