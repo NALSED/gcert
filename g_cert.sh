@@ -300,34 +300,6 @@ afficher_bienvenue
                     exit 1
                 fi
                 
-                
-                
-
-
-
-
-
-
-
-
-
-
-
-
-
-        
-
-
-
-
-
-
-
-
-
-
-
-
                 # === DROITS ===
                 
                 # Vérification des permissions du répertoire /var/log/gcert_install
@@ -369,7 +341,7 @@ afficher_bienvenue
                 msg="Test de la connexion WAN en cours "
                 
                 BLA::start_loading_animation "$msg" "${BLA_passing_dots[@]}"
-                sleep 3
+                sleep 2
                 
                 # Effectuer le ping
                 if ping -c 1 "1.1.1.1" > /dev/null 2>> "$ERROR_LOG"; then
@@ -500,7 +472,7 @@ afficher_bienvenue
                                 if [ ${#absent[@]} -eq 0 ]; then
                                     echo -e "${GREEN}Tous les paquets requis sont déjà installés.${NC}"
                                 else
-                                    echo -e "${YELLOW}=== INSTALLATION EN COURS ===${NC}\n"
+                                    echo -e "${YELLOW}=== INSTALLATION EN COURS ===${NC}\n\n\n"
 
                                     for pkg in "${absent[@]}"; do
 
@@ -681,8 +653,8 @@ afficher_bienvenue
                                                 enter
                                             fi
                                     else
-                                        echo -e "${GREEN}Le répertoire ${WHITE}/etc/vault.d${NC} existe déjà, l'instalation va poursuivre${NC}"
-                                        sleep 2
+                                        echo -e "\n\n${GREEN}Le répertoire ${WHITE}/etc/vault.d${NC} existe déjà, l'instalation va poursuivre${NC}"
+                                        sleep 3
                                     fi
                                 
                                 else
@@ -1234,7 +1206,7 @@ EOF
                                 echo -e " ${WHITE}[12]${NC}${WHITE}Clé Privée Certificat => Restrictions des droits${NC}"
                                 echo -e "    └── ${WHITE}[13]${NC}${YELLOW}Script pour renouvellement + inscription Systemd${NC}\n"
                                 
-                                sleep 4
+                                sleep 3
                                 
                                 # Création de la clé privée
                                 sudo openssl genrsa -out /etc/vault.d/vault.key > /dev/null 2>> "$ERROR_LOG" && echo "/etc/vault.d/vault.key" >> "$INSTALL_LOG" 
@@ -1247,13 +1219,13 @@ EOF
                                         
                                         clear
                                         afficher_bienvenue
-                                        echo -e "${GREEN}OK : Clé privée ${WHITE}/etc/vault.d/vault.key${NC} ${GREEN}créée.${NC}"
-                                        echo -e "\n${RED} Avertissement :${NC}"
+                                        echo -e "${GREEN}OK : Clé privée ${WHITE}/etc/vault.d/vault.key${NC} ${GREEN}créée.${NC}\n\n"
+                                        echo -e "\n${RED}=== Avertissement ===${NC}"
                                         echo -e "${YELLOW}--------------------------------------------------${NC}"
                                         echo -e "${WHITE}1. Stockez la clé dans un emplacement sécurisé.${NC}"
                                         echo -e "${WHITE}2. Limitez l'accès aux utilisateurs autorisés.${NC}"
                                         echo -e "${WHITE}3. Effectuez des sauvegardes régulières.${NC}"
-                                        echo -e "${YELLOW}--------------------------------------------------${NC}"                                        
+                                        echo -e "${YELLOW}--------------------------------------------------${NC}\n"                                        
                                         
                                         enter
                                     else
@@ -1294,7 +1266,7 @@ EOF
                                     echo -e " ${WHITE}[12]${NC}${WHITE}Clé Privée Certificat => Restrictions des droits${NC}"
                                     echo -e "    └── ${WHITE}[13]${NC}${YELLOW}Script pour renouvellement + inscription Systemd${NC}\n"
 
-                                    sleep 4
+                                    sleep 3
                                     
                                     # Test présence CSR
                                     if [ -f /etc/vault.d/vault.csr ]; then
@@ -1319,7 +1291,7 @@ EOF
                                     read -p "Veuillez entrer une valeur pour la durée de validité du certificat (Format => jour entre 1 et 365) : " days_vault
 
                                     if [[ "$days_vault" =~ ^[0-9]+$ ]] && (( days_vault >= 1 && days_vault <= 365 )); then
-                                        echo -e "${GREEN}OK : Format de la date valide ${NC}"
+                                        echo -e "\n${GREEN}OK : Format de la date valide ${NC}"
                                         sleep 2
                                         break
                                     else
@@ -1349,7 +1321,7 @@ EOF
 
                                     echo -e "${YELLOW}Veuillez choisir un mode de CA : ${NC}\n"
                                     
-                                    echo -e "-${INVERSE}[1]${NC}- ${WHITE}Certificat auto signé${NC}" 
+                                    echo -e "-${INVERSE}[1]${NC}- ${WHITE}Certificat auto-signé${NC}" 
                                     echo -e "-${INVERSE}[2]${NC}- ${WHITE}CA Existante${NC}"    
                                     echo -e "-${INVERSE}[3]${NC}- ${WHITE}Sortie Installation${NC}\n"
 
@@ -1402,8 +1374,8 @@ EOF
                                             
                                             clear
                                             afficher_bienvenue
-                                            echo -e "${GREEN}OK : Certificat =>${NC} ${WHITE}/etc/vault.d/vault.crt${NC} créé avec succès et valide."
-                                            sleep 5
+                                            echo -e "${GREEN}OK : Certificat =>${NC} ${WHITE}/etc/vault.d/vault.crt${NC} créé avec succès ET valide."
+                                            sleep 3
                                             break
                                         else
                                             echo -e "${RED}ERREUR : Problème lors de la création du fichier ${WHITE}/etc/vault.d/vault.crt${NC}"
@@ -1573,7 +1545,8 @@ EOF
                                                 clear
                                                 afficher_bienvenue
 
-                                                echo -e "${CYAN_BRIGHT}===Sécurisation de la clé privée avec des permissions strictes et mise en place d'une tâche de renouvellement automatique via Systemd. ===${NC}\n\n"
+                                                echo -e "${CYAN_BRIGHT}=== Sécurisation de la clé privée et renouvellement automatique avec Systemd ===${NC}\n\n"
+
                                                 echo -e "  - Le fichier => ${WHITE}/etc/vault.d/vault.csr${NC} est supprimé pour sécurité."
                                                 echo -e "  - La clé privée ${WHITE}/etc/vault.d/vault.key${NC} : Permissions appliquées : ${WHITE}chown vault:vault${NC} et ${WHITE}chmod 600${NC} "
                                                 echo -e "  - Renouvellement automatique du certificat via Script et Systemd : .Service / .Timer."
@@ -1610,7 +1583,7 @@ EOF
                                                         clear
                                                         afficher_bienvenue
                                                         echo -e "Suppression de : ${WHITE}/etc/vault.d/vault.csr${NC}"
-                                                        sleep 3
+                                                        sleep 2
 
                                                         sudo rm /etc/vault.d/vault.csr > /dev/null 2>> "$ERROR_LOG"
 
@@ -1657,7 +1630,7 @@ EOF
                                                         afficher_bienvenue
 
                                                         echo -e "${WHITE}Droit et propriétaire vault_tls.cnf ${NC}"
-                                                        sleep 3
+                                                        sleep 2
 
                                                         # Appliquer les droits
                                                         sudo chmod 640 /etc/vault.d/vault_tls.cnf > /dev/null 2>> "$ERROR_LOG"
@@ -1819,7 +1792,7 @@ EOF
                                                             echo -e "    └── ${GREEN}[√]${NC}${YELLOW}Script pour renouvellement + inscription Systemd${NC}\n"
                                                             
                                                             sleep 3
-                                                            break 2
+                                                            break 
                                                         
                                                         else
                                                             echo -e "${RED}ERREUR : Problème avec systemd...${NC}"
