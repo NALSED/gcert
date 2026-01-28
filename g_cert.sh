@@ -1861,8 +1861,9 @@ EOF
 
 
                                                             enter
-                                                            break 2
+                                                            
 
+                                                        fi
                                         elif [[ "$secu_ssl" =~ ^[nN]$ ]]; then
                                             break
 
