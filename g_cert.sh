@@ -320,7 +320,7 @@ afficher_bienvenue
                 else
                     echo -e "${RED}ERREUR : Les permissions du fichier ${WHITE}/tmp/install.log${RED} sont incorrectes.${NC}"
                     echo -e "Veuillez corriger les permissions avec la commande : sudo chmod 644 /tmp/install.log"
-                    sleep 3
+                    sleep 4
                     exit 1
                 fi
 
@@ -436,7 +436,7 @@ afficher_bienvenue
                           
                                 clear
                                 afficher_bienvenue
-                                echo -e "\n${YELLOW}=== LISTE DES PAQUETS NECESSAIRES ===${NC}\n"
+                                echo -e "\n${YELLOW}=== LISTE DES PAQUETS NECESSAIRES ===${NC}\n\n\n"
 
                                 # Tableaux pour stocker les paquets
                                 present=()
@@ -462,7 +462,7 @@ afficher_bienvenue
                                 for pkg in "${absent[@]}"; do
                                     echo -e "${RED}$pkg${NC}"
                                 done
-                                sleep 3
+                                sleep 4
 
                                 # === INSTALL ===
 
@@ -542,7 +542,7 @@ afficher_bienvenue
 
                                 # Récapitulation Installation Vault
 
-                                echo -e "${BLUE_BRIGHT}=== Phases d'installation et de configuration de Vault ===${NC}\n"
+                                echo -e "${BLUE_BRIGHT}=== Phases d'installation et de configuration de Vault ===${NC}\n\n"
 
                                 echo -e "${WHITE}[1] Installation de Vault :${NC}"
                                 echo -e "   - Ajout du dépôt HashiCorp et installation du paquet Vault."
@@ -572,7 +572,7 @@ afficher_bienvenue
 
                                 echo -e "${WHITE}[7] Audit et Sécurité :${NC}"
                                 echo -e "   - Activation des logs d'audit."
-                                echo -e "   - Traçabilité des opérations Vault.\n"
+                                echo -e "   - Traçabilité des opérations Vault.\n\n\n"
 
                                 enter
 
@@ -653,7 +653,7 @@ afficher_bienvenue
                                                 enter
                                             fi
                                     else
-                                        echo -e "\n\n${GREEN}Le répertoire ${WHITE}/etc/vault.d${NC} existe déjà, l'instalation va poursuivre${NC}"
+                                        echo -e "\n\n${GREEN}Le répertoire ${WHITE}/etc/vault.d${NC} existe déjà, l'installation va poursuivre${NC}"
                                         sleep 3
                                     fi
                                 
@@ -890,7 +890,7 @@ afficher_bienvenue
                                                 
                                                 clear
                                                 afficher_bienvenue
-                                                read -p "Veuillez indiquer le Nom principal du serveur (Common Name) : " cn_vault
+                                                read -p "Veuillez indiquer le Nom principal du serveur Vault(Common Name) : " cn_vault
 
                                                 clear
                                                 afficher_bienvenue
@@ -1053,7 +1053,7 @@ EOF
                 
                                             while true; do
                                             
-                                                read -p "Veuillez indiquer le Nom principal du serveur (Common Name) : " cn_vault
+                                                read -p "Veuillez indiquer le Nom principal du serveur Vault(Common Name) : " cn_vault
 
                                                 clear
                                                 afficher_bienvenue
@@ -1171,6 +1171,19 @@ subjectAltName = @alt_names
 DNS.1 = $dns_vault
 IP.1  = $ip_vault
 EOF
+                                            if [ -f /etc/vault.d/vault_tls.cnf ]; then
+                                        
+                                                clear
+                                                afficher_bienvenue
+                                                echo -e "${GREEN}OK : Fichier ${WHITE}/etc/vault.d/vault_tls.cnf${NC}${GREEN} créé avec succés.${NC}"
+                                                sleep 4
+                                            else
+                                                echo -e "${RED}ERREUR : Problème lors de la création du fichier ${WHITE}/etc/vault.d/vault_tls.cnf${NC}"
+                                                sleep 3
+                                                clean_up_error
+                                            fi
+
+
 
                                     break
                                     else
@@ -1220,12 +1233,12 @@ EOF
                                         clear
                                         afficher_bienvenue
                                         echo -e "${GREEN}OK : Clé privée ${WHITE}/etc/vault.d/vault.key${NC} ${GREEN}créée.${NC}\n\n"
-                                        echo -e "\n${RED}=== Avertissement ===${NC}"
-                                        echo -e "${YELLOW}--------------------------------------------------${NC}"
+                                        echo -e "\n${RED}=== Avertissement ===${NC}\n"
+                                        echo -e "${YELLOW}-----------------------------------------------${NC}"
                                         echo -e "${WHITE}1. Stockez la clé dans un emplacement sécurisé.${NC}"
                                         echo -e "${WHITE}2. Limitez l'accès aux utilisateurs autorisés.${NC}"
                                         echo -e "${WHITE}3. Effectuez des sauvegardes régulières.${NC}"
-                                        echo -e "${YELLOW}--------------------------------------------------${NC}\n"                                        
+                                        echo -e "${YELLOW}-----------------------------------------------${NC}\n"                                        
                                         
                                         enter
                                     else
@@ -1549,7 +1562,7 @@ EOF
 
                                                 echo -e "  - Le fichier => ${WHITE}/etc/vault.d/vault.csr${NC} est supprimé pour sécurité."
                                                 echo -e "  - La clé privée ${WHITE}/etc/vault.d/vault.key${NC} : Permissions appliquées : ${WHITE}chown vault:vault${NC} et ${WHITE}chmod 600${NC} "
-                                                echo -e "  - Renouvellement automatique du certificat via Script et Systemd : .Service / .Timer."
+                                                echo -e "  - ${WHITE}Renouvellement automatique du certificat via ${WHITE}Script${NC} et ${WHITE}Systemd${NC}: .Service / .Timer."
                                                 echo -e "  - ${YELLOW}**Note**${NC} : Le renouvellement automatique se fera tous les ${WHITE}${days_timer}${NC} jours.\n\n\n"
 
                                                 enter
@@ -1860,15 +1873,29 @@ EOF
                                 echo -e "${YELLOW}============================================================${NC}"
                                 echo -e "${WHITE}             Récapitulatif des étapes d'installation${NC}"
                                 echo -e "${YELLOW}============================================================${NC}\n\n"
-                               
+                            
                                 echo -e "${GREEN}[√] Installation des prérequis...${NC}" 
                                 echo -e "${GREEN}[√] Installation et configuration de Vault...${NC}"
                                 echo -e "-${INVERSE}[3/5]${NC}- Création de l'environnement Python..." 
                                 echo -e "-${INVERSE}[4/5]${NC}- Création de la clé GPG et des mots de passe..." 
                                 echo -e "-${INVERSE}[5/5]${NC}- Lancement du service G_Cert...\n\n"
                                 
-                               enter
-                        
+                                enter
+
+                                clear
+                                afficher_bienvenue
+                                echo -e "\n${YELLOW}=== INSTALLATION DEPENDANCES PYTHON DANS UN VENV ===${NC}\n\n"
+                                echo -e "${WHITE}• pyfiglet :${NC} pour générer des textes ASCII stylisés."
+                                echo -e "${WHITE}• psutil :${NC} pour récupérer des informations sur le système (CPU, mémoire, disques...)."
+                                echo -e "${WHITE}• cryptography :${NC} pour gérer le chiffrement et les certificats SSL."
+                                echo -e "${WHITE}• python-nmap :${NC} pour effectuer des scans réseau avec nmap via Python."
+                                echo -e "${WHITE}• termcolor :${NC} pour colorer facilement le texte dans le terminal."
+                                echo -e "${WHITE}• colorlog :${NC} pour loguer avec des couleurs et améliorer la lisibilité des logs."
+                                echo -e "${WHITE}• tabulate :${NC} pour afficher des tableaux bien formatés en ligne de commande."
+                                echo -e "${WHITE}• rich :${NC} pour améliorer l'affichage avec des éléments comme des barres de progression, des tables, etc.\n\n\n"
+
+                                enter
+
                         clear
                         afficher_bienvenue
                         echo -e "\n${YELLOW}=== INSTALLATION DEPENDANCES PYTHON DANS UN VENV ===${NC}\n"
@@ -1978,12 +2005,12 @@ echo -e "   - Ne partagez jamais votre mot de passe maître."
                         echo -e "${YELLOW}======================================================================${NC}"
                         echo -e "Pour utiliser ${GREEN}pass${NC}, seule une clé ${GREEN}RSA capable de signer et chiffrer${NC} est compatible."
                         echo -e "\nLes options disponibles lors de la création d'une clé GPG :"
-                        echo -e "  (1) ${GREEN}RSA and RSA${NC}           => signature et chiffrement compatible avec pass"
-                        echo -e "  (2) DSA and Elgamal                  => non compatible"
-                        echo -e "  (3) DSA (sign only)                  => non compatible"
-                        echo -e "  (4) RSA (sign only)                  => non compatible"
-                        echo -e "  (9) ECC (sign and encrypt)           => non compatible (Attention par défaut)"
-                        echo -e " (10) ECC (sign only)                  => non compatible"
+                        echo -e "  (1) ${GREEN}RSA and RSA${NC}           ${WHITE}=> signature et chiffrement compatible avec pass${NC}"
+                        echo -e "  (2) ${RED}DSA and Elgamal${NC}                  => non compatible"
+                        echo -e "  (3) ${RED}DSA (sign only)${NC}                  => non compatible"
+                        echo -e "  (4) ${RED}RSA (sign only)${NC}                  => non compatible"
+                        echo -e "  (9) ${RED}ECC (sign and encrypt)${NC}           => non compatible (Attention par défaut)"
+                        echo -e " (10) ${RED}ECC (sign only)${NC}                  => non compatible"
                         echo -e " (14) Existing key from card           => Clé RSA existante ET RSA chiffrante"
                         echo -e "\n${YELLOW}======================================================================${NC}\n"
                         
@@ -2005,7 +2032,7 @@ echo -e "   - Ne partagez jamais votre mot de passe maître."
                 echo -e "${YELLOW}=== Clé GPG ===${NC}\n\n"
                 echo -e "-${INVERSE}[1]${NC}- ${WHITE}Créer un nouvelle Clé${NC}\n"
                 echo -e "-${INVERSE}[2]${NC}- ${WHITE}Entrer un clé existente${NC}\n"
-                echo -e "-${INVERSE}[3]${NC}-] ${WHITE}Sortir...${NC}\n"
+                echo -e "-${INVERSE}[3]${NC}- ${WHITE}Sortir...${NC}\n"
                                                         
                 read -p "Choisissez une option: " choix_gpg_1
 
@@ -2016,10 +2043,10 @@ echo -e "   - Ne partagez jamais votre mot de passe maître."
                     clear
                     afficher_bienvenue
                     echo -e "${BLUE_BRIGHT}=== Création d'une nouvelle clé GPG ===${NC}\n"
-                    echo -e "${WHITE}Génération interactive de la clé avec GnuPG...${NC}\n\n\n"
-                    echo -e " ${RED}=> !!! RAPPEL: !!!${NC}  (1) ${GREEN}RSA and RSA${NC}  => compatible avec pass"
                     
-                    echo
+                    echo -e " ${RED}=> !!! RAPPEL: !!!${NC}  (1) ${GREEN}RSA and RSA${NC}  => compatible avec pass\n\n\n"
+                    
+                    echo -e "\n${BLUE_BRIGHT}=== Création Clé GPG via GnuPG : ===${NC}\n\n"
                     
                     # Génère une nouvelle clé GPG
                     
@@ -2063,8 +2090,8 @@ echo -e "   - Ne partagez jamais votre mot de passe maître."
                         clear
                         afficher_bienvenue
                         echo -e "${BLUE_BRIGHT}=== Entrer une clé GPG existante ===${NC}\n"
-                        echo -e " ${RED}=> !!! RAPPEL: !!!${NC}  ${WHITE}Vous devez être en possession de la Pass Phrase de la clé...${NC}"
-                        echo
+                        echo -e " ${RED}=> !!! RAPPEL: !!!${NC}  ${WHITE}Vous devez être en possession de la Pass Phrase de la clé...${NC}\n\n"
+                    
                         
                         # MENU
                         echo -e "-${INVERSE}[1]${NC}- ${WHITE}Entrer un Clé...${NC}"
@@ -2098,7 +2125,7 @@ echo -e "   - Ne partagez jamais votre mot de passe maître."
 
                                 # Teste le format du fingerprint => 40 caractères hexadécimaux                      
                                 if [[ "$LAST_CLE" =~ ^[0-9A-Fa-f]{40}$ ]]; then
-                                    echo -e "${WHITE}Clé sélectionnée : ${GREEN}${LAST_CLE}${NC}"
+                                    echo -e "${GREEN}Format correct pour, la clé sélectionnée : ${WHITE}${LAST_CLE}${NC}"
                                 break 2
                                 else
                                     echo -e "${RED}Clé invalide. Doit être 40 caractères hexadécimaux (0-9, A-F).${NC}"
@@ -2550,15 +2577,7 @@ echo -e "   - Ne partagez jamais votre mot de passe maître."
                                 echo -e "${GREEN}[√] Création de la clé GPG et des mots de passe...${NC}" 
                                 echo -e "${GREEN}[√] Lancement du service G_Cert...${NC}\n\n"
                                 
-                                while true; do
-                            read -p "Appuyez sur [Entrée] pour continuer : " input
-                        
-                            if [[ -z "$input" ]]; then
-                                
-                            break
-                            else
-                                echo -e "\n${RED}Erreur : appuyez uniquement sur Entrée.${NC}\n"
-                            fi
+                              enter
                         done
 
                                 
