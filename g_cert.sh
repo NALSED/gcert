@@ -1820,7 +1820,7 @@ EOF
                                                             clear
                                                             afficher_bienvenue
                                                             echo -e "${BLUE_BRIGHT}=== Installation et Configuration de Vault ===${NC}\n"
-                                                            echo -e "${WHITE}=== Fin de Tache Certificat Vault ===${NC}\n\n"
+                                                            echo -e "${GREEN}=== Fin de Tache Certificat Vault ===${NC}\n\n"
 
                                                             echo -e " ${GREEN}[√]${NC}${WHITE}Ajout du Dépôt HashiCorp${NC}"
                                                             echo -e "    └── ${GREEN}[√]${NC}${YELLOW}Installation du Paquet Vault${NC}"
@@ -1861,7 +1861,7 @@ EOF
                                                             afficher_bienvenue
 
                                                             echo -e "${BLUE_BRIGHT}=== Installation et Configuration de Vault ===${NC}\n"
-                                                            echo -e "${WHITE}=== Probléme renouvellement auto, Certificat Vault ===${NC}\n\n"
+                                                            echo -e "${RED}=== Probléme renouvellement auto, Certificat Vault ===${NC}\n\n"
 
                                                             echo -e " ${GREEN}[√]${NC}${WHITE}Ajout du Dépôt HashiCorp${NC}"
                                                             echo -e "    └── ${GREEN}[√]${NC}${YELLOW}Installation du Paquet Vault${NC}"
@@ -1896,6 +1896,429 @@ EOF
                                         fi
                                         
                                     done
+
+
+
+# =============================== [3] CONFIGURATION DE VAULT ===============================
+
+
+                                    clear
+                                    afficher_bienvenue
+
+                                    echo -e "${BLUE_BRIGHT}=== Installation et Configuration de Vault ===${NC}\n"
+                                    echo -e "${WHITE}=== Installation de Vault ===${NC}\n\n"
+
+                                    echo -e " ${WHITE}[1]${NC}${WHITE}Ajout du Dépôt HashiCorp${NC}"
+                                    echo -e "    └── ${WHITE}[2]${NC}${YELLOW}Installation du Paquet Vault${NC}"
+                                    echo -e "        └── ${WHITE}[3]${NC}${CYAN}Vérification de la présence de Vault${NC}\n"
+
+                                    echo -e " ${WHITE}[4]${NC}${WHITE}Création clé GPG${NC}"
+                                    echo -e "    └── ${WHITE}[5]${NC}${YELLOW}Certificat SSL${NC}"
+                                    echo -e "        └── ${WHITE}[6]${NC}${CYAN}Fichier de configuration${NC}"
+                                    echo -e "        └── ${WHITE}[7]${NC}${CYAN}Clé Privée${NC}"
+                                    echo -e "        └── ${WHITE}[8]${NC}${CYAN}Fichier CSR${NC}"
+                                    echo -e "        └── ${WHITE}[9]${NC}${CYAN}Certificat Vault${NC}"
+                                    echo -e "        └── ${WHITE}[10]${NC}${CYAN}Signature du Certificat${NC}\n"
+
+                                    echo -e " ${WHITE}[11]${NC}${WHITE}Sécurisation du fichier Certificat${NC}\n"
+
+                                    echo -e " ${WHITE}[12]${NC}${WHITE}Clé Privée Certificat => Restrictions des droits${NC}"
+                                    echo -e "    └── ${WHITE}[13]${NC}${YELLOW}Script pour renouvellement + inscription Systemd${NC}\n"
+
+                                    echo -e " ${WHITE}[14]${NC}${WHITE}Configuration de Vault :${NC}"
+                                    echo -e "    └── ${WHITE}[15]${NC}${CYAN}Création du fichier du configuration : /etc/vault.d/vault.hcl.${NC}"
+
+                                    echo -e " ${WHITE}[16]${NC}${WHITE}Démarrage du service :${NC}"
+                                    echo -e "    └── ${WHITE}[17]${NC}${CYAN}Démarrage du service systemd.${NC}"
+
+                                    echo -e " ${WHITE}[18]${NC}${WHITE}Initialisation et Unseal :${NC}"
+                                    echo -e "    └── ${WHITE}[19]${NC}${CYAN}Initialisation de Vault (vault operator init).${NC}"
+                                    echo -e "    └── ${WHITE}[20]${NC}${CYAN}Déverrouillage (unseal) du service (utilisation de 3 clés).${NC}\n"
+
+                                    echo -e " ${WHITE}[21]${NC}${WHITE}PKI et Autorités de Certification :${NC}"
+                                    echo -e "    └── ${WHITE}[22]${NC}${CYAN}Activation des moteurs PKI LAN et WAN.${NC}"
+                                    echo -e "    └── ${WHITE}[23]${NC}${CYAN}Création de la CA root et des CA intermédiaires.${NC}"
+                                    echo -e "    └── ${WHITE}[24]${NC}${CYAN}Définition des rôles de certificats pour les applications et services.${NC}\n"
+
+                                    echo -e " ${WHITE}[25]${NC}${WHITE}Audit et Sécurité :${NC}"
+                                    echo -e "    └── ${WHITE}[26]${NC}${CYAN}Activation des logs d'audit (journaux des actions Vault).${NC}"
+
+                                    enter
+
+                                    
+                                    clear
+                                    afficher_bienvenue
+                                    
+                                    echo -e "${BLUE_BRIGHT}=== Création du fichier de configuration : ${WHITE}/etc/vault.d/vault.hcl${NC} ${BLUE_BRIGHT}===${NC}\n"
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+# =============================== [4] DEMARRAGE SERVICE ===============================
+
+                                    echo -e "${BLUE_BRIGHT}=== Installation et Configuration de Vault ===${NC}\n"
+                                    echo -e "${WHITE}=== Installation de Vault ===${NC}\n\n"
+
+                                    echo -e " ${WHITE}[1]${NC}${WHITE}Ajout du Dépôt HashiCorp${NC}"
+                                    echo -e "    └── ${WHITE}[2]${NC}${YELLOW}Installation du Paquet Vault${NC}"
+                                    echo -e "        └── ${WHITE}[3]${NC}${CYAN}Vérification de la présence de Vault${NC}\n"
+
+                                    echo -e " ${WHITE}[4]${NC}${WHITE}Création clé GPG${NC}"
+                                    echo -e "    └── ${WHITE}[5]${NC}${YELLOW}Certificat SSL${NC}"
+                                    echo -e "        └── ${WHITE}[6]${NC}${CYAN}Fichier de configuration${NC}"
+                                    echo -e "        └── ${WHITE}[7]${NC}${CYAN}Clé Privée${NC}"
+                                    echo -e "        └── ${WHITE}[8]${NC}${CYAN}Fichier CSR${NC}"
+                                    echo -e "        └── ${WHITE}[9]${NC}${CYAN}Certificat Vault${NC}"
+                                    echo -e "        └── ${WHITE}[10]${NC}${CYAN}Signature du Certificat${NC}\n"
+
+                                    echo -e " ${WHITE}[11]${NC}${WHITE}Sécurisation du fichier Certificat${NC}\n"
+
+                                    echo -e " ${WHITE}[12]${NC}${WHITE}Clé Privée Certificat => Restrictions des droits${NC}"
+                                    echo -e "    └── ${WHITE}[13]${NC}${YELLOW}Script pour renouvellement + inscription Systemd${NC}\n"
+
+                                    echo -e " ${WHITE}[14]${NC}${WHITE}Configuration de Vault :${NC}"
+                                    echo -e "    └── ${WHITE}[15]${NC}${CYAN}Création du fichier du configuration : /etc/vault.d/vault.hcl.${NC}"
+
+                                    echo -e " ${WHITE}[16]${NC}${WHITE}Démarrage du service :${NC}"
+                                    echo -e "    └── ${WHITE}[17]${NC}${CYAN}Démarrage du service systemd.${NC}"
+
+                                    echo -e " ${WHITE}[18]${NC}${WHITE}Initialisation et Unseal :${NC}"
+                                    echo -e "    └── ${WHITE}[19]${NC}${CYAN}Initialisation de Vault (vault operator init).${NC}"
+                                    echo -e "    └── ${WHITE}[20]${NC}${CYAN}Déverrouillage (unseal) du service (utilisation de 3 clés).${NC}\n"
+
+                                    echo -e " ${WHITE}[21]${NC}${WHITE}PKI et Autorités de Certification :${NC}"
+                                    echo -e "    └── ${WHITE}[22]${NC}${CYAN}Activation des moteurs PKI LAN et WAN.${NC}"
+                                    echo -e "    └── ${WHITE}[23]${NC}${CYAN}Création de la CA root et des CA intermédiaires.${NC}"
+                                    echo -e "    └── ${WHITE}[24]${NC}${CYAN}Définition des rôles de certificats pour les applications et services.${NC}\n"
+
+                                    echo -e " ${WHITE}[25]${NC}${WHITE}Audit et Sécurité :${NC}"
+                                    echo -e "    └── ${WHITE}[26]${NC}${CYAN}Activation des logs d'audit (journaux des actions Vault).${NC}"
+
+# =============================== [5] INITIALISATION ET UNSEAL ===============================
+
+                                    echo -e "${BLUE_BRIGHT}=== Installation et Configuration de Vault ===${NC}\n"
+                                    echo -e "${WHITE}=== Installation de Vault ===${NC}\n\n"
+
+                                    echo -e " ${WHITE}[1]${NC}${WHITE}Ajout du Dépôt HashiCorp${NC}"
+                                    echo -e "    └── ${WHITE}[2]${NC}${YELLOW}Installation du Paquet Vault${NC}"
+                                    echo -e "        └── ${WHITE}[3]${NC}${CYAN}Vérification de la présence de Vault${NC}\n"
+
+                                    echo -e " ${WHITE}[4]${NC}${WHITE}Création clé GPG${NC}"
+                                    echo -e "    └── ${WHITE}[5]${NC}${YELLOW}Certificat SSL${NC}"
+                                    echo -e "        └── ${WHITE}[6]${NC}${CYAN}Fichier de configuration${NC}"
+                                    echo -e "        └── ${WHITE}[7]${NC}${CYAN}Clé Privée${NC}"
+                                    echo -e "        └── ${WHITE}[8]${NC}${CYAN}Fichier CSR${NC}"
+                                    echo -e "        └── ${WHITE}[9]${NC}${CYAN}Certificat Vault${NC}"
+                                    echo -e "        └── ${WHITE}[10]${NC}${CYAN}Signature du Certificat${NC}\n"
+
+                                    echo -e " ${WHITE}[11]${NC}${WHITE}Sécurisation du fichier Certificat${NC}\n"
+
+                                    echo -e " ${WHITE}[12]${NC}${WHITE}Clé Privée Certificat => Restrictions des droits${NC}"
+                                    echo -e "    └── ${WHITE}[13]${NC}${YELLOW}Script pour renouvellement + inscription Systemd${NC}\n"
+
+                                    echo -e " ${WHITE}[14]${NC}${WHITE}Configuration de Vault :${NC}"
+                                    echo -e "    └── ${WHITE}[15]${NC}${CYAN}Création du fichier du configuration : /etc/vault.d/vault.hcl.${NC}"
+
+                                    echo -e " ${WHITE}[16]${NC}${WHITE}Démarrage du service :${NC}"
+                                    echo -e "    └── ${WHITE}[17]${NC}${CYAN}Démarrage du service systemd.${NC}"
+
+                                    echo -e " ${WHITE}[18]${NC}${WHITE}Initialisation et Unseal :${NC}"
+                                    echo -e "    └── ${WHITE}[19]${NC}${CYAN}Initialisation de Vault (vault operator init).${NC}"
+                                    echo -e "    └── ${WHITE}[20]${NC}${CYAN}Déverrouillage (unseal) du service (utilisation de 3 clés).${NC}\n"
+
+                                    echo -e " ${WHITE}[21]${NC}${WHITE}PKI et Autorités de Certification :${NC}"
+                                    echo -e "    └── ${WHITE}[22]${NC}${CYAN}Activation des moteurs PKI LAN et WAN.${NC}"
+                                    echo -e "    └── ${WHITE}[23]${NC}${CYAN}Création de la CA root et des CA intermédiaires.${NC}"
+                                    echo -e "    └── ${WHITE}[24]${NC}${CYAN}Définition des rôles de certificats pour les applications et services.${NC}\n"
+
+                                    echo -e " ${WHITE}[25]${NC}${WHITE}Audit et Sécurité :${NC}"
+                                    echo -e "    └── ${WHITE}[26]${NC}${CYAN}Activation des logs d'audit (journaux des actions Vault).${NC}"
+
+# =============================== [6] PKI ET CA ===============================
+
+                                    echo -e "${BLUE_BRIGHT}=== Installation et Configuration de Vault ===${NC}\n"
+                                    echo -e "${WHITE}=== Installation de Vault ===${NC}\n\n"
+
+                                    echo -e " ${WHITE}[1]${NC}${WHITE}Ajout du Dépôt HashiCorp${NC}"
+                                    echo -e "    └── ${WHITE}[2]${NC}${YELLOW}Installation du Paquet Vault${NC}"
+                                    echo -e "        └── ${WHITE}[3]${NC}${CYAN}Vérification de la présence de Vault${NC}\n"
+
+                                    echo -e " ${WHITE}[4]${NC}${WHITE}Création clé GPG${NC}"
+                                    echo -e "    └── ${WHITE}[5]${NC}${YELLOW}Certificat SSL${NC}"
+                                    echo -e "        └── ${WHITE}[6]${NC}${CYAN}Fichier de configuration${NC}"
+                                    echo -e "        └── ${WHITE}[7]${NC}${CYAN}Clé Privée${NC}"
+                                    echo -e "        └── ${WHITE}[8]${NC}${CYAN}Fichier CSR${NC}"
+                                    echo -e "        └── ${WHITE}[9]${NC}${CYAN}Certificat Vault${NC}"
+                                    echo -e "        └── ${WHITE}[10]${NC}${CYAN}Signature du Certificat${NC}\n"
+
+                                    echo -e " ${WHITE}[11]${NC}${WHITE}Sécurisation du fichier Certificat${NC}\n"
+
+                                    echo -e " ${WHITE}[12]${NC}${WHITE}Clé Privée Certificat => Restrictions des droits${NC}"
+                                    echo -e "    └── ${WHITE}[13]${NC}${YELLOW}Script pour renouvellement + inscription Systemd${NC}\n"
+
+                                    echo -e " ${WHITE}[14]${NC}${WHITE}Configuration de Vault :${NC}"
+                                    echo -e "    └── ${WHITE}[15]${NC}${CYAN}Création du fichier du configuration : /etc/vault.d/vault.hcl.${NC}"
+
+                                    echo -e " ${WHITE}[16]${NC}${WHITE}Démarrage du service :${NC}"
+                                    echo -e "    └── ${WHITE}[17]${NC}${CYAN}Démarrage du service systemd.${NC}"
+
+                                    echo -e " ${WHITE}[18]${NC}${WHITE}Initialisation et Unseal :${NC}"
+                                    echo -e "    └── ${WHITE}[19]${NC}${CYAN}Initialisation de Vault (vault operator init).${NC}"
+                                    echo -e "    └── ${WHITE}[20]${NC}${CYAN}Déverrouillage (unseal) du service (utilisation de 3 clés).${NC}\n"
+
+                                    echo -e " ${WHITE}[21]${NC}${WHITE}PKI et Autorités de Certification :${NC}"
+                                    echo -e "    └── ${WHITE}[22]${NC}${CYAN}Activation des moteurs PKI LAN et WAN.${NC}"
+                                    echo -e "    └── ${WHITE}[23]${NC}${CYAN}Création de la CA root et des CA intermédiaires.${NC}"
+                                    echo -e "    └── ${WHITE}[24]${NC}${CYAN}Définition des rôles de certificats pour les applications et services.${NC}\n"
+
+                                    echo -e " ${WHITE}[25]${NC}${WHITE}Audit et Sécurité :${NC}"
+                                    echo -e "    └── ${WHITE}[26]${NC}${CYAN}Activation des logs d'audit (journaux des actions Vault).${NC}"
+
+# =============================== [7] AUDIT ET SECURITE===============================
+
+                                    echo -e "${BLUE_BRIGHT}=== Installation et Configuration de Vault ===${NC}\n"
+                                    echo -e "${WHITE}=== Installation de Vault ===${NC}\n\n"
+
+                                    echo -e " ${WHITE}[1]${NC}${WHITE}Ajout du Dépôt HashiCorp${NC}"
+                                    echo -e "    └── ${WHITE}[2]${NC}${YELLOW}Installation du Paquet Vault${NC}"
+                                    echo -e "        └── ${WHITE}[3]${NC}${CYAN}Vérification de la présence de Vault${NC}\n"
+
+                                    echo -e " ${WHITE}[4]${NC}${WHITE}Création clé GPG${NC}"
+                                    echo -e "    └── ${WHITE}[5]${NC}${YELLOW}Certificat SSL${NC}"
+                                    echo -e "        └── ${WHITE}[6]${NC}${CYAN}Fichier de configuration${NC}"
+                                    echo -e "        └── ${WHITE}[7]${NC}${CYAN}Clé Privée${NC}"
+                                    echo -e "        └── ${WHITE}[8]${NC}${CYAN}Fichier CSR${NC}"
+                                    echo -e "        └── ${WHITE}[9]${NC}${CYAN}Certificat Vault${NC}"
+                                    echo -e "        └── ${WHITE}[10]${NC}${CYAN}Signature du Certificat${NC}\n"
+
+                                    echo -e " ${WHITE}[11]${NC}${WHITE}Sécurisation du fichier Certificat${NC}\n"
+
+                                    echo -e " ${WHITE}[12]${NC}${WHITE}Clé Privée Certificat => Restrictions des droits${NC}"
+                                    echo -e "    └── ${WHITE}[13]${NC}${YELLOW}Script pour renouvellement + inscription Systemd${NC}\n"
+
+                                    echo -e " ${WHITE}[14]${NC}${WHITE}Configuration de Vault :${NC}"
+                                    echo -e "    └── ${WHITE}[15]${NC}${CYAN}Création du fichier du configuration : /etc/vault.d/vault.hcl.${NC}"
+
+                                    echo -e " ${WHITE}[16]${NC}${WHITE}Démarrage du service :${NC}"
+                                    echo -e "    └── ${WHITE}[17]${NC}${CYAN}Démarrage du service systemd.${NC}"
+
+                                    echo -e " ${WHITE}[18]${NC}${WHITE}Initialisation et Unseal :${NC}"
+                                    echo -e "    └── ${WHITE}[19]${NC}${CYAN}Initialisation de Vault (vault operator init).${NC}"
+                                    echo -e "    └── ${WHITE}[20]${NC}${CYAN}Déverrouillage (unseal) du service (utilisation de 3 clés).${NC}\n"
+
+                                    echo -e " ${WHITE}[21]${NC}${WHITE}PKI et Autorités de Certification :${NC}"
+                                    echo -e "    └── ${WHITE}[22]${NC}${CYAN}Activation des moteurs PKI LAN et WAN.${NC}"
+                                    echo -e "    └── ${WHITE}[23]${NC}${CYAN}Création de la CA root et des CA intermédiaires.${NC}"
+                                    echo -e "    └── ${WHITE}[24]${NC}${CYAN}Définition des rôles de certificats pour les applications et services.${NC}\n"
+
+                                    echo -e " ${WHITE}[25]${NC}${WHITE}Audit et Sécurité :${NC}"
+                                    echo -e "    └── ${WHITE}[26]${NC}${CYAN}Activation des logs d'audit (journaux des actions Vault).${NC}"
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 # ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 # =============================== DEPENDENCES via PIPX ===============================
 # ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
