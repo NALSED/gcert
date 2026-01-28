@@ -597,12 +597,26 @@ afficher_bienvenue
                                 echo -e "        └── ${WHITE}[10]${NC}${CYAN}Signature du Certificat${NC}\n"
 
                                 echo -e " ${WHITE}[11]${NC}${WHITE}Sécurisation du fichier Certificat${NC}\n"
+                                echo -e "   └──  ${WHITE}[12]${NC}${WHITE}Clé Privée Certificat => Restrictions des droits${NC}"
+                                echo -e "        └── ${WHITE}[13]${NC}${YELLOW}Script pour renouvellement + inscription Systemd${NC}\n"
 
-                                echo -e " ${WHITE}[12]${NC}${WHITE}Clé Privée Certificat => Restrictions des droits${NC}"
-                                echo -e "    └── ${WHITE}[13]${NC}${YELLOW}Script pour renouvellement + inscription Systemd${NC}\n"
+                                echo -e " ${WHITE}[14]${NC}${WHITE}Configuration de Vault :${NC}"
+                                echo -e "    └── ${WHITE}[15]${NC}${CYAN}Création du fichier du configuration : /etc/vault.d/vault.hcl.${NC}"
 
-                                
+                                echo -e " ${WHITE}[16]${NC}${WHITE}Démarrage du service :${NC}"
+                                echo -e "    └── ${WHITE}[17]${NC}${CYAN}Démarrage du service systemd.${NC}"
 
+                                echo -e " ${WHITE}[18]${NC}${WHITE}Initialisation et Unseal :${NC}"
+                                echo -e "    └── ${WHITE}[19]${NC}${CYAN}Initialisation de Vault (vault operator init).${NC}"
+                                echo -e "    └── ${WHITE}[20]${NC}${CYAN}Déverrouillage (unseal) du service (utilisation de 3 clés).${NC}\n"
+
+                                echo -e " ${WHITE}[21]${NC}${WHITE}PKI et Autorités de Certification :${NC}"
+                                echo -e "    └── ${WHITE}[22]${NC}${CYAN}Activation des moteurs PKI LAN et WAN.${NC}"
+                                echo -e "    └── ${WHITE}[23]${NC}${CYAN}Création de la CA root et des CA intermédiaires.${NC}"
+                                echo -e "    └── ${WHITE}[24]${NC}${CYAN}Définition des rôles de certificats pour les applications et services.${NC}\n"
+
+                                echo -e " ${WHITE}[25]${NC}${WHITE}Audit et Sécurité :${NC}"
+                                echo -e "    └── ${WHITE}[26]${NC}${CYAN}Activation des logs d'audit (journaux des actions Vault).${NC}"
 
                                 enter
 
@@ -687,11 +701,29 @@ afficher_bienvenue
                                 echo -e "        └── ${WHITE}[10]${NC}${CYAN}Signature du Certificat${NC}\n"
 
                                 echo -e " ${WHITE}[11]${NC}${WHITE}Sécurisation du fichier Certificat${NC}\n"
+                                echo -e "   └──  ${WHITE}[12]${NC}${WHITE}Clé Privée Certificat => Restrictions des droits${NC}"
+                                echo -e "        └── ${WHITE}[13]${NC}${YELLOW}Script pour renouvellement + inscription Systemd${NC}\n"
 
-                                echo -e " ${WHITE}[12]${NC}${WHITE}Clé Privée Certificat => Restrictions des droits${NC}"
-                                echo -e "    └── ${WHITE}[13]${NC}${YELLOW}Script pour renouvellement + inscription Systemd${NC}\n"
 
-                                enter
+                                echo -e " ${WHITE}[14]${NC}${WHITE}Configuration de Vault :${NC}"
+                                echo -e "    └── ${WHITE}[15]${NC}${CYAN}Création du fichier du configuration : /etc/vault.d/vault.hcl.${NC}"
+
+                                echo -e " ${WHITE}[16]${NC}${WHITE}Démarrage du service :${NC}"
+                                echo -e "    └── ${WHITE}[17]${NC}${CYAN}Démarrage du service systemd.${NC}"
+
+                                echo -e " ${WHITE}[18]${NC}${WHITE}Initialisation et Unseal :${NC}"
+                                echo -e "    └── ${WHITE}[19]${NC}${CYAN}Initialisation de Vault (vault operator init).${NC}"
+                                echo -e "    └── ${WHITE}[20]${NC}${CYAN}Déverrouillage (unseal) du service (utilisation de 3 clés).${NC}\n"
+
+                                echo -e " ${WHITE}[21]${NC}${WHITE}PKI et Autorités de Certification :${NC}"
+                                echo -e "    └── ${WHITE}[22]${NC}${CYAN}Activation des moteurs PKI LAN et WAN.${NC}"
+                                echo -e "    └── ${WHITE}[23]${NC}${CYAN}Création de la CA root et des CA intermédiaires.${NC}"
+                                echo -e "    └── ${WHITE}[24]${NC}${CYAN}Définition des rôles de certificats pour les applications et services.${NC}\n"
+
+                                echo -e " ${WHITE}[25]${NC}${WHITE}Audit et Sécurité :${NC}"
+                                echo -e "    └── ${WHITE}[26]${NC}${CYAN}Activation des logs d'audit (journaux des actions Vault).${NC}"
+                                
+                                sleep 4
 
 
                                 clear
@@ -821,12 +853,29 @@ afficher_bienvenue
                                 echo -e "        └── ${WHITE}[10]${NC}${CYAN}Signature du Certificat${NC}\n"
 
                                 echo -e " ${WHITE}[11]${NC}${WHITE}Sécurisation du fichier Certificat${NC}\n"
+                                echo -e "   └──  ${WHITE}[12]${NC}${WHITE}Clé Privée Certificat => Restrictions des droits${NC}"
+                                echo -e "        └── ${WHITE}[13]${NC}${YELLOW}Script pour renouvellement + inscription Systemd${NC}\n"
 
-                                echo -e " ${WHITE}[12]${NC}${WHITE}Clé Privée Certificat => Restrictions des droits${NC}"
-                                echo -e "    └── ${WHITE}[13]${NC}${YELLOW}Script pour renouvellement + inscription Systemd${NC}\n"
 
+                                echo -e " ${WHITE}[14]${NC}${WHITE}Configuration de Vault :${NC}"
+                                echo -e "    └── ${WHITE}[15]${NC}${CYAN}Création du fichier du configuration : /etc/vault.d/vault.hcl.${NC}"
 
-                                enter
+                                echo -e " ${WHITE}[16]${NC}${WHITE}Démarrage du service :${NC}"
+                                echo -e "    └── ${WHITE}[17]${NC}${CYAN}Démarrage du service systemd.${NC}"
+
+                                echo -e " ${WHITE}[18]${NC}${WHITE}Initialisation et Unseal :${NC}"
+                                echo -e "    └── ${WHITE}[19]${NC}${CYAN}Initialisation de Vault (vault operator init).${NC}"
+                                echo -e "    └── ${WHITE}[20]${NC}${CYAN}Déverrouillage (unseal) du service (utilisation de 3 clés).${NC}\n"
+
+                                echo -e " ${WHITE}[21]${NC}${WHITE}PKI et Autorités de Certification :${NC}"
+                                echo -e "    └── ${WHITE}[22]${NC}${CYAN}Activation des moteurs PKI LAN et WAN.${NC}"
+                                echo -e "    └── ${WHITE}[23]${NC}${CYAN}Création de la CA root et des CA intermédiaires.${NC}"
+                                echo -e "    └── ${WHITE}[24]${NC}${CYAN}Définition des rôles de certificats pour les applications et services.${NC}\n"
+
+                                echo -e " ${WHITE}[25]${NC}${WHITE}Audit et Sécurité :${NC}"
+                                echo -e "    └── ${WHITE}[26]${NC}${CYAN}Activation des logs d'audit (journaux des actions Vault).${NC}"
+
+                                sleep 4
 
                                 clear
                                 afficher_bienvenue
@@ -988,57 +1037,224 @@ afficher_bienvenue
 
                                             # === 3-3) IP serveur Vault ===
                                             while true; do
-                                                clear
-                                                afficher_bienvenue
-                                            
-                                                read -p "Veuillez indiquer l'IP du serveur Vault : " ip_vault
 
-                                                # test format IP
-                                                if validate_ip "$ip_vault"; then
-                                                    
+                                                
+                                                    clear
+                                                    afficher_bienvenue
+
+                                                    echo -e "${CYAN_BRIGHT}=== Configuration des adresses IP pour le certificat SSL de Vault ===${NC}\n\n"
+
+                                                    echo -e "  ${YELLOW}Choix de la configuration réseau :${NC}\n"
+                                                    echo -e "  ${WHITE}[1] Local uniquement (127.0.0.1)${NC}"
+                                                    echo -e "     - Vault accessible uniquement depuis cette machine"
+                                                    echo -e "     - Certificat IP : ${WHITE}127.0.0.1${NC}\n"
+
+                                                    echo -e "  ${WHITE}[2] Réseau local - LAN (0.0.0.0)${NC} ${GREEN}[Recommandé]${NC}"
+                                                    echo -e "     - Vault accessible depuis toutes les machines du réseau local"
+                                                    echo -e "     - Certificat IPs : ${WHITE}IP Privée${NC} (LAN) et ${WHITE}127.0.0.1${NC} (local)"
+
+                                                    echo -e "  ${WHITE}[3] Plusieurs sous-réseaux${NC}"
+                                                    echo -e "     - Vault accessible depuis plusieurs VLANs/sous-réseaux"
+                                                    echo -e "     - Certificat IPs : Toutes les IPs des réseaux + ${WHITE}127.0.0.1${NC}\n"
+
+                                                    echo -e "  ${RED}Note importante si choix [3] :${NC} Le certificat doit contenir ${WHITE}toutes les adresses IP${NC}"
+                                                    echo -e "  que les clients utiliseront pour contacter Vault, sinon erreur SSL.\n\n\n"
+
+                                                    enter
+
                                                     clear
                                                     afficher_bienvenue
                                                     
-                                                    echo -e "${GREEN}Format adresse IP valide${NC}"
-                                                    sleep 2
-
-                                                    while true; do
-                                                        clear
-                                                        afficher_bienvenue
-
-                                                        # Confirmation utilisation adresse IP
-                                                        echo -e "Adresse IP choisie pour Vault = ${WHITE}$ip_vault${NC}\n"       
-                                                        read -p "L'adresse IP est-elle correcte ? y/n : " validation_ip
-
-                                                        if [[ "$validation_ip" =~ ^[yY]$ ]]; then
-                                                        
-                                                            clear
-                                                            afficher_bienvenue
-                                                            echo -e "${GREEN}IP confirmée : ${NC}$ip_vault${NC}${GREEN}...${NC}"
-                                                            sleep 2
-                                                            break 2
-                                                        elif [[ "$validation_ip" =~ ^[nN]$ ]]; then
-                                                            
-                                                            clear
-                                                            afficher_bienvenue
-                                                            echo -e "\n${RED}Recommençons...${NC}"
-                                                            sleep 2
-                                                            break
-                                                        else
-                                                            echo -e "\n${RED}Réponse invalide. Tapez y ou n.${NC}"
-                                                            sleep 2
-                                                        fi
-                                                    done
-                                                else
-                                                    echo -e "\n${RED}Format adresse IP invalide${NC}\n"
-                                                    echo -e "\nRecommençons..."
-                                                    sleep 2
+                                                    echo -e "${YELLOW}Veuillez choisir l'adressage IP : ${NC}\n"
                                                     
-                                                fi
-                                            done
+                                                    echo -e "-${INVERSE}[1]${NC}- ${WHITE}Local Uniquement${NC}" 
+                                                    echo -e "-${INVERSE}[2]${NC}- ${WHITE}Réseau Local${NC}"    
+                                                    echo -e "-${INVERSE}[3]${NC}- ${WHITE}Plusieurs Sous réseaux${NC}"   
+                                                    echo -e "-${INVERSE}[4]${NC}- ${WHITE}Sortie Installation${NC}\n"
+
+                                                    read -p "Choix de l'adressage IP : " choix_adressage_ip
+
+                                                        case "$choix_adressage_ip" in
+
+                                                        1)
+
+                                                            ip_vault="IP.1 = 127.0.0.1"
+
+                                                            echo -e "${CYAN_BRIGHT}=== Choix de l'adressage IP pour le certificat SSL de Vault ===${NC}\n\n"
+                                                            echo -e "  ${WHITE}Local uniquement (127.0.0.1)${NC}"
+                                                            enter
+                                                            break
+                                                        
+                                                        
+                                                        
+                                                        
+                                                        ;;
+
+                                                        2)
+
+                                                            while true; do
+                                                            clear
+                                                            afficher_bienvenue
+                                                            
+                                                            echo -e "${CYAN_BRIGHT}=== Choix de l'adressage IP pour le certificat SSL de Vault ===${NC}\n\n"
+                                                            read -p "Veuillez indiquer l'IP du serveur Vault : " ip_vault_2
+
+                                                            # test format IP
+                                                            if validate_ip "$ip_vault_2"; then
+                                                                
+                                                                clear
+                                                                afficher_bienvenue
+                                                                
+                                                                echo -e "${GREEN}Format adresse IP valide${NC}"
+                                                                sleep 2
+
+                                                                while true; do
+                                                                    clear
+                                                                    afficher_bienvenue
+
+                                                                    # Confirmation utilisation adresse IP
+                                                                    echo -e "${CYAN_BRIGHT}=== Choix de l'adressage IP pour le certificat SSL de Vault ===${NC}\n\n"
+                                                                    echo -e "Adresse IP choisie pour Vault = ${WHITE}$ip_vault_2${NC}\n"       
+                                                                    echo -e "Vault sera joignable en local et depuis le réseau local\n\n"
+                                                                    read -p "L'adresse IP est-elle correcte ? y/n : " validation_ip
+
+                                                                    if [[ "$validation_ip" =~ ^[yY]$ ]]; then
+                                                                    
+                                                                        clear
+                                                                        afficher_bienvenue
+                                                                        echo -e "${GREEN}IP confirmée : ${NC}$ip_vault_2${NC}${GREEN}...${NC}"
+                                                                        sleep 2
+                                                                        
+                                                                        ip_vault="IP.1 = 127.0.0.1\nIP.2 = $ip_vault_2 "
+                                                                        
+                                                                        break 2
+                                                                    
+                                                                    
+                                                                    elif [[ "$validation_ip" =~ ^[nN]$ ]]; then
+                                                                        
+                                                                        clear
+                                                                        afficher_bienvenue
+                                                                        echo -e "\n${RED}Recommençons...${NC}"
+                                                                        sleep 2
+                                                                        break
+                                                                    else
+                                                                        echo -e "\n${RED}Réponse invalide. Tapez y ou n.${NC}"
+                                                                        sleep 2
+                                                                    fi
+                                                                done
+                                                            else
+                                                                echo -e "\n${RED}Format adresse IP invalide${NC}\n"
+                                                                echo -e "\nRecommençons..."
+                                                                sleep 2
+                                                                
+                                                            fi
+                                                        done
+                                                        
+                                                        
+                                                        
+                                                        
+                                                        
+                                                        
+                                                        break
+                                                        ;;
+
+                                                        3)
+                                                            clear
+                                                            afficher_bienvenue
+
+                                                            echo -e "${CYAN_BRIGHT}=== Choix de l'adressage IP pour le certificat SSL de Vault ===${NC}\n\n"
+                                                        
+                                                        
+                                                            echo -e "  ${RED}Attention :${NC} Vous allez devoir entrer ${WHITE}toutes les adresses IP${NC}"
+                                                            echo -e "  que les clients utiliseront pour contacter Vault, sinon erreur SSL.\n\n\n"
+                                                        
+                                                            while true; do
+                                                                clear
+                                                                afficher_bienvenue
+
+                                                                # Exécution du script 1 pour la saisie des adresses IP
+                                                                vault_ip="IP.1  = 127.0.0.1"
+                                                                ip_index=2
+
+                                                                # Ajouter l'IP locale de la machine
+                                                                ip_locale=$(ip route get 1 | awk '{print $7; exit}')
+                                                                vault_ip="${vault_ip}\nIP.${ip_index}  = ${ip_locale}"
+                                                                ((ip_index++))
+
+                                                                # Boucle pour ajouter des IPs supplémentaires
+                                                                while true; do
+                                                                    echo ""
+                                                                    echo "IPs actuellement configurées :"
+                                                                    echo -e "$vault_ip" | sed 's/\\n/\n/g'
+                                                                    echo ""
+                                                                    
+                                                                    read -p "Ajouter une IP supplémentaire ? (adresse IP ou [ ENTER ] pour terminer) : " nouvelle_ip
+                                                                        
+                                                                    while true; do
+
+                                                                        # Test format IP
+                                                                        if validate_ip "$nouvelle_ip"; then
+
+                                                                            # Si vide, on sort de la boucle
+                                                                            if [ -z "$nouvelle_ip" ]; then
+                                                                                break 2
+                                                                            fi
+                                                                            
+                                                                            # Ajouter l'IP à la variable
+                                                                            vault_ip="${vault_ip}\nIP.${ip_index}  = ${nouvelle_ip}"
+                                                                            ((ip_index++))
 
 
+                                                                        else
+                                                                            echo -e "\n${RED}Format adresse IP invalide${NC}\n"
+                                                                            echo -e "\nRecommençons..."
+                                                                            sleep 2
+                                                                            
+                                                                        fi
+                                                                    done
+
+                                                                done
+
+                                                                # Demande de validation de la configuration IP
+                                                                read -p "La configuration de l'adressage IP est-elle correcte ? y/n : " validation_adressage
+
+                                                                if [[ "$validation_adressage" =~ ^[yY]$ ]]; then
+                                                                    # Configuration correcte, on continue
+                                                                    echo -e "\n${GREEN}Configuration des IPs validée.${NC}"
+                                                                    break
+
+                                                                elif [[ "$validation_adressage" =~ ^[nN]$ ]]; then
+                                                                    # Si choix négatif, recommencer l'opération de saisie des IPs
+                                                                    clear
+                                                                    afficher_bienvenue
+                                                                    echo -e "\n${RED}Recommençons...${NC}"
+                                                                    sleep 2
+                                                                    continue  # Recommence la boucle pour saisir les IPs
+
+                                                                else
+                                                                    # Si réponse invalide, demande à nouveau
+                                                                    echo -e "\n${RED}Réponse invalide. Tapez y ou n.${NC}"
+                                                                    sleep 2
+                                                                fi
+                                                            done
+
+                                                done    
+                                                    
+                                                    ;;
+                                                    4)
+                                                        clean_up_choice         
+                                                    ;;
+
+                                                    *)
+                                                        echo -e "${RED}Erreur, Réponse invalide.${NC}"
+                                                    ;;
+                                                    esac
+
+                                                done
                                                 
+
+
+                                                # === FICHIER DE CONFIGURATION AVEC DOMAINE ===
                                                 # /etc/vault.d/vault_tls.cnf
                                                 clear
                                                 afficher_bienvenue
@@ -1140,53 +1356,228 @@ EOF
                                                     echo -e "${RED}Réponse invalide. Tapez y ou n.${NC}"
                                                 fi
                                             done
-
-                                            while true; do
-                                                
                                                 
                                                 # === 3-3) Ip serveur Vault ===
-                                                clear
-                                                afficher_bienvenue
+                                            
+
+                                                while true; do
 
                                                 
-                                                read -p "Veuillez indiquer l'IP du serveur Vault : " ip_vault
+                                                    clear
+                                                    afficher_bienvenue
 
-                                                # Test IP
-                                                if validate_ip "$ip_vault"; then
-                                                    echo -e "${GREEN}Format adresse IP valide${NC}"
-                                                    sleep 2
+                                                    echo -e "${CYAN_BRIGHT}=== Configuration des adresses IP pour le certificat SSL de Vault ===${NC}\n\n"
 
-                                                    while true; do
-                                                        clear
-                                                        afficher_bienvenue
+                                                    echo -e "  ${YELLOW}Choix de la configuration réseau :${NC}\n"
+                                                    echo -e "  ${WHITE}[1] Local uniquement (127.0.0.1)${NC}"
+                                                    echo -e "     - Vault accessible uniquement depuis cette machine"
+                                                    echo -e "     - Certificat IP : ${WHITE}127.0.0.1${NC}\n"
 
-                                                        # Confirmation utilisation adresse IP
-                                                        echo -e "Adresse IP choisie pour Vault = ${WHITE}$ip_vault${NC}\n"       
-                                                        read -p "L'adresse IP est-elle correcte ? y/n : " validation_ip
+                                                    echo -e "  ${WHITE}[2] Réseau local - LAN (0.0.0.0)${NC} ${GREEN}[Recommandé]${NC}"
+                                                    echo -e "     - Vault accessible depuis toutes les machines du réseau local"
+                                                    echo -e "     - Certificat IPs : ${WHITE}IP Privée${NC} (LAN) et ${WHITE}127.0.0.1${NC} (local)"
 
-                                                        if [[ "$validation_ip" =~ ^[yY]$ ]]; then
-                                                            
+                                                    echo -e "  ${WHITE}[3] Plusieurs sous-réseaux${NC}"
+                                                    echo -e "     - Vault accessible depuis plusieurs VLANs/sous-réseaux"
+                                                    echo -e "     - Certificat IPs : Toutes les IPs des réseaux + ${WHITE}127.0.0.1${NC}\n"
+
+                                                    echo -e "  ${RED}Note importante si choix [3] :${NC} Le certificat doit contenir ${WHITE}toutes les adresses IP${NC}"
+                                                    echo -e "  que les clients utiliseront pour contacter Vault, sinon erreur SSL.\n\n\n"
+
+                                                    enter
+
+                                                    clear
+                                                    afficher_bienvenue
+
+                                                    echo -e "${YELLOW}Veuillez choisir l'adressage IP : ${NC}\n"
+                                                    
+                                                    echo -e "-${INVERSE}[1]${NC}- ${WHITE}Local Uniquement${NC}" 
+                                                    echo -e "-${INVERSE}[2]${NC}- ${WHITE}Réseau Local${NC}"    
+                                                    echo -e "-${INVERSE}[3]${NC}- ${WHITE}Plusieurs Sous réseaux${NC}"   
+                                                    echo -e "-${INVERSE}[4]${NC}- ${WHITE}Sortie Installation${NC}\n"
+
+                                                    read -p "Choix de l'adressage IP : " choix_adressage_ip
+
+                                                        case "$choix_adressage_ip" in
+
+                                                        1)
+
+                                                            ip_vault="IP.1 = 127.0.0.1"
+
+                                                            echo -e "${CYAN_BRIGHT}=== Choix de l'adressage IP pour le certificat SSL de Vault ===${NC}\n\n"
+                                                            echo -e "  ${WHITE}Local uniquement (127.0.0.1)${NC}"
+                                                            enter
+                                                            break
+                                                        
+                                                        
+                                                        
+                                                        
+                                                        ;;
+
+                                                        2)
+
+                                                            while true; do
                                                             clear
                                                             afficher_bienvenue
-                                                            echo -e "${GREEN}IP confirmée : ${NC} $ip_vault"
-                                                            sleep 2
-                                                            break 2
-                                                        elif [[ "$validation_ip" =~ ^[nN]$ ]]; then
-                                                            echo -e "${RED}Recommençons...${NC}"
-                                                            sleep 1
-                                                            break
-                                                        else
-                                                            echo -e "${RED}Réponse invalide. Tapez y ou n.${NC}"
-                                                            sleep 2
-                                                        fi
-                                                    done
-                                                else
-                                                    echo -e "${RED}Format adresse IP invalide${NC}"
-                                                    sleep 2
-                                                fi
-                                            done
+                                                            
+                                                            echo -e "${CYAN_BRIGHT}=== Choix de l'adressage IP pour le certificat SSL de Vault ===${NC}\n\n"
+                                                            read -p "Veuillez indiquer l'IP du serveur Vault : " ip_vault_2
+
+                                                            # test format IP
+                                                            if validate_ip "$ip_vault_2"; then
+                                                                
+                                                                clear
+                                                                afficher_bienvenue
+                                                                
+                                                                echo -e "${GREEN}Format adresse IP valide${NC}"
+                                                                sleep 2
+
+                                                                while true; do
+                                                                    clear
+                                                                    afficher_bienvenue
+
+                                                                    # Confirmation utilisation adresse IP
+                                                                    echo -e "${CYAN_BRIGHT}=== Choix de l'adressage IP pour le certificat SSL de Vault ===${NC}\n\n"
+                                                                    echo -e "Adresse IP choisie pour Vault = ${WHITE}$ip_vault_2${NC}\n"       
+                                                                    echo -e "Vault sera joignable en local et depuis le réseau local\n\n"
+                                                                    read -p "L'adresse IP est-elle correcte ? y/n : " validation_ip
+
+                                                                    if [[ "$validation_ip" =~ ^[yY]$ ]]; then
+                                                                    
+                                                                        clear
+                                                                        afficher_bienvenue
+                                                                        echo -e "${GREEN}IP confirmée : ${NC}$ip_vault_2${NC}${GREEN}...${NC}"
+                                                                        sleep 2
+                                                                        
+                                                                        ip_vault="IP.1 = 127.0.0.1\nIP.2 = $ip_vault_2 "
+                                                                        
+                                                                        break 2
+                                                                    
+                                                                    
+                                                                    elif [[ "$validation_ip" =~ ^[nN]$ ]]; then
+                                                                        
+                                                                        clear
+                                                                        afficher_bienvenue
+                                                                        echo -e "\n${RED}Recommençons...${NC}"
+                                                                        sleep 2
+                                                                        break
+                                                                    else
+                                                                        echo -e "\n${RED}Réponse invalide. Tapez y ou n.${NC}"
+                                                                        sleep 2
+                                                                    fi
+                                                                done
+                                                            else
+                                                                echo -e "\n${RED}Format adresse IP invalide${NC}\n"
+                                                                echo -e "\nRecommençons..."
+                                                                sleep 2
+                                                                
+                                                            fi
+                                                        done
+                                                        
+                                                        
+                                                        
+                                                        
+                                                        
+                                                        
+                                                        break
+                                                        ;;
+
+                                                        3)
+                                                            clear
+                                                            afficher_bienvenue
+
+                                                            echo -e "${CYAN_BRIGHT}=== Choix de l'adressage IP pour le certificat SSL de Vault ===${NC}\n\n"
+                                                        
+                                                        
+                                                            echo -e "  ${RED}Attention :${NC} Vous allez devoir entrer ${WHITE}toutes les adresses IP${NC}"
+                                                            echo -e "  que les clients utiliseront pour contacter Vault, sinon erreur SSL.\n\n\n"
+                                                        
+                                                            while true; do
+                                                                clear
+                                                                afficher_bienvenue
+
+                                                                # Exécution du script 1 pour la saisie des adresses IP
+                                                                vault_ip="IP.1  = 127.0.0.1"
+                                                                ip_index=2
+
+                                                                # Ajouter l'IP locale de la machine
+                                                                ip_locale=$(ip route get 1 | awk '{print $7; exit}')
+                                                                vault_ip="${vault_ip}\nIP.${ip_index}  = ${ip_locale}"
+                                                                ((ip_index++))
+
+                                                                # Boucle pour ajouter des IPs supplémentaires
+                                                                while true; do
+                                                                    echo ""
+                                                                    echo "IPs actuellement configurées :"
+                                                                    echo -e "$vault_ip" | sed 's/\\n/\n/g'
+                                                                    echo ""
+                                                                    
+                                                                    read -p "Ajouter une IP supplémentaire ? (adresse IP ou [ ENTER ] pour terminer) : " nouvelle_ip
+                                                                        
+                                                                    while true; do
+
+                                                                        # Test format IP
+                                                                        if validate_ip "$nouvelle_ip"; then
+
+                                                                            # Si vide, on sort de la boucle
+                                                                            if [ -z "$nouvelle_ip" ]; then
+                                                                                break 2
+                                                                            fi
+                                                                            
+                                                                            # Ajouter l'IP à la variable
+                                                                            vault_ip="${vault_ip}\nIP.${ip_index}  = ${nouvelle_ip}"
+                                                                            ((ip_index++))
 
 
+                                                                        else
+                                                                            echo -e "\n${RED}Format adresse IP invalide${NC}\n"
+                                                                            echo -e "\nRecommençons..."
+                                                                            sleep 2
+                                                                            
+                                                                        fi
+                                                                    done
+
+                                                                done
+
+                                                                # Demande de validation de la configuration IP
+                                                                read -p "La configuration de l'adressage IP est-elle correcte ? y/n : " validation_adressage
+
+                                                                if [[ "$validation_adressage" =~ ^[yY]$ ]]; then
+                                                                    # Configuration correcte, on continue
+                                                                    echo -e "\n${GREEN}Configuration des IPs validée.${NC}"
+                                                                    break
+
+                                                                elif [[ "$validation_adressage" =~ ^[nN]$ ]]; then
+                                                                    # Si choix négatif, recommencer l'opération de saisie des IPs
+                                                                    clear
+                                                                    afficher_bienvenue
+                                                                    echo -e "\n${RED}Recommençons...${NC}"
+                                                                    sleep 2
+                                                                    continue  # Recommence la boucle pour saisir les IPs
+
+                                                                else
+                                                                    # Si réponse invalide, demande à nouveau
+                                                                    echo -e "\n${RED}Réponse invalide. Tapez y ou n.${NC}"
+                                                                    sleep 2
+                                                                fi
+                                                            done
+
+                                                done    
+                                                    
+                                                    ;;
+                                                    4)
+                                                        clean_up_choice         
+                                                    ;;
+
+                                                    *)
+                                                        echo -e "${RED}Erreur, Réponse invalide.${NC}"
+                                                    ;;
+                                                    esac
+
+                                                done
+                                                
+
+                                            # === FICHIER DE CONFIGURATION AVEC DOMAINE ===
                                             # /etc/vault.d/vault_tls.cnf
                                             sudo tee /etc/vault.d/vault_tls.cnf <<-EOF > /dev/null 2>> "$ERROR_LOG" && echo "/etc/vault.d/vault_tls.cnf" >> "$INSTALL_LOG"
 [ req ]
@@ -1204,7 +1595,7 @@ subjectAltName = @alt_names
 
 [ alt_names ]
 DNS.1 = $dns_vault
-IP.1  = $ip_vault
+$ip_vault
 EOF
                                             if [ -f /etc/vault.d/vault_tls.cnf ]; then
                                         
@@ -1250,9 +1641,26 @@ EOF
                                 echo -e "        └── ${WHITE}[10]${NC}${CYAN}Signature du Certificat${NC}\n"
 
                                 echo -e " ${WHITE}[11]${NC}${WHITE}Sécurisation du fichier Certificat${NC}\n"
+                                echo -e "   └──  ${WHITE}[12]${NC}${WHITE}Clé Privée Certificat => Restrictions des droits${NC}"
+                                echo -e "        └── ${WHITE}[13]${NC}${YELLOW}Script pour renouvellement + inscription Systemd${NC}\n"
+                                
+                                echo -e " ${WHITE}[14]${NC}${WHITE}Configuration de Vault :${NC}"
+                                echo -e "    └── ${WHITE}[15]${NC}${CYAN}Création du fichier du configuration : /etc/vault.d/vault.hcl.${NC}"
 
-                                echo -e " ${WHITE}[12]${NC}${WHITE}Clé Privée Certificat => Restrictions des droits${NC}"
-                                echo -e "    └── ${WHITE}[13]${NC}${YELLOW}Script pour renouvellement + inscription Systemd${NC}\n"
+                                echo -e " ${WHITE}[16]${NC}${WHITE}Démarrage du service :${NC}"
+                                echo -e "    └── ${WHITE}[17]${NC}${CYAN}Démarrage du service systemd.${NC}"
+
+                                echo -e " ${WHITE}[18]${NC}${WHITE}Initialisation et Unseal :${NC}"
+                                echo -e "    └── ${WHITE}[19]${NC}${CYAN}Initialisation de Vault (vault operator init).${NC}"
+                                echo -e "    └── ${WHITE}[20]${NC}${CYAN}Déverrouillage (unseal) du service (utilisation de 3 clés).${NC}\n"
+
+                                echo -e " ${WHITE}[21]${NC}${WHITE}PKI et Autorités de Certification :${NC}"
+                                echo -e "    └── ${WHITE}[22]${NC}${CYAN}Activation des moteurs PKI LAN et WAN.${NC}"
+                                echo -e "    └── ${WHITE}[23]${NC}${CYAN}Création de la CA root et des CA intermédiaires.${NC}"
+                                echo -e "    └── ${WHITE}[24]${NC}${CYAN}Définition des rôles de certificats pour les applications et services.${NC}\n"
+
+                                echo -e " ${WHITE}[25]${NC}${WHITE}Audit et Sécurité :${NC}"
+                                echo -e "    └── ${WHITE}[26]${NC}${CYAN}Activation des logs d'audit (journaux des actions Vault).${NC}"
                                 
                                 sleep 3
                                 
@@ -1310,10 +1718,27 @@ EOF
                                     echo -e "        └── ${WHITE}[10]${NC}${CYAN}Signature du Certificat${NC}\n"
 
                                     echo -e " ${WHITE}[11]${NC}${WHITE}Sécurisation du fichier Certificat${NC}\n"
+                                    echo -e "   └──  ${WHITE}[12]${NC}${WHITE}Clé Privée Certificat => Restrictions des droits${NC}"
+                                    echo -e "        └── ${WHITE}[13]${NC}${YELLOW}Script pour renouvellement + inscription Systemd${NC}\n"
 
-                                    echo -e " ${WHITE}[12]${NC}${WHITE}Clé Privée Certificat => Restrictions des droits${NC}"
-                                    echo -e "    └── ${WHITE}[13]${NC}${YELLOW}Script pour renouvellement + inscription Systemd${NC}\n"
+                                    
+                                    echo -e " ${WHITE}[14]${NC}${WHITE}Configuration de Vault :${NC}"
+                                    echo -e "    └── ${WHITE}[15]${NC}${CYAN}Création du fichier du configuration : /etc/vault.d/vault.hcl.${NC}"
 
+                                    echo -e " ${WHITE}[16]${NC}${WHITE}Démarrage du service :${NC}"
+                                    echo -e "    └── ${WHITE}[17]${NC}${CYAN}Démarrage du service systemd.${NC}"
+
+                                    echo -e " ${WHITE}[18]${NC}${WHITE}Initialisation et Unseal :${NC}"
+                                    echo -e "    └── ${WHITE}[19]${NC}${CYAN}Initialisation de Vault (vault operator init).${NC}"
+                                    echo -e "    └── ${WHITE}[20]${NC}${CYAN}Déverrouillage (unseal) du service (utilisation de 3 clés).${NC}\n"
+
+                                    echo -e " ${WHITE}[21]${NC}${WHITE}PKI et Autorités de Certification :${NC}"
+                                    echo -e "    └── ${WHITE}[22]${NC}${CYAN}Activation des moteurs PKI LAN et WAN.${NC}"
+                                    echo -e "    └── ${WHITE}[23]${NC}${CYAN}Création de la CA root et des CA intermédiaires.${NC}"
+                                    echo -e "    └── ${WHITE}[24]${NC}${CYAN}Définition des rôles de certificats pour les applications et services.${NC}\n"
+
+                                    echo -e " ${WHITE}[25]${NC}${WHITE}Audit et Sécurité :${NC}"
+                                    echo -e "    └── ${WHITE}[26]${NC}${CYAN}Activation des logs d'audit (journaux des actions Vault).${NC}"
                                     sleep 3
                                     
                                     # Test présence CSR
@@ -1399,10 +1824,26 @@ EOF
                                         echo -e "        └── ${WHITE}[10]${NC}${CYAN}Signature du Certificat${NC}\n"
 
                                         echo -e " ${WHITE}[11]${NC}${WHITE}Sécurisation du fichier Certificat${NC}\n"
+                                        echo -e "   └──  ${WHITE}[12]${NC}${WHITE}Clé Privée Certificat => Restrictions des droits${NC}"
+                                        echo -e "        └── ${WHITE}[13]${NC}${YELLOW}Script pour renouvellement + inscription Systemd${NC}\n"
 
-                                        echo -e " ${WHITE}[12]${NC}${WHITE}Clé Privée Certificat => Restrictions des droits${NC}"
-                                        echo -e "    └── ${WHITE}[13]${NC}${YELLOW}Script pour renouvellement + inscription Systemd${NC}\n"
-                                    
+                                        echo -e " ${WHITE}[14]${NC}${WHITE}Configuration de Vault :${NC}"
+                                        echo -e "    └── ${WHITE}[15]${NC}${CYAN}Création du fichier du configuration : /etc/vault.d/vault.hcl.${NC}"
+
+                                        echo -e " ${WHITE}[16]${NC}${WHITE}Démarrage du service :${NC}"
+                                        echo -e "    └── ${WHITE}[17]${NC}${CYAN}Démarrage du service systemd.${NC}"
+
+                                        echo -e " ${WHITE}[18]${NC}${WHITE}Initialisation et Unseal :${NC}"
+                                        echo -e "    └── ${WHITE}[19]${NC}${CYAN}Initialisation de Vault (vault operator init).${NC}"
+                                        echo -e "    └── ${WHITE}[20]${NC}${CYAN}Déverrouillage (unseal) du service (utilisation de 3 clés).${NC}\n"
+
+                                        echo -e " ${WHITE}[21]${NC}${WHITE}PKI et Autorités de Certification :${NC}"
+                                        echo -e "    └── ${WHITE}[22]${NC}${CYAN}Activation des moteurs PKI LAN et WAN.${NC}"
+                                        echo -e "    └── ${WHITE}[23]${NC}${CYAN}Création de la CA root et des CA intermédiaires.${NC}"
+                                        echo -e "    └── ${WHITE}[24]${NC}${CYAN}Définition des rôles de certificats pour les applications et services.${NC}\n"
+
+                                        echo -e " ${WHITE}[25]${NC}${WHITE}Audit et Sécurité :${NC}"
+                                        echo -e "    └── ${WHITE}[26]${NC}${CYAN}Activation des logs d'audit (journaux des actions Vault).${NC}"
                                         sleep 3
                                         
                                         
@@ -1456,9 +1897,27 @@ EOF
                                         echo -e "        └── ${WHITE}[10]${NC}${CYAN}Signature du Certificat${NC}\n"
 
                                         echo -e " ${WHITE}[11]${NC}${WHITE}Sécurisation du fichier Certificat${NC}\n"
+                                        echo -e "   └──  ${WHITE}[12]${NC}${WHITE}Clé Privée Certificat => Restrictions des droits${NC}"
+                                        echo -e "        └── ${WHITE}[13]${NC}${YELLOW}Script pour renouvellement + inscription Systemd${NC}\n"
 
-                                        echo -e " ${WHITE}[12]${NC}${WHITE}Clé Privée Certificat => Restrictions des droits${NC}"
-                                        echo -e "    └── ${WHITE}[13]${NC}${YELLOW}Script pour renouvellement + inscription Systemd${NC}\n"
+                                        
+                                        echo -e " ${WHITE}[14]${NC}${WHITE}Configuration de Vault :${NC}"
+                                        echo -e "    └── ${WHITE}[15]${NC}${CYAN}Création du fichier du configuration : /etc/vault.d/vault.hcl.${NC}"
+
+                                        echo -e " ${WHITE}[16]${NC}${WHITE}Démarrage du service :${NC}"
+                                        echo -e "    └── ${WHITE}[17]${NC}${CYAN}Démarrage du service systemd.${NC}"
+
+                                        echo -e " ${WHITE}[18]${NC}${WHITE}Initialisation et Unseal :${NC}"
+                                        echo -e "    └── ${WHITE}[19]${NC}${CYAN}Initialisation de Vault (vault operator init).${NC}"
+                                        echo -e "    └── ${WHITE}[20]${NC}${CYAN}Déverrouillage (unseal) du service (utilisation de 3 clés).${NC}\n"
+
+                                        echo -e " ${WHITE}[21]${NC}${WHITE}PKI et Autorités de Certification :${NC}"
+                                        echo -e "    └── ${WHITE}[22]${NC}${CYAN}Activation des moteurs PKI LAN et WAN.${NC}"
+                                        echo -e "    └── ${WHITE}[23]${NC}${CYAN}Création de la CA root et des CA intermédiaires.${NC}"
+                                        echo -e "    └── ${WHITE}[24]${NC}${CYAN}Définition des rôles de certificats pour les applications et services.${NC}\n"
+
+                                        echo -e " ${WHITE}[25]${NC}${WHITE}Audit et Sécurité :${NC}"
+                                        echo -e "    └── ${WHITE}[26]${NC}${CYAN}Activation des logs d'audit (journaux des actions Vault).${NC}"                                           
                                         sleep 3
 
                                         # CHEMIN .CRT
@@ -1622,10 +2081,26 @@ EOF
                                                         echo -e "        └── ${GREEN}[√]${NC}${CYAN}Signature du Certificat${NC}\n"
 
                                                         echo -e " ${WHITE}[11]${NC}${WHITE}Sécurisation du fichier Certificat${NC}\n"
+                                                        echo -e "   └──  ${WHITE}[12]${NC}${WHITE}Clé Privée Certificat => Restrictions des droits${NC}"
+                                                        echo -e "        └── ${WHITE}[13]${NC}${YELLOW}Script pour renouvellement + inscription Systemd${NC}\n"
+                                                        
+                                                        echo -e " ${WHITE}[14]${NC}${WHITE}Configuration de Vault :${NC}"
+                                                        echo -e "    └── ${WHITE}[15]${NC}${CYAN}Création du fichier du configuration : /etc/vault.d/vault.hcl.${NC}"
 
-                                                        echo -e " ${WHITE}[12]${NC}${WHITE}Clé Privée Certificat => Restrictions des droits${NC}"
-                                                        echo -e "    └── ${WHITE}[13]${NC}${YELLOW}Script pour renouvellement + inscription Systemd${NC}\n"
+                                                        echo -e " ${WHITE}[16]${NC}${WHITE}Démarrage du service :${NC}"
+                                                        echo -e "    └── ${WHITE}[17]${NC}${CYAN}Démarrage du service systemd.${NC}"
 
+                                                        echo -e " ${WHITE}[18]${NC}${WHITE}Initialisation et Unseal :${NC}"
+                                                        echo -e "    └── ${WHITE}[19]${NC}${CYAN}Initialisation de Vault (vault operator init).${NC}"
+                                                        echo -e "    └── ${WHITE}[20]${NC}${CYAN}Déverrouillage (unseal) du service (utilisation de 3 clés).${NC}\n"
+
+                                                        echo -e " ${WHITE}[21]${NC}${WHITE}PKI et Autorités de Certification :${NC}"
+                                                        echo -e "    └── ${WHITE}[22]${NC}${CYAN}Activation des moteurs PKI LAN et WAN.${NC}"
+                                                        echo -e "    └── ${WHITE}[23]${NC}${CYAN}Création de la CA root et des CA intermédiaires.${NC}"
+                                                        echo -e "    └── ${WHITE}[24]${NC}${CYAN}Définition des rôles de certificats pour les applications et services.${NC}\n"
+
+                                                        echo -e " ${WHITE}[25]${NC}${WHITE}Audit et Sécurité :${NC}"
+                                                        echo -e "    └── ${WHITE}[26]${NC}${CYAN}Activation des logs d'audit (journaux des actions Vault).${NC}"
                                                         sleep 4
 
                                                         clear
@@ -1835,10 +2310,27 @@ EOF
                                                             echo -e "        └── ${GREEN}[√]${NC}${CYAN}Signature du Certificat${NC}\n"
 
                                                             echo -e " ${GREEN}[√]${NC}${WHITE}Sécurisation du fichier Certificat${NC}\n"
-                
-                                                            echo -e " ${GREEN}[√]${NC}${WHITE}Clé Privée Certificat => Restrictions des droits${NC}"
-                                                            echo -e "    └── ${GREEN}[√]${NC}${YELLOW}Script pour renouvellement + inscription Systemd${NC}\n"
+                                                            echo -e "   └──  ${GREEN}[√]${NC}${WHITE}Clé Privée Certificat => Restrictions des droits${NC}"
+                                                            echo -e "        └── ${GREEN}[√]${NC}${YELLOW}Script pour renouvellement + inscription Systemd${NC}\n"
+
                                                             
+                                                            echo -e " ${WHITE}[14]${NC}${WHITE}Configuration de Vault :${NC}"
+                                                            echo -e "    └── ${WHITE}[15]${NC}${CYAN}Création du fichier du configuration : /etc/vault.d/vault.hcl.${NC}"
+
+                                                            echo -e " ${WHITE}[16]${NC}${WHITE}Démarrage du service :${NC}"
+                                                            echo -e "    └── ${WHITE}[17]${NC}${CYAN}Démarrage du service systemd.${NC}"
+
+                                                            echo -e " ${WHITE}[18]${NC}${WHITE}Initialisation et Unseal :${NC}"
+                                                            echo -e "    └── ${WHITE}[19]${NC}${CYAN}Initialisation de Vault (vault operator init).${NC}"
+                                                            echo -e "    └── ${WHITE}[20]${NC}${CYAN}Déverrouillage (unseal) du service (utilisation de 3 clés).${NC}\n"
+
+                                                            echo -e " ${WHITE}[21]${NC}${WHITE}PKI et Autorités de Certification :${NC}"
+                                                            echo -e "    └── ${WHITE}[22]${NC}${CYAN}Activation des moteurs PKI LAN et WAN.${NC}"
+                                                            echo -e "    └── ${WHITE}[23]${NC}${CYAN}Création de la CA root et des CA intermédiaires.${NC}"
+                                                            echo -e "    └── ${WHITE}[24]${NC}${CYAN}Définition des rôles de certificats pour les applications et services.${NC}\n"
+
+                                                            echo -e " ${WHITE}[25]${NC}${WHITE}Audit et Sécurité :${NC}"
+                                                            echo -e "    └── ${WHITE}[26]${NC}${CYAN}Activation des logs d'audit (journaux des actions Vault).${NC}"
                                                             sleep 3
                                                             break 
                                                         
@@ -1876,10 +2368,26 @@ EOF
                                                             echo -e "        └── ${GREEN}[√]${NC}${CYAN}Signature du Certificat${NC}\n"
 
                                                             echo -e " ${GREEN}[√]${NC}${WHITE}Sécurisation du fichier Certificat${NC}\n"
-                
-                                                            echo -e " ${RED}[X]${NC}${WHITE}Clé Privée Certificat => Restrictions des droits${NC}"
-                                                            echo -e "    └── ${RED}[X]${NC}${YELLOW}Script pour renouvellement + inscription Systemd${NC}\n"
+                                                            echo -e "   └──  ${RED}[X]${NC}${WHITE}Clé Privée Certificat => Restrictions des droits${NC}"
+                                                            echo -e "        └── ${RED}[X]${NC}${YELLOW}Script pour renouvellement + inscription Systemd${NC}\n"
+                                                            
+                                                            echo -e " ${WHITE}[14]${NC}${WHITE}Configuration de Vault :${NC}"
+                                                            echo -e "    └── ${WHITE}[15]${NC}${CYAN}Création du fichier du configuration : /etc/vault.d/vault.hcl.${NC}"
 
+                                                            echo -e " ${WHITE}[16]${NC}${WHITE}Démarrage du service :${NC}"
+                                                            echo -e "    └── ${WHITE}[17]${NC}${CYAN}Démarrage du service systemd.${NC}"
+
+                                                            echo -e " ${WHITE}[18]${NC}${WHITE}Initialisation et Unseal :${NC}"
+                                                            echo -e "    └── ${WHITE}[19]${NC}${CYAN}Initialisation de Vault (vault operator init).${NC}"
+                                                            echo -e "    └── ${WHITE}[20]${NC}${CYAN}Déverrouillage (unseal) du service (utilisation de 3 clés).${NC}\n"
+
+                                                            echo -e " ${WHITE}[21]${NC}${WHITE}PKI et Autorités de Certification :${NC}"
+                                                            echo -e "    └── ${WHITE}[22]${NC}${CYAN}Activation des moteurs PKI LAN et WAN.${NC}"
+                                                            echo -e "    └── ${WHITE}[23]${NC}${CYAN}Création de la CA root et des CA intermédiaires.${NC}"
+                                                            echo -e "    └── ${WHITE}[24]${NC}${CYAN}Définition des rôles de certificats pour les applications et services.${NC}\n"
+
+                                                            echo -e " ${WHITE}[25]${NC}${WHITE}Audit et Sécurité :${NC}"
+                                                            echo -e "    └── ${WHITE}[26]${NC}${CYAN}Activation des logs d'audit (journaux des actions Vault).${NC}"
 
                                                             enter
                                                             
@@ -1900,198 +2408,330 @@ EOF
 
 
 # =============================== [3] CONFIGURATION DE VAULT ===============================
-
-
-                                    clear
-                                    afficher_bienvenue
-
-                                    echo -e "${BLUE_BRIGHT}=== Installation et Configuration de Vault ===${NC}\n"
-                                    echo -e "${WHITE}=== Installation de Vault ===${NC}\n\n"
-
-                                    echo -e " ${WHITE}[1]${NC}${WHITE}Ajout du Dépôt HashiCorp${NC}"
-                                    echo -e "    └── ${WHITE}[2]${NC}${YELLOW}Installation du Paquet Vault${NC}"
-                                    echo -e "        └── ${WHITE}[3]${NC}${CYAN}Vérification de la présence de Vault${NC}\n"
-
-                                    echo -e " ${WHITE}[4]${NC}${WHITE}Création clé GPG${NC}"
-                                    echo -e "    └── ${WHITE}[5]${NC}${YELLOW}Certificat SSL${NC}"
-                                    echo -e "        └── ${WHITE}[6]${NC}${CYAN}Fichier de configuration${NC}"
-                                    echo -e "        └── ${WHITE}[7]${NC}${CYAN}Clé Privée${NC}"
-                                    echo -e "        └── ${WHITE}[8]${NC}${CYAN}Fichier CSR${NC}"
-                                    echo -e "        └── ${WHITE}[9]${NC}${CYAN}Certificat Vault${NC}"
-                                    echo -e "        └── ${WHITE}[10]${NC}${CYAN}Signature du Certificat${NC}\n"
-
-                                    echo -e " ${WHITE}[11]${NC}${WHITE}Sécurisation du fichier Certificat${NC}\n"
-
-                                    echo -e " ${WHITE}[12]${NC}${WHITE}Clé Privée Certificat => Restrictions des droits${NC}"
-                                    echo -e "    └── ${WHITE}[13]${NC}${YELLOW}Script pour renouvellement + inscription Systemd${NC}\n"
-
-                                    echo -e " ${WHITE}[14]${NC}${WHITE}Configuration de Vault :${NC}"
-                                    echo -e "    └── ${WHITE}[15]${NC}${CYAN}Création du fichier du configuration : /etc/vault.d/vault.hcl.${NC}"
-
-                                    echo -e " ${WHITE}[16]${NC}${WHITE}Démarrage du service :${NC}"
-                                    echo -e "    └── ${WHITE}[17]${NC}${CYAN}Démarrage du service systemd.${NC}"
-
-                                    echo -e " ${WHITE}[18]${NC}${WHITE}Initialisation et Unseal :${NC}"
-                                    echo -e "    └── ${WHITE}[19]${NC}${CYAN}Initialisation de Vault (vault operator init).${NC}"
-                                    echo -e "    └── ${WHITE}[20]${NC}${CYAN}Déverrouillage (unseal) du service (utilisation de 3 clés).${NC}\n"
-
-                                    echo -e " ${WHITE}[21]${NC}${WHITE}PKI et Autorités de Certification :${NC}"
-                                    echo -e "    └── ${WHITE}[22]${NC}${CYAN}Activation des moteurs PKI LAN et WAN.${NC}"
-                                    echo -e "    └── ${WHITE}[23]${NC}${CYAN}Création de la CA root et des CA intermédiaires.${NC}"
-                                    echo -e "    └── ${WHITE}[24]${NC}${CYAN}Définition des rôles de certificats pour les applications et services.${NC}\n"
-
-                                    echo -e " ${WHITE}[25]${NC}${WHITE}Audit et Sécurité :${NC}"
-                                    echo -e "    └── ${WHITE}[26]${NC}${CYAN}Activation des logs d'audit (journaux des actions Vault).${NC}"
-
-                                    enter
-
-                                    
                                     clear
                                     afficher_bienvenue
                                     
-                                    echo -e "${BLUE_BRIGHT}=== Création du fichier de configuration : ${WHITE}/etc/vault.d/vault.hcl${NC} ${BLUE_BRIGHT}===${NC}\n"
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+                                    echo -e "${BLUE_BRIGHT}=== Création du fichier de configuration : ${WHITE}/etc/vault.d/vault.hcl${NC} ${BLUE_BRIGHT}===${NC}\n\n"
+
+
+                                        # === Local Uniquement  ===
+                                        if [[ "$choix_adressage_ip" =~ ^[1]$ ]]; then
+
+                                        echo -e "Lors du choix de l'adressage IP pour le certificat SSL, vous aviez choisi ${WHITE}Local Uniquement${NC}"                
+                                        echo -e "La configuration du fichier ${WHITE}/etc/vault.d/vault.hcl${NC} se fera donc en conséquence"
+
+                                        enter
+                                        
+                                        sudo rm /etc/vault.d/vault.hcl
+                                        
+                                        sudo touch /etc/vault.d/vault.hcl
+                                        sudo chown vault:vault /etc/vault.d/vault.hcl
+                                        sudo chmod 644 /etc/vault.d/vault.hcl
+
+                                        sudo bash -c "cat > /etc/vault.d/vault.hcl << 'EOF'
+
+ui            = true
+cluster_addr  = "https://127.0.0.1:8201"
+api_addr      = "https://127.0.0.1:8200"
+disable_mlock = flase 
+
+storage "raft" {
+  path = "/opt/vault/data"
+  node_id = "vault-node-1"
+}
+
+listener "tcp" {
+  address       = "127.0.0.1:8200"
+  tls_cert_file = "/etc/vault.d/vault.crt"
+  tls_key_file  = "/etc/vault.d/vault.key"
+}
+
+telemetry {
+  statsite_address = "127.0.0.1:8125"
+  disable_hostname = true
+}                                            
+EOF
+" > /dev/null 2>> "$ERROR_LOG" && echo "/etc/vault.d/vault.hcl" >> "$INSTALL_LOG"
+
+
+
+                                            if [ -f /etc/vault.d/vault.hcl ]; then
+                                        
+                                                clear
+                                                afficher_bienvenue
+                                                echo -e "${GREEN}OK : Fichier ${WHITE}/etc/vault.d/vault.hcl${NC}${GREEN} créé avec succés.${NC}"
+                                                
+                                                sleep 4
+                                            else
+                                                echo -e "${RED}ERREUR : Problème lors de la création du fichier ${WHITE}/etc/vault.d/vault_tls.cnf${NC}"
+                                                sleep 3
+                                                clean_up_error
+                                            fi
+
+
+                                        # === Réseau Local  ===
+                                        elif [[ "$choix_adressage_ip" =~ ^[2]$ ]]  ; then
+                                                        
+                                        echo -e "Lors du choix de l'adressage IP pour le certificat SSL, vous aviez choisi ${WHITE}Réseau Local${NC}"
+                                        echo -e "La configuration du fichier ${WHITE}/etc/vault.d/vault.hcl${NC} se fera donc en conséquence"
+                                        
+                                        enter 
+
+                                        sudo rm /etc/vault.d/vault.hcl
+                                        
+                                        sudo touch /etc/vault.d/vault.hcl
+                                        sudo chown vault:vault /etc/vault.d/vault.hcl
+                                        sudo chmod 644 /etc/vault.d/vault.hcl
+
+                                        sudo bash -c "cat > /etc/vault.d/vault.hcl << 'EOF'
+
+
+
+ui            = true
+cluster_addr  = "https://$ip_vault_2:8201"
+api_addr      = "https://$ip_vault_2:8200"
+disable_mlock = false
+
+storage "raft" {
+  path = "/opt/vault/data"
+  node_id = "vault-node-1"
+}
+
+listener "tcp" {
+  address       = "0.0.0.0:8200"
+  tls_cert_file = "/etc/vault.d/vault.crt"
+  tls_key_file  = "/etc/vault.d/vault.key"
+}
+
+telemetry {
+  statsite_address = "127.0.0.1:8125"
+  disable_hostname = true
+}   
+EOF
+" > /dev/null 2>> "$ERROR_LOG" && echo "/etc/vault.d/vault.hcl" >> "$INSTALL_LOG"
+
+
+                                            if [ -f /etc/vault.d/vault.hcl ]; then
+                                        
+                                                clear
+                                                afficher_bienvenue
+                                                echo -e "${GREEN}OK : Fichier ${WHITE}/etc/vault.d/vault.hcl${NC}${GREEN} créé avec succés.${NC}"
+                                                
+                                                sleep 4
+                                            else
+                                                echo -e "${RED}ERREUR : Problème lors de la création du fichier ${WHITE}/etc/vault.d/vault_tls.cnf${NC}"
+                                                sleep 3
+                                                clean_up_error
+                                            fi
+
+
+                                        # === Plusieurs Sous réseaux  ===
+                                        elif [[ "$choix_adressage_ip" =~ ^[3]$ ]]; then
+                                        
+                                        echo -e "Lors du choix de l'adressage IP pour le certificat SSL, vous aviez choisi ${WHITE}Plusieurs Sous réseaux${NC}"
+                                        echo -e "La configuration du fichier ${WHITE}/etc/vault.d/vault.hcl${NC} se fera donc en conséquence"
+
+                                        enter
+                                        
+                                        
+                                        sudo rm /etc/vault.d/vault.hcl
+                                        
+                                        sudo touch /etc/vault.d/vault.hcl
+                                        sudo chown vault:vault /etc/vault.d/vault.hcl
+                                        sudo chmod 644 /etc/vault.d/vault.hcl
+
+                                        sudo bash -c "cat > /etc/vault.d/vault.hcl << 'EOF'
+
+
+
+ui            = true
+cluster_addr  = "https://$ip_vault_2:8201"
+api_addr      = "https://$ip_vault_2:8200"
+disable_mlock = false
+
+storage "raft" {
+  path = "/opt/vault/data"
+  node_id = "vault-node-1"
+}
+
+listener "tcp" {
+  address       = "0.0.0.0:8200"
+  tls_cert_file = "/etc/vault.d/vault.crt"
+  tls_key_file  = "/etc/vault.d/vault.key"
+}
+
+telemetry {
+  statsite_address = "127.0.0.1:8125"
+  disable_hostname = true
+}   
+EOF
+" > /dev/null 2>> "$ERROR_LOG" && echo "/etc/vault.d/vault.hcl" >> "$INSTALL_LOG"
+
+
+                                            if [ -f /etc/vault.d/vault.hcl ]; then
+                                        
+                                                clear
+                                                afficher_bienvenue
+                                                echo -e "${GREEN}OK : Fichier ${WHITE}/etc/vault.d/vault.hcl${NC}${GREEN} créé avec succés.${NC}"
+                                                
+                                                sleep 4
+                                            else
+                                                echo -e "${RED}ERREUR : Problème lors de la création du fichier ${WHITE}/etc/vault.d/vault_tls.cnf${NC}"
+                                                sleep 3
+                                                clean_up_error
+                                            fi
+
+                                            echo -e "${BLUE_BRIGHT}=== Installation et Configuration de Vault ===${NC}\n"
+                                            echo -e "${WHITE}=== Installation de Vault ===${NC}\n\n"
+
+                                            echo -e " ${WHITE}[1]${NC}${WHITE}Ajout du Dépôt HashiCorp${NC}"
+                                            echo -e "    └── ${WHITE}[2]${NC}${YELLOW}Installation du Paquet Vault${NC}"
+                                            echo -e "        └── ${WHITE}[3]${NC}${CYAN}Vérification de la présence de Vault${NC}\n"
+
+                                            echo -e " ${WHITE}[4]${NC}${WHITE}Création clé GPG${NC}"
+                                            echo -e "    └── ${WHITE}[5]${NC}${YELLOW}Certificat SSL${NC}"
+                                            echo -e "        └── ${WHITE}[6]${NC}${CYAN}Fichier de configuration${NC}"
+                                            echo -e "        └── ${WHITE}[7]${NC}${CYAN}Clé Privée${NC}"
+                                            echo -e "        └── ${WHITE}[8]${NC}${CYAN}Fichier CSR${NC}"
+                                            echo -e "        └── ${WHITE}[9]${NC}${CYAN}Certificat Vault${NC}"
+                                            echo -e "        └── ${WHITE}[10]${NC}${CYAN}Signature du Certificat${NC}\n"
+
+                                            echo -e " ${GREEN}[√]${NC}${WHITE}Sécurisation du fichier Certificat${NC}\n"
+                                            echo -e "   └──  ${GREEN}[√]${NC}${WHITE}Clé Privée Certificat => Restrictions des droits${NC}"
+                                            echo -e "        └── ${GREEN}[√]${NC}${YELLOW}Script pour renouvellement + inscription Systemd${NC}\n"
+
+                                            echo -e " ${WHITE}[14]${NC}${WHITE}Configuration de Vault :${NC}"
+                                            echo -e "    └── ${WHITE}[15]${NC}${CYAN}Création du fichier du configuration : /etc/vault.d/vault.hcl.${NC}"
+
+                                            echo -e " ${WHITE}[16]${NC}${WHITE}Démarrage du service :${NC}"
+                                            echo -e "    └── ${WHITE}[17]${NC}${CYAN}Démarrage du service systemd.${NC}"
+
+                                            echo -e " ${WHITE}[18]${NC}${WHITE}Initialisation et Unseal :${NC}"
+                                            echo -e "    └── ${WHITE}[19]${NC}${CYAN}Initialisation de Vault (vault operator init).${NC}"
+                                            echo -e "    └── ${WHITE}[20]${NC}${CYAN}Déverrouillage (unseal) du service (utilisation de 3 clés).${NC}\n"
+
+                                            echo -e " ${WHITE}[21]${NC}${WHITE}PKI et Autorités de Certification :${NC}"
+                                            echo -e "    └── ${WHITE}[22]${NC}${CYAN}Activation des moteurs PKI LAN et WAN.${NC}"
+                                            echo -e "    └── ${WHITE}[23]${NC}${CYAN}Création de la CA root et des CA intermédiaires.${NC}"
+                                            echo -e "    └── ${WHITE}[24]${NC}${CYAN}Définition des rôles de certificats pour les applications et services.${NC}\n"
+
+                                            echo -e " ${WHITE}[25]${NC}${WHITE}Audit et Sécurité :${NC}"
+                                            echo -e "    └── ${WHITE}[26]${NC}${CYAN}Activation des logs d'audit (journaux des actions Vault).${NC}"
+                                        
+                                        
+                                        
 
 # =============================== [4] DEMARRAGE SERVICE ===============================
 
-                                    echo -e "${BLUE_BRIGHT}=== Installation et Configuration de Vault ===${NC}\n"
-                                    echo -e "${WHITE}=== Installation de Vault ===${NC}\n\n"
 
-                                    echo -e " ${WHITE}[1]${NC}${WHITE}Ajout du Dépôt HashiCorp${NC}"
-                                    echo -e "    └── ${WHITE}[2]${NC}${YELLOW}Installation du Paquet Vault${NC}"
-                                    echo -e "        └── ${WHITE}[3]${NC}${CYAN}Vérification de la présence de Vault${NC}\n"
 
-                                    echo -e " ${WHITE}[4]${NC}${WHITE}Création clé GPG${NC}"
-                                    echo -e "    └── ${WHITE}[5]${NC}${YELLOW}Certificat SSL${NC}"
-                                    echo -e "        └── ${WHITE}[6]${NC}${CYAN}Fichier de configuration${NC}"
-                                    echo -e "        └── ${WHITE}[7]${NC}${CYAN}Clé Privée${NC}"
-                                    echo -e "        └── ${WHITE}[8]${NC}${CYAN}Fichier CSR${NC}"
-                                    echo -e "        └── ${WHITE}[9]${NC}${CYAN}Certificat Vault${NC}"
-                                    echo -e "        └── ${WHITE}[10]${NC}${CYAN}Signature du Certificat${NC}\n"
+                                            clear
+                                            afficher_bienvenue
+                                            
+                                            echo -e "${BLUE_BRIGHT}=== Création et Démarrage du service Vault ${BLUE_BRIGHT}===${NC}\n\n" 
+                                            
 
-                                    echo -e " ${WHITE}[11]${NC}${WHITE}Sécurisation du fichier Certificat${NC}\n"
+                                            msg="Inscription à systemd =>  /etc/systemd/system/vault.service"
+                                                    
+                                            BLA::start_loading_animation "$msg" "${BLA_passing_dots[@]}"
 
-                                    echo -e " ${WHITE}[12]${NC}${WHITE}Clé Privée Certificat => Restrictions des droits${NC}"
-                                    echo -e "    └── ${WHITE}[13]${NC}${YELLOW}Script pour renouvellement + inscription Systemd${NC}\n"
+                                            sleep 3
+                                            # Effacer la ligne du message dynamique
+                                            echo -ne "\r\033[K"
+                                            BLA::stop_loading_animation
 
-                                    echo -e " ${WHITE}[14]${NC}${WHITE}Configuration de Vault :${NC}"
-                                    echo -e "    └── ${WHITE}[15]${NC}${CYAN}Création du fichier du configuration : /etc/vault.d/vault.hcl.${NC}"
+                                            sudo bash -c "cat > /etc/systemd/system/vault.service << 'EOF'
 
-                                    echo -e " ${WHITE}[16]${NC}${WHITE}Démarrage du service :${NC}"
-                                    echo -e "    └── ${WHITE}[17]${NC}${CYAN}Démarrage du service systemd.${NC}"
+[Unit]
+Description=HashiCorp Vault
+Documentation=https://www.vaultproject.io/docs/
+Requires=network-online.target
+After=network-online.target
+ConditionFileNotEmpty=/etc/vault.d/vault.hcl
 
-                                    echo -e " ${WHITE}[18]${NC}${WHITE}Initialisation et Unseal :${NC}"
-                                    echo -e "    └── ${WHITE}[19]${NC}${CYAN}Initialisation de Vault (vault operator init).${NC}"
-                                    echo -e "    └── ${WHITE}[20]${NC}${CYAN}Déverrouillage (unseal) du service (utilisation de 3 clés).${NC}\n"
+[Service]
+Type=notify
+User=vault
+Group=vault
+ProtectSystem=full
+ProtectHome=yes
+PrivateTmp=yes
+NoNewPrivileges=yes
+ExecStart=/usr/local/bin/vault server -config=/etc/vault.d/vault.hcl
+ExecReload=/bin/kill --signal HUP $MAINPID
+KillMode=process
+KillSignal=SIGINT
+Restart=on-failure
+RestartSec=5
+TimeoutStopSec=30
+LimitNOFILE=65536
+LimitMEMLOCK=infinity
+AmbientCapabilities=CAP_IPC_LOCK
+CapabilityBoundingSet=CAP_SYSLOG CAP_IPC_LOCK
 
-                                    echo -e " ${WHITE}[21]${NC}${WHITE}PKI et Autorités de Certification :${NC}"
-                                    echo -e "    └── ${WHITE}[22]${NC}${CYAN}Activation des moteurs PKI LAN et WAN.${NC}"
-                                    echo -e "    └── ${WHITE}[23]${NC}${CYAN}Création de la CA root et des CA intermédiaires.${NC}"
-                                    echo -e "    └── ${WHITE}[24]${NC}${CYAN}Définition des rôles de certificats pour les applications et services.${NC}\n"
+[Install]
+WantedBy=multi-user.target
+EOF
+" > /dev/null 2>> "$ERROR_LOG" && echo "/etc/systemd/system/vault.service" >> "$INSTALL_LOG"
 
-                                    echo -e " ${WHITE}[25]${NC}${WHITE}Audit et Sécurité :${NC}"
-                                    echo -e "    └── ${WHITE}[26]${NC}${CYAN}Activation des logs d'audit (journaux des actions Vault).${NC}"
+
+
+
+
+                                            # === AUTORISATION ET DEMARRAGE SYSTEMD ===
+                                                        
+                                            sudo systemctl daemon-reload > /dev/null 2>&1
+                                                        
+                                            # .service
+                                            sudo systemctl enable vault.service > /dev/null 2>&1
+                                            sudo systemctl start vault.service > /dev/null 2>&1
+
+                                            # === TEST RENOUVELEMENT ACTIF ===
+
+                                            if [ -f /etc/systemd/system/vault.service ] && systemctl is-active --quiet vault.service; then
+                                                            
+                                            clear
+                                            afficher_bienvenue
+                                            echo -e "${GREEN}OK : Fichiers systemd pour Vault créé, actifs et opérationnels.${NC}\n"
+                                                            
+                                            enter
+
+                                            echo -e "${BLUE_BRIGHT}=== Installation et Configuration de Vault ===${NC}\n"
+                                            echo -e "${WHITE}=== Installation de Vault ===${NC}\n\n"
+
+                                            echo -e " ${WHITE}[1]${NC}${WHITE}Ajout du Dépôt HashiCorp${NC}"
+                                            echo -e "    └── ${WHITE}[2]${NC}${YELLOW}Installation du Paquet Vault${NC}"
+                                            echo -e "        └── ${WHITE}[3]${NC}${CYAN}Vérification de la présence de Vault${NC}\n"
+
+                                            echo -e " ${WHITE}[4]${NC}${WHITE}Création clé GPG${NC}"
+                                            echo -e "    └── ${WHITE}[5]${NC}${YELLOW}Certificat SSL${NC}"
+                                            echo -e "        └── ${WHITE}[6]${NC}${CYAN}Fichier de configuration${NC}"
+                                            echo -e "        └── ${WHITE}[7]${NC}${CYAN}Clé Privée${NC}"
+                                            echo -e "        └── ${WHITE}[8]${NC}${CYAN}Fichier CSR${NC}"
+                                            echo -e "        └── ${WHITE}[9]${NC}${CYAN}Certificat Vault${NC}"
+                                            echo -e "        └── ${WHITE}[10]${NC}${CYAN}Signature du Certificat${NC}\n"
+
+                                            echo -e " ${GREEN}[√]${NC}${WHITE}Sécurisation du fichier Certificat${NC}\n"
+                                            echo -e "   └──  ${GREEN}[√]${NC}${WHITE}Clé Privée Certificat => Restrictions des droits${NC}"
+                                            echo -e "        └── ${GREEN}[√]${NC}${YELLOW}Script pour renouvellement + inscription Systemd${NC}\n"
+
+                                            echo -e " ${WHITE}[14]${NC}${WHITE}Configuration de Vault :${NC}"
+                                            echo -e "    └── ${WHITE}[15]${NC}${CYAN}Création du fichier du configuration : /etc/vault.d/vault.hcl.${NC}"
+
+                                            echo -e " ${WHITE}[16]${NC}${WHITE}Démarrage du service :${NC}"
+                                            echo -e "    └── ${WHITE}[17]${NC}${CYAN}Démarrage du service systemd.${NC}"
+
+                                            echo -e " ${WHITE}[18]${NC}${WHITE}Initialisation et Unseal :${NC}"
+                                            echo -e "    └── ${WHITE}[19]${NC}${CYAN}Initialisation de Vault (vault operator init).${NC}"
+                                            echo -e "    └── ${WHITE}[20]${NC}${CYAN}Déverrouillage (unseal) du service (utilisation de 3 clés).${NC}\n"
+
+                                            echo -e " ${WHITE}[21]${NC}${WHITE}PKI et Autorités de Certification :${NC}"
+                                            echo -e "    └── ${WHITE}[22]${NC}${CYAN}Activation des moteurs PKI LAN et WAN.${NC}"
+                                            echo -e "    └── ${WHITE}[23]${NC}${CYAN}Création de la CA root et des CA intermédiaires.${NC}"
+                                            echo -e "    └── ${WHITE}[24]${NC}${CYAN}Définition des rôles de certificats pour les applications et services.${NC}\n"
+
+                                            echo -e " ${WHITE}[25]${NC}${WHITE}Audit et Sécurité :${NC}"
+                                            echo -e "    └── ${WHITE}[26]${NC}${CYAN}Activation des logs d'audit (journaux des actions Vault).${NC}"
 
 # =============================== [5] INITIALISATION ET UNSEAL ===============================
 
@@ -2110,10 +2750,9 @@ EOF
                                     echo -e "        └── ${WHITE}[9]${NC}${CYAN}Certificat Vault${NC}"
                                     echo -e "        └── ${WHITE}[10]${NC}${CYAN}Signature du Certificat${NC}\n"
 
-                                    echo -e " ${WHITE}[11]${NC}${WHITE}Sécurisation du fichier Certificat${NC}\n"
-
-                                    echo -e " ${WHITE}[12]${NC}${WHITE}Clé Privée Certificat => Restrictions des droits${NC}"
-                                    echo -e "    └── ${WHITE}[13]${NC}${YELLOW}Script pour renouvellement + inscription Systemd${NC}\n"
+                                    echo -e " ${GREEN}[√]${NC}${WHITE}Sécurisation du fichier Certificat${NC}\n"
+                                    echo -e "   └──  ${GREEN}[√]${NC}${WHITE}Clé Privée Certificat => Restrictions des droits${NC}"
+                                    echo -e "        └── ${GREEN}[√]${NC}${YELLOW}Script pour renouvellement + inscription Systemd${NC}\n"
 
                                     echo -e " ${WHITE}[14]${NC}${WHITE}Configuration de Vault :${NC}"
                                     echo -e "    └── ${WHITE}[15]${NC}${CYAN}Création du fichier du configuration : /etc/vault.d/vault.hcl.${NC}"
@@ -2150,10 +2789,9 @@ EOF
                                     echo -e "        └── ${WHITE}[9]${NC}${CYAN}Certificat Vault${NC}"
                                     echo -e "        └── ${WHITE}[10]${NC}${CYAN}Signature du Certificat${NC}\n"
 
-                                    echo -e " ${WHITE}[11]${NC}${WHITE}Sécurisation du fichier Certificat${NC}\n"
-
-                                    echo -e " ${WHITE}[12]${NC}${WHITE}Clé Privée Certificat => Restrictions des droits${NC}"
-                                    echo -e "    └── ${WHITE}[13]${NC}${YELLOW}Script pour renouvellement + inscription Systemd${NC}\n"
+                                    echo -e " ${GREEN}[√]${NC}${WHITE}Sécurisation du fichier Certificat${NC}\n"
+                                    echo -e "   └──  ${GREEN}[√]${NC}${WHITE}Clé Privée Certificat => Restrictions des droits${NC}"
+                                    echo -e "        └── ${GREEN}[√]${NC}${YELLOW}Script pour renouvellement + inscription Systemd${NC}\n"
 
                                     echo -e " ${WHITE}[14]${NC}${WHITE}Configuration de Vault :${NC}"
                                     echo -e "    └── ${WHITE}[15]${NC}${CYAN}Création du fichier du configuration : /etc/vault.d/vault.hcl.${NC}"
@@ -2190,10 +2828,9 @@ EOF
                                     echo -e "        └── ${WHITE}[9]${NC}${CYAN}Certificat Vault${NC}"
                                     echo -e "        └── ${WHITE}[10]${NC}${CYAN}Signature du Certificat${NC}\n"
 
-                                    echo -e " ${WHITE}[11]${NC}${WHITE}Sécurisation du fichier Certificat${NC}\n"
-
-                                    echo -e " ${WHITE}[12]${NC}${WHITE}Clé Privée Certificat => Restrictions des droits${NC}"
-                                    echo -e "    └── ${WHITE}[13]${NC}${YELLOW}Script pour renouvellement + inscription Systemd${NC}\n"
+                                    echo -e " ${GREEN}[√]${NC}${WHITE}Sécurisation du fichier Certificat${NC}\n"
+                                    echo -e "   └──  ${GREEN}[√]${NC}${WHITE}Clé Privée Certificat => Restrictions des droits${NC}"
+                                    echo -e "        └── ${GREEN}[√]${NC}${YELLOW}Script pour renouvellement + inscription Systemd${NC}\n"
 
                                     echo -e " ${WHITE}[14]${NC}${WHITE}Configuration de Vault :${NC}"
                                     echo -e "    └── ${WHITE}[15]${NC}${CYAN}Création du fichier du configuration : /etc/vault.d/vault.hcl.${NC}"
