@@ -123,7 +123,7 @@ enter() {
         if [[ -z "$input" ]]; then
             break
         else
-            echo -e "\n${RED}Erreur : appuyez uniquement sur [Entrée].${NC}\n"
+            echo -e "\n${RED}Erreur : appuyez uniquement sur [Entrée].${NC}\n\n\n"
         fi
     done
 }
